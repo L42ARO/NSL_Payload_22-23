@@ -4,3 +4,4 @@ EE/CS MEMBERS
 Gabbriel McIntosh
 Ryotaro Okada
 Kavi Patel
+Alessandro Lovadina
