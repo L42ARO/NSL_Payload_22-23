@@ -4,6 +4,6 @@ Everything related to the Raspberry Pi Pico development:
     Lora
     Cam motors
 
-This is device is a slave to the Raspberry Pi Zero
+This device is a slave to the Raspberry Pi Zero
 
 
