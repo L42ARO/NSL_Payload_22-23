@@ -1,0 +1,1 @@
+This folder will be used to store the prograam for the Raspberry Pi Zero.
