@@ -2,7 +2,7 @@
 Everything related to the Raspberry Pi Pico development:
     Light Sensors
     Lora
-    And Cam motors
+    Cam motors
 
 This is device is a slave to the Raspberry Pi Zero
 
