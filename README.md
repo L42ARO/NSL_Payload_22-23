@@ -8,3 +8,4 @@ Kavi Patel
 Alessandro Lovadina
 German Becerra
 Morgan Melissa W.
+Chi Vo 
