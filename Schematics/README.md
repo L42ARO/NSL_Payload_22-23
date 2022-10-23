@@ -1,0 +1,1 @@
+This folder will contain the schematics of both our software logic and the electrical system
