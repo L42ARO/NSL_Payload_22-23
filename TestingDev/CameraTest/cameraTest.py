@@ -1,8 +1,15 @@
 from picamera import PiCamera
 from time import sleep
 
-camera = PiCamera()
-camera.start_preview()
-sleep(5)
-camera.capture('./image.jpg')
-camera.stop_preview()
+def TakePhoto(a, camera):
+    camera.start_preview()
+    sleep(2)
+    imagename='./image'+str(a)+'.jpg'
+    camera.capture(imagename)
+    camera.stop_preview()
+    print(imagename)
+
+if __name__=="__main__":
+    camera = PiCamera()
+    for i in range(3):
+        TakePhoto(i, camera)
