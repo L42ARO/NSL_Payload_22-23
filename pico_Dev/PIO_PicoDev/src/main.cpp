@@ -4,6 +4,8 @@ const int stepPin = 6;
 const int dirPin = 5; 
 const int microDelay = 1000;
 const int betweenDelay = 250;
+
+void MoveMotor(int degrees);
 void setup() {
   // Sets the two pins as Outputs
   pinMode(stepPin,OUTPUT); 
@@ -31,4 +33,8 @@ void loop() {
     delayMicroseconds(betweenDelay);
   }
   delay(1000);
+}
+
+void MoveMotor(int degrees){
+  
 }
