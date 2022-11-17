@@ -13,7 +13,6 @@ def CheckCalibration():
     cal["gyro"] = gyro
     cal["accel"] = accel
     cal["mag"] = mag
-    cal["avg"]= (sys/3+gyro/3+accel/3+mag/3)/4
     return cal
     #Check PICO IMU calibration
     
@@ -21,31 +20,33 @@ def CheckCalibration():
 def align():
     print("Starting motor alignement")
     #Confidence treshold for calibration
-    treshold = 0.9
-    tresh_confirms=0
-    zero_cal = CheckCalibration()
     vertical = False
     calib_need = True
     #Enter Loop to align
     while(vertical == False):
-        #Sys must be zero before start trying to calibrate
         if(calib_need == True):
-            while(zero_cal["sys"] != 0):
-                print("Waiting to beign reading data")
+            accel_confirms=0
+            sys_confirms = 0
+            zero_cal = CheckCalibration()
+            while(zero_cal["gyro"] != 3):
+                print("Waiting still for gyro")
                 zero_cal=CheckCalibration()
                 time.sleep(1)
             #Wait for calibration to be good
-            while(tresh_confirms < 5):
+            print("Starting other sensors calibration")
+            while(accel_confirms <=10 and sys_confirms <=10):
                 #Check for ZERO IMU calibration
-                if(zero_cal["avg"] > treshold):
-                    tresh_confirms += 1
+                if(zero_cal["accel"] >=3):
+                    accel_confirms += 1
+                if(zero_cal["sys"] >=3):
+                    sys_confirms += 1
+                print(f"Accel: {zero_cal['accel']}, Sys: {zero_cal['sys']}\nAccel Good: {accel_confirms}/10, Sys_Good={sys_confirms}", end='\r')
                 zero_cal = CheckCalibration()
-                if(treshold>0.7):
-                    treshold-=0.02
                 time.sleep(1)
             print("Calibration seems good chief")
         gyro = sensor.euler
         gravity = sensor.gravity
+        input("Press enter to continue chief")
         print(f"Gyro (x,y,z):{gyro}")
         print(f"Gravity (x,y,z): {gravity}")
         vertical=True #Just for testing
