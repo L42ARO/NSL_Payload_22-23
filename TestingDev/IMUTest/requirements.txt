@@ -1,0 +1,2 @@
+ adafruit-circuitpython-bno055==5.4.7
+ board==1.0
