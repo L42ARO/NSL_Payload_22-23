@@ -29,7 +29,7 @@ def align():
             sys_confirms = 0
             zero_cal = CheckCalibration()
             while(zero_cal["gyro"] != 3):
-                print("Waiting still for gyro")
+                print(f"Waiting still for gyro: {zero_cal['gyro']}", end="\r")
                 zero_cal=CheckCalibration()
                 time.sleep(1)
             #Wait for calibration to be good
@@ -40,15 +40,17 @@ def align():
                     accel_confirms += 1
                 if(zero_cal["sys"] >=3):
                     sys_confirms += 1
-                print(f"Accel: {zero_cal['accel']}, Sys: {zero_cal['sys']}\nAccel Good: {accel_confirms}/10, Sys_Good={sys_confirms}", end='\r')
+                print(f"Accel: {zero_cal['accel']}, Sys: {zero_cal['sys']} - Accel Good: {accel_confirms}/10, Sys_Good={sys_confirms}", end='\r')
                 zero_cal = CheckCalibration()
                 time.sleep(1)
             print("Calibration seems good chief")
         gyro = sensor.euler
         gravity = sensor.gravity
+        accel = sensor.acceleration
         input("Press enter to continue chief")
         print(f"Gyro (x,y,z):{gyro}")
         print(f"Gravity (x,y,z): {gravity}")
+        print(f"accel (x,y,z): {accel}")
         vertical=True #Just for testing
         #Check orientation ZERO
         #Check orientation PICO
