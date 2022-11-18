@@ -47,8 +47,9 @@ void moveServo(int startAngle, int endAngle)
 {
   const int i = startAngle > endAngle ? -1 : 1;
 
-  for (int pos = startAngle; pos != endAngle; pos+=i) {
+  for (int pos{ startAngle }; pos != endAngle; pos+=i) {
     myservo.write(pos);
     delay(15);
   }
+  myservo.write(endAngle);
 }
