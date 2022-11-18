@@ -1,11 +1,15 @@
 #include <Arduino.h>
+#include <Servo.h>
 // defines pins numbers
 const int stepPin = 6; 
 const int dirPin = 5; 
 const int microDelay = 1000;
 const int betweenDelay = 250;
+Servo myservo;
 
 void MoveMotor(int degrees);
+void moveServo(int startAngle, int endAngle);
+
 void setup() {
   // Sets the two pins as Outputs
   pinMode(stepPin,OUTPUT); 
@@ -37,4 +41,15 @@ void loop() {
 
 void MoveMotor(int degrees){
   
+}
+
+void moveServo(int startAngle, int endAngle) 
+{
+  const int i = startAngle > endAngle ? -1 : 1;
+
+  for (int pos{ startAngle }; pos != endAngle; pos+=i) {
+    myservo.write(pos);
+    delay(15);
+  }
+  myservo.write(endAngle);
 }
