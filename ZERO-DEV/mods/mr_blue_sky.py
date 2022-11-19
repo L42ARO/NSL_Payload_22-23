@@ -110,13 +110,13 @@ def computeOrientation():
     return int( round(angleDestCam, 0) ) #round allows value to be rounded up to 131 if 130.9
 
 def servoMover(degrees):
-    talking_heads.talk('1-'+degrees)
+    talking_heads.talk('1-'+str(degrees))
 
 
 def moveToHole():
     angle = 90
     #computeOrientation()
-    talking_heads.talk('2-'+angle)
+    talking_heads.talk('2-'+str(angle))
 
 
 if __name__=="__main__":

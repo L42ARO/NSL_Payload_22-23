@@ -9,7 +9,7 @@ def talk(cmd):
 
     flag = True
     while(flag):
-        ser.write(cmd+'\n'.encode('utf-8'))
+        ser.write((cmd+'\n').encode('utf-8'))
         line = ser.readline().decode('utf-8').rstrip()
         if (line == cmd):
             flag = False
