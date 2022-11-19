@@ -27,7 +27,7 @@ def checkForLanding():
             continue
         magnitude = math.sqrt( (velocity[0] ** 2) + (velocity[1] ** 2) + (velocity[2] ** 2) )
         print(f"Velocity: {velocity} magnitude: {magnitude}", end="\r")
-        if (magnitude >= 10):
+        if (magnitude <= 10):
             flag = 0
         time.sleep(1)
 
