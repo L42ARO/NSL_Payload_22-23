@@ -57,11 +57,10 @@ def align():
         #Move motor
         #Check if vertical alignment is good
         #Exit loop
-def testAcceleration():
-    while True:
-        accel = sensor.acceleration
-        print(f"accel (x,y,z): {accel}")
-        time.sleep(1)
+def getAcceleration():
+    accel = sensor.acceleration
+    print(f"accel (x,y,z): {accel}")
+    return accel
 
 if __name__=="__main__":
-    testAcceleration()
+    accel = getAcceleration()

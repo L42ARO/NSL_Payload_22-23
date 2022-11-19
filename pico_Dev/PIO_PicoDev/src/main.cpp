@@ -7,6 +7,7 @@ const int dirPin = 5;
 const int microDelay = 1000;
 const int betweenDelay = 500;
 Servo myservo;
+char incomingByte = 0;
 
 void MoveServo(int startAngle, int endAngle);
 void MoveStepper(int degrees);
@@ -31,12 +32,39 @@ void setup() {
   myservo.write(0);
   digitalWrite(LED_BUILTIN, HIGH);
 }
-int incomingByte = 0; 
+
 void loop() {
   if (Serial.available() > 0) {
     // read the incoming byte:
     incomingByte = Serial.read();
+
     // say what you got:
+    switch (incomingByte)
+    {
+    case '0':
+      Serial.print("Waiting.\n");
+      break;
+    
+    case '1':
+      Serial.print("Running Servo.\n");
+      MoveStepper(0,90);
+      delay(1000);
+      break;
+    
+    case '2':
+      Serial.print("Running Stepper BIG.\n")
+      MoveStepper(90);
+      break;
+    
+    case '3':
+      Serial.print("Decoding Radio frequencies.\n");
+      break;
+    
+    default:
+      Serial.print("Undefined value recieved.\n")
+      break;
+    }
+
     Serial.print("2");
   }
 }
