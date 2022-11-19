@@ -106,7 +106,8 @@ def computeOrientation():
     #Angle between camera and destination
     angleDestCam = math.acos(dotDestCam/(destMag*camMag))
 
-
+    #check which of the two holes it is. 
+    
     return int( round(angleDestCam, 0) ) #round allows value to be rounded up to 131 if 130.9
 
 def servoMover(degrees):
@@ -114,8 +115,7 @@ def servoMover(degrees):
 
 
 def moveToHole():
-    angle = 90
-    #computeOrientation()
+    angle = computeOrientation()
     talking_heads.talk('2-'+str(angle))
 
 
