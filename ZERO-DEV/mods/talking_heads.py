@@ -8,11 +8,8 @@ def talk():
     ser.reset_input_buffer()
 
     while True:
-        ser.write('s'.encode('utf-8'))
-        line = ser.readline().decode('utf-8').rstrip()
-        if (line == '1'):
-            print("Success.\n")
-        print(line)
+        ser.write('1-180\n'.encode('utf-8'))
+        #line = ser.readline().decode('utf-8').rstrip()
         time.sleep(1)
 if __name__ == "__main__":
     talk()

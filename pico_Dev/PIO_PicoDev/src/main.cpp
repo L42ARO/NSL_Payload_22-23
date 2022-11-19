@@ -36,10 +36,10 @@ void setup() {
 void loop() {
   if (Serial.available() > 0) {
     // read the incoming byte:
-    incomingByte = Serial.read();
-
+    //incomingByte = Serial.read();
+    String data = Serial.readStringUntil('\n');
     // say what you got:
-    switch (incomingByte)
+    switch (data.charAt(0))
     {
     case '0':
       Serial.print("Waiting.\n");
@@ -47,7 +47,14 @@ void loop() {
     
     case '1':
       Serial.print("Running Servo.\n");
-      MoveStepper(0,90);
+      //Third character 
+      int numchar = data.length() - 2;
+      int moveamount = 0;
+      for(int i=0; numchar > 0; numchar--, i++){
+        moveamount += stoi(data.charAt(2+i)) * (pow(10, numchar)) 
+      }
+      Serial.println(moveamount);
+      MoveServo(0,90);
       delay(1000);
       break;
     

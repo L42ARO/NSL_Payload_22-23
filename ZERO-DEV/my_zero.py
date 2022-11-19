@@ -3,10 +3,6 @@ import mods.happy_landing as happy_landing
 import mods.talking_heads as talking_heads
 import math
 
-def allignment():
-    accel = mr_blue_sky.testAcceleration
-    math.acos()
-
 if __name__=="__main__":
     print("Starting ZERO-DEV")
     happy_landing.checkForLanding
