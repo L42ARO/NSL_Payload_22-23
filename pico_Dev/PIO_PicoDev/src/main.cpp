@@ -4,8 +4,8 @@
 // defines pins numbers
 const int stepPin = 6; 
 const int dirPin = 5; 
-const int microDelay = 1000;
-const int betweenDelay = 500;
+const int microDelay = 5000;
+const int betweenDelay = 250;
 Servo myservo;
 char incomingByte = 0;
 
@@ -34,8 +34,13 @@ void setup() {
   myservo.write(0);
   digitalWrite(LED_BUILTIN, HIGH);
 }
+void serialCom();
 
 void loop() {
+  serialCom();
+}
+
+void serialCom(){
   int moveamount;
   if (Serial.available() > 0) {
     // read the incoming byte:
@@ -80,8 +85,9 @@ void loop() {
 }
 
 void MoveStepper(int degrees){
-  int steps = degrees * (200/360);
-  digitalWrite(LED_BUILTIN, HIGH);
+  int steps = double((degrees*200)/360);
+  Serial.println(steps);
+  digitalWrite(LED_BUILTIN, LOW);
   digitalWrite(dirPin,HIGH); // Enables the motor to move in a particular direction
   // Makes 200 pulses for making one full cycle rotation
   for(int x = 0; x < steps; x++) {
@@ -90,6 +96,7 @@ void MoveStepper(int degrees){
     digitalWrite(stepPin,LOW); 
     delayMicroseconds(betweenDelay); 
   }
+  digitalWrite(LED_BUILTIN, HIGH);
   delay(2000);
 }
 
