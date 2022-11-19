@@ -18,7 +18,14 @@ class MicroStepper{
     void step(int steps);
 };
 
+void recieveManager(int i);
+
+
 void setup() {
+  Serial.begin(9600);
+  Wire.begin(0x3E);
+  Wire.onReceive(recieveManager);
+  Serial.println("Listening for I2C");
   // Sets the two pins as Outputs
   pinMode(stepPin,OUTPUT); 
   pinMode(dirPin,OUTPUT);
@@ -28,11 +35,7 @@ void setup() {
 }
 
 void loop() {
-  digitalWrite(LED_BUILTIN, HIGH);
-  MoveServo(0,90);
-  delay(1000);
-  MoveServo(90,0);
-  delay(1000);
+  delay(100);
 }
 
 void MoveStepper(int degrees){
@@ -57,4 +60,11 @@ void MoveServo(int startAngle, int endAngle)
     delay(15);
   }
   myservo.write(endAngle);
+}
+
+void recieveManager(int i){
+  while(Wire.available()){
+    char c = Wire.read();
+    Serial.print(c);
+  }
 }
