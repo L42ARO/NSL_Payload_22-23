@@ -22,6 +22,8 @@ void setup() {
   pinMode(stepPin,OUTPUT); 
   pinMode(dirPin,OUTPUT);
   pinMode(LED_BUILTIN, OUTPUT);
+  myservo.attach(9);  // attaches the servo on pin 9 to the servo object
+  myservo.write(0);
 }
 
 void loop() {
