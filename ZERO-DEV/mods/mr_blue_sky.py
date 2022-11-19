@@ -2,7 +2,7 @@ import adafruit_bno055
 import board
 import time
 import math
-import talking_heads
+import mods.talking_heads as talking_heads
 
 i2c = board.I2C()  # uses board.SCL and board.SDA
 sensor = adafruit_bno055.BNO055_I2C(i2c)
@@ -120,4 +120,4 @@ def moveToHole():
 
 
 if __name__=="__main__":
-    servoMover(90)
+    moveToHole()
