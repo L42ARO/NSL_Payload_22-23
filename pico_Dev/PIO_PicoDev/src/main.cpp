@@ -30,7 +30,7 @@ void loop() {
 
 void MoveStepper(int degrees){
   digitalWrite(LED_BUILTIN, HIGH);
-  moveServo(0,90);
+  MoveServo(0,90);
   delay(1000);
 
   digitalWrite(dirPin,HIGH); // Enables the motor to move in a particular direction
