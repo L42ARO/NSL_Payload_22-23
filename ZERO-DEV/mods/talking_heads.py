@@ -7,7 +7,7 @@ while True:
     sleep(1)
     try:
         print("Writing to device")
-        bus.write.i2c_block_data(address, i&0xFF, [i>>8])
+        bus.write_i2c_block_data(address, i&0xFF, [i>>8])
     except Exception as e:
         print("Write error: " + str(e))
         continue
