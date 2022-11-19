@@ -22,10 +22,8 @@ void recieveManager(int i);
 
 
 void setup() {
-  Serial.begin(9600);
-  Wire.begin(0x3E);
+  Wire.begin(2);
   Wire.onReceive(recieveManager);
-  Serial.println("Listening for I2C");
   // Sets the two pins as Outputs
   pinMode(stepPin,OUTPUT); 
   pinMode(dirPin,OUTPUT);
