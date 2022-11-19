@@ -4,11 +4,11 @@ import serial
 import time
     
 def talk(cmd):
-    ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
-    ser.reset_input_buffer()
-
+    
     flag = True
     while(flag):
+        ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
+        ser.reset_input_buffer()
         ser.write((cmd+'\n').encode('utf-8'))
         line = ser.readline().decode('utf-8').rstrip()
         if (line == cmd):
