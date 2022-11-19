@@ -15,9 +15,23 @@ def checkForLanding():
         if (magnitude >= 69):
             flag = 0
         time.sleep(1)
-    time.sleep(90)
+
+    time.sleep(120)
+
+    flag = 1
+    while(flag == 1):
+        velocity = sensor.linear_acceleration
+        magnitude = math.sqrt( (velocity[0] ** 2) + (velocity[1] ** 2) + (velocity[2] ** 2) )
+        print(f"Velocity: {velocity} magnitude: {magnitude}", end="\r")
+        if (magnitude >= 10):
+            flag = 0
+        time.sleep(1)
+
+    print("Landing confirmed. Program starting.")
 
     return
+
+
 
 if __name__=="__main__":
     checkForLanding()
