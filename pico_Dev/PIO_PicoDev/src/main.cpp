@@ -42,7 +42,7 @@ void loop() {
     //incomingByte = Serial.read();
     String data = Serial.readStringUntil('\n');
     // say what you got:
-    Serial.print(data)
+    Serial.print(data);
     switch (data.charAt(0))
     {
     case '0':{
@@ -54,24 +54,24 @@ void loop() {
       //Third character 
       moveamount = inputToInt(data);
       MoveServo(0, moveamount);
-      Serial.print("High")
+      Serial.print("High");
       break;
     }
     case '2':{
       //Run Stepper Big
       moveamount = inputToInt(data);
       MoveStepper(moveamount);
-      Serial.print("High")
+      Serial.print("High");
       break;
     }
     case '3':{
       //Run radio frequency decoding
-      Serial.print("High")
+      Serial.print("High");
       break;
     }
     default:{
       //Undefined value recieved
-      Serial.print("Low")
+      Serial.print("Low");
       break;
     }
     }
@@ -117,5 +117,5 @@ int inputToInt(String data){
   for(int i=0; numchar > 0; numchar--, i++){
     moveamount += (data.charAt(2+i)-'0') * (pow(10, numchar-1)) ;
   }
-  return moveamount
+  return moveamount;
 };
