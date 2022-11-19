@@ -29,13 +29,15 @@ void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
   myservo.attach(9);  // attaches the servo on pin 9 to the servo object
   myservo.write(0);
+  digitalWrite(LED_BUILTIN, HIGH);
 }
-
+int incomingByte = 0; 
 void loop() {
   if (Serial.available() > 0) {
-    String data = Serial.readStringUntil('\n');
-    Serial.print("You sent me: ");
-    Serial.println(data);
+    // read the incoming byte:
+    incomingByte = Serial.read();
+    // say what you got:
+    Serial.print("2");
   }
 }
 
