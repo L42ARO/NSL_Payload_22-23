@@ -34,16 +34,8 @@ void MoveStepper(int degrees){
   digitalWrite(LED_BUILTIN, HIGH);
   MoveServo(0,90);
   delay(1000);
-
-  digitalWrite(dirPin,HIGH); // Enables the motor to move in a particular direction
-  // Makes 200 pulses for making one full cycle rotation
-  for(int x = 0; x < 100; x++) {
-    digitalWrite(stepPin,HIGH); 
-    delayMicroseconds(microDelay); 
-    digitalWrite(stepPin,LOW); 
-    delayMicroseconds(betweenDelay); 
-  }
-  delay(2000);
+  MoveServo(90,0);
+  delay(1000);
 }
 
 void MoveServo(int startAngle, int endAngle) 
