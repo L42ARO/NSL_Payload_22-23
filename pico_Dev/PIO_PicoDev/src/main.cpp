@@ -22,8 +22,7 @@ void recieveManager(int i);
 
 
 void setup() {
-  Wire.begin(2);
-  Wire.onReceive(recieveManager);
+  Serial.begin(9600);
   // Sets the two pins as Outputs
   pinMode(stepPin,OUTPUT); 
   pinMode(dirPin,OUTPUT);
@@ -33,7 +32,11 @@ void setup() {
 }
 
 void loop() {
-  delay(100);
+  if (Serial.available() > 0) {
+    String data = Serial.readStringUntil('\n');
+    Serial.print("You sent me: ");
+    Serial.println(data);
+  }
 }
 
 void MoveStepper(int degrees){
