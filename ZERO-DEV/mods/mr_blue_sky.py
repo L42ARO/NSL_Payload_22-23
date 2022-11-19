@@ -120,4 +120,4 @@ def moveToHole():
 
 
 if __name__=="__main__":
-    moveToHole()
+    servoMover(90)

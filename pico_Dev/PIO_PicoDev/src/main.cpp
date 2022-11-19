@@ -86,9 +86,8 @@ void serialCom(){
 
 void MoveStepper(int degrees){
   int steps = double((degrees*200)/360);
-  Serial.println(steps);
-  digitalWrite(LED_BUILTIN, LOW);
   digitalWrite(dirPin,HIGH); // Enables the motor to move in a particular direction
+  
   // Makes 200 pulses for making one full cycle rotation
   for(int x = 0; x < steps; x++) {
     digitalWrite(stepPin,HIGH); 
@@ -96,7 +95,6 @@ void MoveStepper(int degrees){
     digitalWrite(stepPin,LOW); 
     delayMicroseconds(betweenDelay); 
   }
-  digitalWrite(LED_BUILTIN, HIGH);
   delay(2000);
 }
 
