@@ -16,7 +16,7 @@ def checkForLanding():
         print(f"Velocity: {velocity} magnitude: {magnitude}", end="\r")
         if (magnitude >= 69):
             flag = 0
-        time.sleep(1)
+        time.sleep(0.25)
 
     time.sleep(120)
 
