@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <Servo.h>
+#include<Wire.h>
 // defines pins numbers
 const int stepPin = 6; 
 const int dirPin = 5; 
@@ -27,15 +28,24 @@ void setup() {
 }
 
 void loop() {
-  
-}
-
-void MoveStepper(int degrees){
   digitalWrite(LED_BUILTIN, HIGH);
   MoveServo(0,90);
   delay(1000);
   MoveServo(90,0);
   delay(1000);
+}
+
+void MoveStepper(int degrees){
+  digitalWrite(LED_BUILTIN, HIGH);
+  digitalWrite(dirPin,HIGH); // Enables the motor to move in a particular direction
+  // Makes 200 pulses for making one full cycle rotation
+  for(int x = 0; x < 100; x++) {
+    digitalWrite(stepPin,HIGH); 
+    delayMicroseconds(microDelay); 
+    digitalWrite(stepPin,LOW); 
+    delayMicroseconds(betweenDelay); 
+  }
+  delay(2000);
 }
 
 void MoveServo(int startAngle, int endAngle) 
