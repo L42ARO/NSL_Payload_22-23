@@ -38,38 +38,40 @@ void loop() {
     // read the incoming byte:
     //incomingByte = Serial.read();
     String data = Serial.readStringUntil('\n');
+    Serial.println(data);
     // say what you got:
     switch (data.charAt(0))
     {
-    case '0':
+    case '0':{
       Serial.print("Waiting.\n");
       break;
-    
-    case '1':
+    }
+    case '1':{
       Serial.print("Running Servo.\n");
       //Third character 
       int numchar = data.length() - 2;
       int moveamount = 0;
       for(int i=0; numchar > 0; numchar--, i++){
-        moveamount += stoi(data.charAt(2+i)) * (pow(10, numchar)) 
+        moveamount += (data.charAt(2+i)-'0') * (pow(10, numchar)) ;
       }
-      Serial.println(moveamount);
-      MoveServo(0,90);
+      Serial.print(moveamount);
+      MoveServo(0, moveamount);
       delay(1000);
       break;
-    
-    case '2':
-      Serial.print("Running Stepper BIG.\n")
+    }
+    case '2':{
+      Serial.print("Running Stepper BIG.\n");
       MoveStepper(90);
       break;
-    
-    case '3':
+    }
+    case '3':{
       Serial.print("Decoding Radio frequencies.\n");
       break;
-    
-    default:
-      Serial.print("Undefined value recieved.\n")
+    }
+    default:{
+      Serial.print("Undefined value recieved.\n");
       break;
+    }
     }
 
     Serial.print("2");
