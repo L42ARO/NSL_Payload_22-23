@@ -16,8 +16,12 @@ void setup() {
   pinMode(dirPin,OUTPUT);
   pinMode(LED_BUILTIN, OUTPUT);
 }
+
 void loop() {
   digitalWrite(LED_BUILTIN, HIGH);
+  moveServo(0,90);
+  delay(1000);
+
   digitalWrite(dirPin,HIGH); // Enables the motor to move in a particular direction
   // Makes 200 pulses for making one full cycle rotation
   for(int x = 0; x < 200; x++) {
