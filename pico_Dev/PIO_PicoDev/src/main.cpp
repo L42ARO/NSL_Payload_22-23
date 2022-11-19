@@ -9,6 +9,8 @@ const int betweenDelay = 500;
 Servo myservo;
 char incomingByte = 0;
 
+int inputToInt(String data);
+
 void MoveServo(int startAngle, int endAngle);
 void MoveStepper(int degrees);
 class MicroStepper{
@@ -34,55 +36,55 @@ void setup() {
 }
 
 void loop() {
+  int moveamount;
   if (Serial.available() > 0) {
     // read the incoming byte:
     //incomingByte = Serial.read();
     String data = Serial.readStringUntil('\n');
-    Serial.println(data);
     // say what you got:
+    Serial.print(data)
     switch (data.charAt(0))
     {
     case '0':{
-      Serial.print("Waiting.\n");
+      //WAITING
       break;
     }
     case '1':{
-      Serial.print("Running Servo.\n");
+      //Run servo
       //Third character 
-      int numchar = data.length() - 2;
-      int moveamount = 0;
-      for(int i=0; numchar > 0; numchar--, i++){
-        moveamount += (data.charAt(2+i)-'0') * (pow(10, numchar)) ;
-      }
-      Serial.print(moveamount);
+      moveamount = inputToInt(data);
       MoveServo(0, moveamount);
-      delay(1000);
+      Serial.print("High")
       break;
     }
     case '2':{
-      Serial.print("Running Stepper BIG.\n");
-      MoveStepper(90);
+      //Run Stepper Big
+      moveamount = inputToInt(data);
+      MoveStepper(moveamount);
+      Serial.print("High")
       break;
     }
     case '3':{
-      Serial.print("Decoding Radio frequencies.\n");
+      //Run radio frequency decoding
+      Serial.print("High")
       break;
     }
     default:{
-      Serial.print("Undefined value recieved.\n");
+      //Undefined value recieved
+      Serial.print("Low")
       break;
     }
     }
 
-    Serial.print("2");
   }
 }
 
 void MoveStepper(int degrees){
+  int steps = degrees * (200/360);
   digitalWrite(LED_BUILTIN, HIGH);
   digitalWrite(dirPin,HIGH); // Enables the motor to move in a particular direction
   // Makes 200 pulses for making one full cycle rotation
-  for(int x = 0; x < 100; x++) {
+  for(int x = 0; x < steps; x++) {
     digitalWrite(stepPin,HIGH); 
     delayMicroseconds(microDelay); 
     digitalWrite(stepPin,LOW); 
@@ -108,3 +110,12 @@ void recieveManager(int i){
     Serial.print(c);
   }
 }
+
+int inputToInt(String data){
+  int numchar = data.length() - 2;
+  int moveamount = 0;
+  for(int i=0; numchar > 0; numchar--, i++){
+    moveamount += (data.charAt(2+i)-'0') * (pow(10, numchar-1)) ;
+  }
+  return moveamount
+};

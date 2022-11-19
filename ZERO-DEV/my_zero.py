@@ -6,6 +6,8 @@ import math
 if __name__=="__main__":
     print("Starting ZERO-DEV")
     happy_landing.checkForLanding
+    mr_blue_sky.moveToHole
+    mr_blue_sky.
 
     #Check For Landing
     #Turn motor

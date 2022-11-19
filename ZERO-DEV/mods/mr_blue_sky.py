@@ -2,6 +2,7 @@ import adafruit_bno055
 import board
 import time
 import math
+import talking_heads
 
 i2c = board.I2C()  # uses board.SCL and board.SDA
 sensor = adafruit_bno055.BNO055_I2C(i2c)
@@ -104,6 +105,19 @@ def computeOrientation():
     camMag = math.sqrt(camVector[0]**2 + camVector[1]**2 + camVector[2]**2)
     #Angle between camera and destination
     angleDestCam = math.acos(dotDestCam/(destMag*camMag))
+
+
+    return int( round(angleDestCam, 0) ) #round allows value to be rounded up to 131 if 130.9
+
+def servoMover(degrees):
+    talking_heads.talk('1-'+degrees)
+
+
+def moveToHole():
+    angle = 90
+    #computeOrientation()
+    talking_heads.talk('2-'+angle)
+
 
 if __name__=="__main__":
     accel = getAcceleration()
