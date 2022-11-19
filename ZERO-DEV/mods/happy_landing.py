@@ -10,6 +10,8 @@ def checkForLanding():
     flag = 1
     while(flag == 1):
         velocity = sensor.linear_acceleration
+        if ((velocity[0] == None) or (velocity[1] == None) or (velocity[2] == None)):
+            continue
         magnitude = math.sqrt( (velocity[0] ** 2) + (velocity[1] ** 2) + (velocity[2] ** 2) )
         print(f"Velocity: {velocity} magnitude: {magnitude}", end="\r")
         if (magnitude >= 69):
@@ -21,6 +23,8 @@ def checkForLanding():
     flag = 1
     while(flag == 1):
         velocity = sensor.linear_acceleration
+        if ((velocity[0] == None) or (velocity[1] == None) or (velocity[2] == None)):
+            continue
         magnitude = math.sqrt( (velocity[0] ** 2) + (velocity[1] ** 2) + (velocity[2] ** 2) )
         print(f"Velocity: {velocity} magnitude: {magnitude}", end="\r")
         if (magnitude >= 10):
