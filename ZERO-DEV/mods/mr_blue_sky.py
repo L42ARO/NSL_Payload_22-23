@@ -104,10 +104,18 @@ def computeOrientation():
     #Magnitude of camera vector
     camMag = math.sqrt(camVector[0]**2 + camVector[1]**2 + camVector[2]**2)
     #Angle between camera and destination
+
+    #solving FINAL PROBLEM.
+    #so imagining a camera that is pointing downwards, if we assume it to be pointing straight down
+    #
+    # QUADRANTS
+    #  H2  3  |  2 H1
+    #  H3  4  |  1 h4
+    # 
+    # Assuming camera is facing downwards and that stepper motor turns counterclockwise.
+    # so if hole to move is H3 or H2 angle Dest cam = (math.pi - math.acos(dotDestCam/(destMag*camMag)) )
     angleDestCam = math.acos(dotDestCam/(destMag*camMag))
 
-    #check which of the two holes it is. 
-    
     return int( round(angleDestCam, 0) ) #round allows value to be rounded up to 131 if 130.9
 
 def servoMover(degrees):
