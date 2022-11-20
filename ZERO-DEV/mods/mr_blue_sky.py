@@ -113,7 +113,7 @@ def computeOrientation():
     #  H3  4  |  1 h4
     # 
     # Assuming camera is facing downwards and that stepper motor turns counterclockwise.
-    # so if hole to move is H3 or H2 angle Dest cam = (math.pi - math.acos(dotDestCam/(destMag*camMag)) )
+    # so if hole to move is H3 or H2 angle Dest cam = (math.pi*2 - math.acos(dotDestCam/(destMag*camMag)) )
     angleDestCam = math.acos(dotDestCam/(destMag*camMag))
 
     return int( round(angleDestCam, 0) ) #round allows value to be rounded up to 131 if 130.9
