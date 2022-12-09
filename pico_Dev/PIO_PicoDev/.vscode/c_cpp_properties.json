@@ -10,6 +10,8 @@
             "includePath": [
                 "C:/Users/L42ARO/Documents/USF/SOAR/NSL_22-23/NSL_Payload_22-23/pico_Dev/PIO_PicoDev/include",
                 "C:/Users/L42ARO/Documents/USF/SOAR/NSL_22-23/NSL_Payload_22-23/pico_Dev/PIO_PicoDev/src",
+                "C:/Users/L42ARO/.platformio/packages/framework-arduino-mbed/libraries/Wire",
+                "C:/Users/L42ARO/Documents/USF/SOAR/NSL_22-23/NSL_Payload_22-23/pico_Dev/PIO_PicoDev/.pio/libdeps/pico/Servo/src",
                 "C:/Users/L42ARO/.platformio/packages/framework-arduino-mbed/cores/arduino",
                 "C:/Users/L42ARO/.platformio/packages/framework-arduino-mbed/cores/arduino/api/deprecated",
                 "C:/Users/L42ARO/.platformio/packages/framework-arduino-mbed/cores/arduino/api/deprecated-avr-comp",
@@ -45,7 +47,6 @@
                 "C:/Users/L42ARO/.platformio/packages/framework-arduino-mbed/libraries/USBHOST/src",
                 "C:/Users/L42ARO/.platformio/packages/framework-arduino-mbed/libraries/USBMSD/src",
                 "C:/Users/L42ARO/.platformio/packages/framework-arduino-mbed/libraries/WiFi/src",
-                "C:/Users/L42ARO/.platformio/packages/framework-arduino-mbed/libraries/Wire",
                 "C:/Users/L42ARO/.platformio/packages/framework-arduino-mbed/libraries/doom/src",
                 "C:/Users/L42ARO/.platformio/packages/framework-arduino-mbed/libraries/ea_malloc",
                 "C:/Users/L42ARO/.platformio/packages/framework-arduino-mbed/libraries/mbed-memory-status",
@@ -58,6 +59,8 @@
                 "path": [
                     "C:/Users/L42ARO/Documents/USF/SOAR/NSL_22-23/NSL_Payload_22-23/pico_Dev/PIO_PicoDev/include",
                     "C:/Users/L42ARO/Documents/USF/SOAR/NSL_22-23/NSL_Payload_22-23/pico_Dev/PIO_PicoDev/src",
+                    "C:/Users/L42ARO/.platformio/packages/framework-arduino-mbed/libraries/Wire",
+                    "C:/Users/L42ARO/Documents/USF/SOAR/NSL_22-23/NSL_Payload_22-23/pico_Dev/PIO_PicoDev/.pio/libdeps/pico/Servo/src",
                     "C:/Users/L42ARO/.platformio/packages/framework-arduino-mbed/cores/arduino",
                     "C:/Users/L42ARO/.platformio/packages/framework-arduino-mbed/cores/arduino/api/deprecated",
                     "C:/Users/L42ARO/.platformio/packages/framework-arduino-mbed/cores/arduino/api/deprecated-avr-comp",
@@ -93,7 +96,6 @@
                     "C:/Users/L42ARO/.platformio/packages/framework-arduino-mbed/libraries/USBHOST/src",
                     "C:/Users/L42ARO/.platformio/packages/framework-arduino-mbed/libraries/USBMSD/src",
                     "C:/Users/L42ARO/.platformio/packages/framework-arduino-mbed/libraries/WiFi/src",
-                    "C:/Users/L42ARO/.platformio/packages/framework-arduino-mbed/libraries/Wire",
                     "C:/Users/L42ARO/.platformio/packages/framework-arduino-mbed/libraries/doom/src",
                     "C:/Users/L42ARO/.platformio/packages/framework-arduino-mbed/libraries/ea_malloc",
                     "C:/Users/L42ARO/.platformio/packages/framework-arduino-mbed/libraries/mbed-memory-status",

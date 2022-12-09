@@ -1,7 +1,9 @@
 #include <Arduino.h>
 #include <Servo.h>
 #include<Wire.h>
+#include "mini_steppers.h"
 // defines pins numbers
+const int buzzer = 14;
 const int stepPin = 6; 
 const int dirPin = 5; 
 const int microDelay = 5000;
@@ -25,21 +27,66 @@ void recieveManager(int i);
 
 
 void setup() {
+  setupMiniSteppers();
+  pinMode(buzzer, OUTPUT);
   Serial.begin(9600);
   // Sets the two pins as Outputs
   pinMode(stepPin,OUTPUT); 
   pinMode(dirPin,OUTPUT);
   pinMode(LED_BUILTIN, OUTPUT);
   myservo.attach(9);  // attaches the servo on pin 9 to the servo object
-  myservo.write(0);
   digitalWrite(LED_BUILTIN, HIGH);
 }
 void serialCom();
+void buzzerNotification();
 
+struct timer{
+  int start;
+  int curr;
+  int limit;
+};
+timer time_keeper = {-1,0,1000};
+int buzzState = 0;
+int useBuzzer = 0;
+int led = 1;
 void loop() {
   serialCom();
+  buzzerNotification();
+  if(led ==1){
+    digitalWrite(LED_BUILTIN, HIGH);
+    led =0;
+  }else{
+    digitalWrite(LED_BUILTIN, LOW);
+    led =1;
+  }
+  clockwise(100);
 }
 
+void buzzerNotification(){
+  if(useBuzzer ==0 ){
+    if(buzzState == 1){
+      analogWrite(buzzer, LOW);
+      buzzState = 0;
+    }
+    return;
+  }
+  if(time_keeper.start == -1){
+    time_keeper.start = millis();
+  }else{
+    time_keeper.curr = millis();
+    if(time_keeper.curr - time_keeper.start > time_keeper.limit){
+      time_keeper.start = time_keeper.curr;
+      if(buzzState == 0){
+        analogWrite(buzzer, 255);
+        buzzState = 1;
+      }
+      else {
+        analogWrite(buzzer, LOW);
+        buzzState = 0;
+      }
+    }
+  }
+}
 void serialCom(){
   int moveamount;
   if (Serial.available() > 0) {
@@ -47,36 +94,47 @@ void serialCom(){
     //incomingByte = Serial.read();
     String data = Serial.readStringUntil('\n');
     // say what you got:
-    Serial.print(data);
+    Serial.println(data);
     switch (data.charAt(0))
     {
     case '0':{
       //WAITING
+      int state = data.charAt(2);
+      if(state == '1'){
+        useBuzzer = 1;
+      }else if(state == '0'){
+        useBuzzer = 0;
+      }
+      Serial.println("High");
       break;
     }
     case '1':{
       //Run servo
       //Third character 
+      useBuzzer = 0;
       moveamount = inputToInt(data);
       MoveServo(0, moveamount);
-      Serial.print("High");
+      Serial.println("High");
       break;
     }
     case '2':{
       //Run Stepper Big
+      useBuzzer = 0;
       moveamount = inputToInt(data);
       MoveStepper(moveamount);
-      Serial.print("High");
+      Serial.println("High");
       break;
     }
     case '3':{
       //Run radio frequency decoding
-      Serial.print("High");
+      useBuzzer = 0;
+      Serial.println("High");
       break;
     }
     default:{
+      useBuzzer = 0;
       //Undefined value recieved
-      Serial.print("Low");
+      Serial.println("Low");
       break;
     }
     }

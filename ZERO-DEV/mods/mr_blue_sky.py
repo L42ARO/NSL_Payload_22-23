@@ -79,21 +79,33 @@ def computeOrientation():
         "H4": [0,1,-1]
     }
     quadrant = 0
+    moveAngle = 0
     if(angle <= math.pi/2 and accel[2] > 0):
         quadrant = 1
-        holeToMove = "H3"
     elif(angle > math.pi/2 and accel[2] > 0):
         quadrant = 2
-        holeToMove = "H4"
     elif(angle > math.pi/2 and accel[2] < 0):
         quadrant = 3
         angle = (math.pi*2) - (angle)
-        holeToMove = "H1"
     elif(angle <= math.pi/2 and accel[2] < 0):
         quadrant = 4
         angle = (math.pi*2) - (angle)
+    #If gravity vector is on the bottom
+    if(angle>=5*math.pi/4 and angle<7*math.pi/4):
         holeToMove = "H2"
-
+        moveAngle = 90
+    #If gravity vector is on the left``
+    elif(angle>=3*math.pi/4 and angle<5*math.pi/4):
+        holeToMove = "H1"
+        moveAngle = 180
+    #If gravity vector is on the top
+    elif(angle>=math.pi/4 and angle<3*math.pi/4):
+        holeToMove="H4"
+        moveAngle = 270
+    #If gravity vector is on the right
+    elif(angle>=7*math.pi/4 or angle<math.pi/4):
+        holeToMove="H3"
+        moveAngle = 0
     #Assumed initial camera position: <0,0,1>
     destVector = holes[holeToMove]
     #Dot product between camera and destination
@@ -108,7 +120,8 @@ def computeOrientation():
 
     #check which of the two holes it is. 
     
-    return int( round(angleDestCam, 0) ) #round allows value to be rounded up to 131 if 130.9
+    #return int( round(moveAngle, 0) ) #round allows value to be rounded up to 131 if 130.9
+    return moveAngle
 
 def servoMover(degrees):
     talking_heads.talk('1-'+str(degrees))
