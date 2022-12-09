@@ -116,6 +116,22 @@ def computeOrientation():
     #Magnitude of camera vector
     camMag = math.sqrt(camVector[0]**2 + camVector[1]**2 + camVector[2]**2)
     #Angle between camera and destination
+
+    #solving FINAL PROBLEM.
+    #so imagining a camera that is pointing downwards, if we assume it to be pointing straight down
+    #
+    # QUADRANTS
+    #  H2  3  |  2 H1
+    #  H3  4  |  1 h4
+    # 
+    # Assuming camera is facing downwards and that stepper motor turns counterclockwise.
+    # so if hole to move is H3 or H2 angle Dest cam = (math.pi*2 - math.acos(dotDestCam/(destMag*camMag)) )
+    
+    #Second solution proposal
+    #imagining two vectors ina 3D field, if we have already obtained the angle to be moved but dont yet have the direction
+    #we can run the cross product between these two vectors and finding wether it is positive or negative determines the direction.
+    #
+    
     angleDestCam = math.acos(dotDestCam/(destMag*camMag))
 
     #check which of the two holes it is. 
