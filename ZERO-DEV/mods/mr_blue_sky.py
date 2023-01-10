@@ -78,17 +78,13 @@ def computeOrientation():
         "H3": [0,-1,-1],
         "H4": [0,1,-1]
     }
-    quadrant = 0
+    #quadrant = 0
     moveAngle = 0
-    if(angle <= math.pi/2 and accel[2] > 0):
-        quadrant = 1
-    elif(angle > math.pi/2 and accel[2] > 0):
-        quadrant = 2
-    elif(angle > math.pi/2 and accel[2] < 0):
-        quadrant = 3
+    if(angle > math.pi/2 and accel[2] < 0):
+        #quadrant = 3
         angle = (math.pi*2) - (angle)
     elif(angle <= math.pi/2 and accel[2] < 0):
-        quadrant = 4
+        #quadrant = 4
         angle = (math.pi*2) - (angle)
     #If gravity vector is on the bottom
     if(angle>=5*math.pi/4 and angle<7*math.pi/4):
