@@ -1,15 +1,10 @@
 #ifndef MINI_STEPPERS_H
 #define MINI_STEPPERS_H
-#define in_A_1 10
-#define in_B_1 11
-#define in_A_2 12
-#define in_B_2 13
+#define MiniBaseDir 2
+#define MiniBaseStep 3
+#define MiniRegDelay 5000
+#define MiniBetweenDelay 250
 void setupMiniSteppers();
-void step1();
-void step2();
-void step3();
-void step4();
-void clockwise(long st);
-void counter_clockwise(long st);
+void MoveMiniBase(int degrees);
 
 #endif

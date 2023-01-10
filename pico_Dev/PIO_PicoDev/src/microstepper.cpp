@@ -1,13 +1,13 @@
 #include <Arduino.h>
 #include <cmath>
 
-void setup() {
+void microsetup() {
     pinMode(3 , OUTPUT);
     pinMode(11, OUTPUT);
     pinMode(9 , OUTPUT);
     pinMode(10, OUTPUT);
 }
-void loop() {
+void microloop() {
     float floatTime = float(millis());
     float A = (sin((floatTime * 0.03) )) * 255;
     float B = (sin((floatTime * 0.03) + 1.5708)) * 255;

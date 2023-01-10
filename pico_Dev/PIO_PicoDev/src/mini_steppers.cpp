@@ -1,67 +1,21 @@
 #include <Arduino.h>
 #include "mini_steppers.h"
-
-unsigned int time_delay = 30;
 void setupMiniSteppers(){
-    pinMode(in_A_1, OUTPUT);
-    pinMode(in_B_1, OUTPUT);
-    pinMode(in_A_2, OUTPUT);
-    pinMode(in_B_2, OUTPUT);
+  pinMode(MiniBaseDir,OUTPUT); 
+  pinMode(MiniBaseStep,OUTPUT);
 }
-void step1(){
-    //A+, B+
-    analogWrite(in_A_1, 0);
-    analogWrite(in_A_2, 255);
-    analogWrite(in_B_1, 255);
-    analogWrite(in_B_2, 0);
-    delay(time_delay);
-}
-void step2(){
-    //A+, B-
-    analogWrite(in_A_1, 0);
-    analogWrite(in_A_2, 255);
-    analogWrite(in_B_1, 0);
-    analogWrite(in_B_2, 255);
-    delay(time_delay);
-}
-
-void step3(){
-    //A-, B-
-    analogWrite(in_A_1, 255);
-    analogWrite(in_A_2, 0);
-    analogWrite(in_B_1, 0);
-    analogWrite(in_B_2, 255);
-    delay(time_delay);
-}
-
-void step4(){
-    //A-,B+
-    analogWrite(in_A_1, 255);
-    analogWrite(in_A_2, 0);
-    analogWrite(in_B_1, 255);
-    analogWrite(in_B_2, 0);
-}
-
-void clockwise(long st){
-  long i = 0;
-  while( i < st ){
-    analogWrite(in_A_2, 255);
-    i++;
+void MoveMiniBase(int degrees){
+  int steps = double((degrees*200)/360);
+  if(steps > 0){
+    digitalWrite(MiniBaseDir,HIGH); // Enables the motor to move in a particular direction
+  }else{
+    digitalWrite(MiniBaseDir,LOW); // Enables the motor to move in a particular direction
+  }
+  for(int i =0; i<steps; i++){
+    digitalWrite(MiniBaseStep,HIGH); 
+    delayMicroseconds(MiniRegDelay);
+    digitalWrite(MiniBaseStep,LOW); 
+    delayMicroseconds(MiniBetweenDelay);
   }
 }
 
-void counter_clockwise(long st){
-  long i = 0;
-  while( i < st ){
-    //step1
-    step1();
-    //step4
-    step4();
-    //step3
-    step3();
-    //step2
-    step2();
-    delay(50);
-    i++;
-  }
-}

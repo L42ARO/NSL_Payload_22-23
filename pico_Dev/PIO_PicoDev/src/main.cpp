@@ -52,14 +52,6 @@ int led = 1;
 void loop() {
   serialCom();
   buzzerNotification();
-  if(led ==1){
-    digitalWrite(LED_BUILTIN, HIGH);
-    led =0;
-  }else{
-    digitalWrite(LED_BUILTIN, LOW);
-    led =1;
-  }
-  clockwise(100);
 }
 
 void buzzerNotification(){
@@ -128,6 +120,14 @@ void serialCom(){
     case '3':{
       //Run radio frequency decoding
       useBuzzer = 0;
+      Serial.println("High");
+      break;
+    }
+    case '4':{
+      //Run Stepper Small
+      useBuzzer = 0;
+      moveamount = inputToInt(data);
+      MoveMiniBase(moveamount);
       Serial.println("High");
       break;
     }

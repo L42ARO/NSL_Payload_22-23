@@ -9,7 +9,7 @@ if __name__=="__main__":
     utils.exitListen()
     print("Starting ZERO-DEV")
     happy_landing.checkForLanding()
-    #mr_blue_sky.moveToHole()
+    mr_blue_sky.moveToHole()
     mr_blue_sky.servoMover(0)
     mr_blue_sky.servoMover(90)
     #bullseye.TakePhoto("1stlaunch")

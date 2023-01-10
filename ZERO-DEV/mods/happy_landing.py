@@ -19,9 +19,11 @@ def checkForLanding():
         if (magnitude >= 30):
             flag = 0
         time.sleep(0.25)
+    talking_heads.talk('0-0')
     print("Starting 120 second countdown ...")
     time.sleep(120)
     print("Checking for having landed ...")
+    talking_heads.talk("0-1")
     flag = 1
     while(flag == 1):
         velocity = sensor.linear_acceleration
