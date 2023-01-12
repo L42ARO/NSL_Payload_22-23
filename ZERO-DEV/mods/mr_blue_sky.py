@@ -142,6 +142,16 @@ def servoMover(degrees):
 def invertGravityVector(gAngle):
     return (gAngle + math.pi) % (2*math.pi)
 
+# Get the smaller angle between the camera and the hole.  Positive angle means counterclockwise rotation 
+def getAngleBetween(holeAngle, cameraAngle):
+    angle = holeAngle - cameraAngle
+    if (angle > 180):
+        angle -= 360
+    elif (angle < -180):
+        angle += 360
+    
+    return angle
+
 def moveToHole():
     angle = computeOrientation()
     talking_heads.talk('2-'+str(angle))
