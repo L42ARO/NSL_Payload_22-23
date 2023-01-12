@@ -138,6 +138,9 @@ def computeOrientation():
 def servoMover(degrees):
     talking_heads.talk('1-'+str(degrees))
 
+# Inverts the gravity vector by pi radians.
+def invertGravityVector(gAngle):
+    return (gAngle + math.pi) % (2*math.pi)
 
 def moveToHole():
     angle = computeOrientation()
