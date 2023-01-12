@@ -135,6 +135,15 @@ def computeOrientation():
     #return int( round(moveAngle, 0) ) #round allows value to be rounded up to 131 if 130.9
     return moveAngle
 
+#closest angle function
+def angleCalc(angList, Angle):
+    
+    if(Angle>angList[3] and Angle<angList[4]):
+        if(angList[4]-Angle>45):
+            return angList[3]
+        return angList[0]
+    return min(angList, key=lambda x:abs(x-Angle))
+
 def servoMover(degrees):
     talking_heads.talk('1-'+str(degrees))
 
