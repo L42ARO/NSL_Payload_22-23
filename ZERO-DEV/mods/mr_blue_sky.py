@@ -154,10 +154,10 @@ def invertGravityVector(gAngle):
 # Get the smaller angle between the camera and the hole.  Positive angle means counterclockwise rotation 
 def getAngleBetween(holeAngle, cameraAngle):
     angle = holeAngle - cameraAngle
-    if (angle > 180):
-        angle -= 360
-    elif (angle < -180):
-        angle += 360
+    if (angle > math.pi):
+        angle -= 2*math.pi
+    elif (angle < -math.pi):
+        angle += 2*math.pi
     
     return angle
 
