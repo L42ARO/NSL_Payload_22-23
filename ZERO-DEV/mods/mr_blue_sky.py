@@ -137,10 +137,19 @@ def computeOrientation():
 
 #closest angle function
 def angleCalc(angList, Angle):
-    
-    if(Angle>angList[3]+45):
-        return angList[0]
-    return min(angList, key=lambda x:abs(x-Angle))
+    return min(angList, key=lambda x:abs(getAngleBetween(x, Angle)))
+
+# Converts coordinates to polar and returns the angle
+def getAngleFromCoordinate(x, y):
+    if (x == 0 and y == 0):
+        raise Exception("Cannot assign angle to the origin.")
+    elif (y == 0):
+        return 0 if x > 0 else math.pi
+    elif (x == 0):
+        return math.pi/2 if y > 0 else 3*math.pi/2
+
+    return math.atan(y/x) % (2*math.pi) if x > 0 else math.atan(y/x) + math.pi
+
 
 def servoMover(degrees):
     talking_heads.talk('1-'+str(degrees))
