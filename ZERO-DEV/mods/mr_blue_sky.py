@@ -74,6 +74,7 @@ def computeOrientation(holeList):
     #Getting angle between gravity and y-axis
 
     #get angle from x and y parameters of the gravity vector
+    #there is a chance for the sensor to return NULL type. make sure functions deal witht this.
     gravityAngle = getAngleFromCoordinate(accel[0], accel[1])
 
     #invert it
