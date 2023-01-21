@@ -5,8 +5,11 @@ import math
 import mods.talking_heads as talking_heads
 
 i2c = board.I2C()  # uses board.SCL and board.SDA
+
 sensor = adafruit_bno055.BNO055_I2C(i2c)
+sensor2 = adafruit_bno055.BNO055_I2C(i2c, 0x29)
 #Return the average of all calibration values
+
 def CheckCalibration():
     #Check for ZERO IMU calibration
     sys, gyro, accel, mag = sensor.calibration_status
@@ -17,7 +20,6 @@ def CheckCalibration():
     cal["mag"] = mag
     return cal
     #Check PICO IMU calibration
-    
 
 def calib2():
     print("Starting motor alignement")
@@ -59,87 +61,42 @@ def calib2():
         #Move motor
         #Check if vertical alignment is good
         #Exit loop
+
 def getAcceleration():
     accel = sensor.acceleration
     print(f"accel (x,y,z): {accel}")
     return accel
-def computeOrientation():
+
+def computeOrientation(holeList):
     accel = sensor.acceleration
+    cameraAccel = sensor2.acceleration
+    #create a function that using the before statement can get an angle 
     #Getting angle between gravity and y-axis
-    #x is static. 
-    #then value of gravity is <0,y,z>
-    #find angle between <0,y,z> and <0,1,0>
-    gMag = math.sqrt(accel[1]**2 + accel[2]**2)
-    #Angle is in radians
-    angle = math.acos(((accel[1]) / (gMag)))
-    holes={
-        "H1": [0,1,1],
-        "H2": [0,-1,1],
-        "H3": [0,-1,-1],
-        "H4": [0,1,-1]
-    }
-    #quadrant = 0
-    moveAngle = 0
-    if(angle > math.pi/2 and accel[2] < 0):
-        #quadrant = 3
-        angle = (math.pi*2) - (angle)
-    elif(angle <= math.pi/2 and accel[2] < 0):
-        #quadrant = 4
-        angle = (math.pi*2) - (angle)
-    #If gravity vector is on the bottom
-    if(angle>=5*math.pi/4 and angle<7*math.pi/4):
-        holeToMove = "H2"
-        moveAngle = 90
-    #If gravity vector is on the left``
-    elif(angle>=3*math.pi/4 and angle<5*math.pi/4):
-        holeToMove = "H1"
-        moveAngle = 180
-    #If gravity vector is on the top
-    elif(angle>=math.pi/4 and angle<3*math.pi/4):
-        holeToMove="H4"
-        moveAngle = 270
-    #If gravity vector is on the right
-    elif(angle>=7*math.pi/4 or angle<math.pi/4):
-        holeToMove="H3"
-        moveAngle = 0
-    #Assumed initial camera position: <0,0,1>
-    destVector = holes[holeToMove]
-    #Dot product between camera and destination
-    camVector = [0,0,1]
-    dotDestCam = camVector[0]*destVector[0] + camVector[1]*destVector[1] + camVector[2]*destVector[2]
-    #Magnitude of destination vector
-    destMag = math.sqrt(destVector[0]**2 + destVector[1]**2 + destVector[2]**2)
-    #Magnitude of camera vector
-    camMag = math.sqrt(camVector[0]**2 + camVector[1]**2 + camVector[2]**2)
-    #Angle between camera and destination
 
-    #solving FINAL PROBLEM.
-    #so imagining a camera that is pointing downwards, if we assume it to be pointing straight down
-    #
-    # QUADRANTS
-    #  H2  3  |  2 H1
-    #  H3  4  |  1 h4
-    # 
-    # Assuming camera is facing downwards and that stepper motor turns counterclockwise.
-    # so if hole to move is H3 or H2 angle Dest cam = (math.pi*2 - math.acos(dotDestCam/(destMag*camMag)) )
-    
-    #Second solution proposal
-    #imagining two vectors ina 3D field, if we have already obtained the angle to be moved but dont yet have the direction
-    #we can run the cross product between these two vectors and finding wether it is positive or negative determines the direction.
-    #
-    
-    angleDestCam = math.acos(dotDestCam/(destMag*camMag))
+    #get angle from x and y parameters of the gravity vector
+    gravityAngle = getAngleFromCoordinate(accel[0], accel[1])
 
-    #check which of the two holes it is. 
-    
-    #return int( round(moveAngle, 0) ) #round allows value to be rounded up to 131 if 130.9
-    return moveAngle
+    #invert it
+    gravityAngle = invertGravityVector(gravityAngle)
 
-#closest angle function
+    #find closest hole
+    #holeList is to be given when calling the function
+    holeAngle = angleCalc(holeList, gravityAngle)
+
+    #Get angle from camera using the second IMU, store it in cameraAngle variable
+    cameraAngle = angleCalcCamera(cameraAccel)
+    
+    #take two angles and find shortest rotation path
+    rotationAngle = getAngleBetween(holeAngle, cameraAngle)
+
+    return rotationAngle
+
+#closest angle function // chooses hole
 def angleCalc(angList, Angle):
     return min(angList, key=lambda x:abs(getAngleBetween(x, Angle)))
 
 # Converts coordinates to polar and returns the angle
+#function that turns x,y parameters into angle
 def getAngleFromCoordinate(x, y):
     if (x == 0 and y == 0):
         raise Exception("Cannot assign angle to the origin.")
@@ -155,6 +112,7 @@ def servoMover(degrees):
     talking_heads.talk('1-'+str(degrees))
 
 # Inverts the gravity vector by pi radians.
+# This funtion inverts the gravity vector and 
 def invertGravityVector(gAngle):
     return (gAngle + math.pi) % (2*math.pi)
 
