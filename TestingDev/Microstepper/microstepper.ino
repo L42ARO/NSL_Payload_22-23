@@ -18,10 +18,10 @@ void moveMicrostepper2(double angle, bool clockwise);
 
 void setup()
 {
-  pinMode(3 , OUTPUT);
-  pinMode(11, OUTPUT);
-  pinMode(9 , OUTPUT);
-  pinMode(10, OUTPUT);
+  pinMode((int)Micro1pins::A_plus, OUTPUT);
+  pinMode((int)Micro1pins::A_minus, OUTPUT);
+  pinMode((int)Micro1pins::B_plus, OUTPUT);
+  pinMode((int)Micro1pins::B_minus, OUTPUT);
 
   Serial.begin(9600);
 }
