@@ -6,7 +6,7 @@ const double phase_shift_B{ 1.5708 };   // pi/2
 const double delta_time_factor{ 0.3 };
 
 enum class Micro1pins {
-    A_plus = 3, A_minus = 11, B_plus = 9, B_minus = 11
+    A_plus = 3, A_minus = 11, B_plus = 9, B_minus = 10
 };
 
 enum class Micro2pins {
