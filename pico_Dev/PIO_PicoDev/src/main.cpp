@@ -131,6 +131,13 @@ void serialCom(){
       Serial.println("High");
       break;
     }
+    case '5':{
+      useBuzzer = 0;
+      moveamount = inputToInt(data);
+      MoveStepper(moveamount, 0)
+      Serial.println("High");
+      break;
+    }
     default:{
       useBuzzer = 0;
       //Undefined value recieved
@@ -142,9 +149,10 @@ void serialCom(){
   }
 }
 
-void MoveStepper(int degrees){
+void MoveStepper(int degrees, bool dir = 1){
   int steps = double((degrees*200)/360);
-  digitalWrite(dirPin,HIGH); // Enables the motor to move in a particular direction
+  if(dir) digitalWrite(dirPin,HIGH); // Enables the motor to move in a particular direction
+  else digitalWrite(dirPin, LOW);
   
   // Makes 200 pulses for making one full cycle rotation
   for(int x = 0; x < steps; x++) {
