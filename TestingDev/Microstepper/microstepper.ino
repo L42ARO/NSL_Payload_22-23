@@ -1,6 +1,6 @@
 #include <Arduino.h>
 
-/************ Microstepper Class****************/
+/************ Microstepper Class ****************/
 class Microstepper {
   public:
     struct PinList{
@@ -16,7 +16,18 @@ class Microstepper {
     void rotate(double angle, bool clockwise);
 
   private:
-    int ClockwiseBitmap[8][4] = {
+    const int full_rot_count;
+    const int delay_btwn_loop;
+    const PinList pins;
+    static const double phase_shift_B;   // pi/2
+    static const double delta_time_factor;
+    static const int rotation_bitmap[8][4];
+};
+
+// Initializing static member variables in Microstepper class.
+const double Microstepper::phase_shift_B = 1.5708;
+const double Microstepper::delta_time_factor = 0.3;
+const int Microstepper::rotation_bitmap[8][4] = {
       {HIGH, LOW, LOW, LOW},
       {HIGH, LOW, HIGH, LOW},
       {LOW, LOW, HIGH, LOW},
@@ -25,66 +36,33 @@ class Microstepper {
       {LOW, HIGH, LOW, HIGH},
       {LOW, LOW, LOW, HIGH},
       {HIGH, LOW, LOW, HIGH}      
-    };
-    const int full_rot_count;
-    const int delay_btwn_loop;
-    const PinList pins;
-    static const double phase_shift_B;   // pi/2
-    static const double delta_time_factor;
 };
-
-// Initializing static member variables in Microstepper class.
-const double Microstepper::phase_shift_B = 1.5708;
-const double Microstepper::delta_time_factor = 0.3;
 
 void Microstepper::rotate(double angle, bool clockwise)
 {
   int steps{ round(angle / (2*PI) * full_rot_count) };
-  float starttime{ millis() };
-
-  int vel_delay = 50;
   int step_idx = clockwise ? 0 : 7;
   for (int i{0}; i < steps; ++i) {
-    float floatTime = float(millis()) - starttime;
-    float A = (sin((floatTime * delta_time_factor) )) * 255;
-    float B = (sin((floatTime * delta_time_factor) + phase_shift_B)) * 255;
-  
-    if (!clockwise)  {
-      digitalWrite(pins.A_plus, ClockwiseBitmap[step_idx][0]);
-      digitalWrite(pins.A_minus, ClockwiseBitmap[step_idx][1]);
-      digitalWrite(pins.B_plus, ClockwiseBitmap[step_idx][2]);
-      digitalWrite(pins.B_minus, ClockwiseBitmap[step_idx][3]);
-      delay(vel_delay);
-      step_idx--;
-      if (step_idx < 0) {
-        step_idx = 7;
-      }
-    }
-    else {
-      digitalWrite(pins.A_plus, ClockwiseBitmap[step_idx][0]);
-      digitalWrite(pins.A_minus, ClockwiseBitmap[step_idx][1]);
-      digitalWrite(pins.B_plus, ClockwiseBitmap[step_idx][2]);
-      digitalWrite(pins.B_minus, ClockwiseBitmap[step_idx][3]);
-      delay(vel_delay);
-      step_idx++;
-      if (step_idx % 8 == 0 && step_idx != 0) {
-        step_idx = 0;
-      }
+    digitalWrite(pins.A_plus, rotation_bitmap[step_idx][0]);
+    digitalWrite(pins.A_minus, rotation_bitmap[step_idx][1]);
+    digitalWrite(pins.B_plus, rotation_bitmap[step_idx][2]);
+    digitalWrite(pins.B_minus, rotation_bitmap[step_idx][3]);
+    
+    // Increment if clockwise is true, decrement if false
+    clockwise ? ++step_idx : --step_idx;
 
-      // analogWrite(pins.A_plus, max(0, -B));
-      // analogWrite(pins.A_minus, max(0, B));
-      // analogWrite(pins.B_plus, max(0, -A));
-      // analogWrite(pins.B_minus, max(0, A));
+    if (step_idx < 0) {
+      step_idx = 7;
     }
-    //delay(delay_btwn_loop);
+    else if (step_idx > 7) {
+      step_idx = 0;
+    }
+  
+    delay(delay_btwn_loop);
   }
 }
 
 /*************** Microstepper Class End *********************/
-
-
-void moveMicrostepper1(double angle, bool clockwise);
-void moveMicrostepper2(double angle, bool clockwise);
 
 void setup()
 {
@@ -98,35 +76,12 @@ void setup()
 
 int count = 0;
 void loop(){
-
-  Microstepper digitalMicro(42, 300, {3, 11, 9, 10});
-  Microstepper analogMicro(15, 300, {A0, A1, A2, A3});
+  Microstepper stepper1(42, 50, {3, 11, 9, 10});
 
   if(count <= 0) {
-    Serial.print("Calling: ");
+    Serial.print("Starting: ");
     Serial.println(count);
-    //analogMicro.rotate(2*PI, true);
-    digitalMicro.rotate(2*PI, false);
+    stepper1.rotate(2*PI, false);
   }
-  count=2;
-
-    // float floatTime = float(millis());
-    // static float starttime = floatTime;
-    // float A = (sin((floatTime * 0.03))) * 255;
-    // float B = (sin((floatTime * 0.03) + 1.5708)) * 255;
-
-    // //if (floatTime*0.03 < starttime*0.03 + 2*PI) {
-    //   if (count >= 0 && count < 25) {
-    //     Serial.print("Current time: ");
-    //     Serial.println(floatTime);
-    //     Serial.print("Start time: ");
-    //     Serial.println(starttime);
-    //     Serial.println(count);
-    
-    //     analogWrite(3, max(0, A));
-    //     analogWrite(11, max(0,-A));
-    //     analogWrite(9, max(0, B));
-    //     analogWrite(10, max(0,-B));
-    //   }
-   // }
+  count = 1;
 }
