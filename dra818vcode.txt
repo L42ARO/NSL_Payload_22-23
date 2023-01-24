@@ -1,0 +1,14 @@
+import serial
+
+ser = serial.Serial("/dev/ttyS0", 9600) # open serial port
+ser.write(b"AT+DMOCONNECT\r\n") # send command to connect to DRA818V
+ser.write(b"AT+DMOSETGROUP=145.5,25\r\n") # set frequency to 145.5 MHz and 25kHz deviation
+ser.write(b"AT+DMOSETPOWER=20\r\n") # set power to 20mW
+ser.write(b"AT+DMOFILTER=0\r\n") # set to filter off
+
+while True:
+    data = ser.readline() # read data from serial port
+    decoded_data = data.decode() # decode data from bytes to string
+    print(decoded_data) # print decoded data
+
+ser.close() # close serial port
