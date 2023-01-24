@@ -14,7 +14,7 @@ char incomingByte = 0;
 int inputToInt(String data);
 
 void MoveServo(int startAngle, int endAngle);
-void MoveStepper(int degrees);
+void MoveStepper(int degrees, bool dir);
 class MicroStepper{
   public:
     MicroStepper(int stepPin, int dirPin, int microDelay){
@@ -134,7 +134,7 @@ void serialCom(){
     case '5':{
       useBuzzer = 0;
       moveamount = inputToInt(data);
-      MoveStepper(moveamount, 0)
+      MoveStepper(moveamount, 0);
       Serial.println("High");
       break;
     }
