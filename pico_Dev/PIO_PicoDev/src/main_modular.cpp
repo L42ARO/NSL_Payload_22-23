@@ -110,7 +110,7 @@ void serialCom(){
     case '5':{
       useBuzzer = 0;
       moveamount = inputToInt(data);
-      MoveStepper(moveamount, 0)
+      MoveStepper(moveamount, 0);
       Serial.println("High");
       break;
     }
