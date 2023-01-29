@@ -17,26 +17,13 @@
 const int buzzerPin = 14;
 const int stepPin = 6; 
 const int dirPin = 5; 
+MoveStepper stepper1(stepPin, dirPin); //create stepper object
+
+    
 const int microDelay = 5000;
 const int betweenDelay = 250;
 Servo myservo;
 char incomingByte = 0;
-
-int inputToInt(String data);
-
-void MoveServo(int startAngle, int endAngle);
-void MoveStepper(int degrees);
-
-
-class MicroStepper{
-  public:
-    MicroStepper(int stepPin, int dirPin, int microDelay){
-
-    };
-    void step(int steps);
-};
-
-void recieveManager(int i);
 
 
 void setup() {
@@ -50,49 +37,13 @@ void setup() {
   myservo.attach(9);  // attaches the servo on pin 9 to the servo object
   digitalWrite(LED_BUILTIN, HIGH);
 }
-void serialCom();
-void buzzerNotification();
 
-struct timer{
-  int start;
-  int curr;
-  int limit;
-};
+buzzer time_keeper(buzzerPin);//see buzzerNotification.h
 
-timer time_keeper = {-1,0,1000};
-int buzzState = 0;
-int useBuzzer = 0;
-int led = 1; // UNUSED VARIABLE?????????????
 
 void loop() {
   serialCom();
-  buzzerNotification();
-}
-
-void buzzerNotification(){
-  if(useBuzzer ==0 ){
-    if(buzzState == 1){
-      analogWrite(buzzerPin, LOW);
-      buzzState = 0;
-    }
-    return;
-  }
-  if(time_keeper.start == -1){
-    time_keeper.start = millis();
-  }else{
-    time_keeper.curr = millis();
-    if(time_keeper.curr - time_keeper.start > time_keeper.limit){
-      time_keeper.start = time_keeper.curr;
-      if(buzzState == 0){
-        analogWrite(buzzerPin, 255);
-        buzzState = 1;
-      }
-      else {
-        analogWrite(buzzerPin, LOW);
-        buzzState = 0;
-      }
-    }
-  }
+  time_keeper.buzzerNotification();
 }
 
 void serialCom(){
@@ -129,7 +80,16 @@ void serialCom(){
       //Run Stepper Big
       useBuzzer = 0;
       moveamount = inputToInt(data);
-      MoveStepper(moveamount);
+      //HOW TO GET DIR?
+      /*
+      negatives can't really be read in current inttoinput function 
+      maybe in mrbluesky if (angle >0) angle = abs(angle)+360
+      and here in recieval do:
+      if (angle >360) moveamount -=360; dir =0;
+      else dir = 1
+      */
+      int dir = 1; // placeholder
+      stepper1.rotate(moveamount, dir)
       Serial.println("High");
       break;
     }
