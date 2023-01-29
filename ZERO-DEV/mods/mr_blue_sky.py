@@ -90,6 +90,8 @@ def computeOrientation(holeList):
     #take two angles and find shortest rotation path
     rotationAngle = getAngleBetween(holeAngle, cameraAngle)
 
+    #deal with possible negative angles - sending negative values is inconvenient
+
     return rotationAngle
 
 #closest angle function // chooses hole
