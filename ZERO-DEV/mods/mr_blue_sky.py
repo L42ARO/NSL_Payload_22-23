@@ -126,12 +126,7 @@ def getAngleBetween(holeAngle, cameraAngle):
         angle -= 2*math.pi
     elif (angle < -math.pi):
         angle += 2*math.pi
-    
-    if(angle < 0):
-        angle = abs(angle)+360
-        #if angle is negative, pass an angle greater than 360.
-        #when angle is recieved we will check if greater than 360, substract 360 and set the direction to clockwise
-        #if angle is smaller than 360 (else) set direction to counterclockwise
+        
     return angle
 
 def moveToHole():

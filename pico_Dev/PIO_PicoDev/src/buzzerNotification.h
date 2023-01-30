@@ -54,7 +54,7 @@ public:
     void setUseBuzzer( int newUseBuzzer){
         useBuzzer = newUseBuzzer;
     }
-}
+};
 
 /*
 
