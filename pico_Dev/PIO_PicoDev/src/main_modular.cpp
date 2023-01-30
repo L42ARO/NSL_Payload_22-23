@@ -9,6 +9,7 @@
 #include "MoveServo.h"
 #include "MoveStepper.h"
 #include "recieveManager.h"
+#include "microstepper.h"
 
 // defines pins numbers
 const int buzzerPin = 14;
