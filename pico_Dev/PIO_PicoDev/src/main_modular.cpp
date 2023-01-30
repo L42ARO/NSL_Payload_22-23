@@ -2,7 +2,6 @@
 #include <Servo.h>
 #include<Wire.h>
 
-
 #include "mini_steppers.h"
 #include "MoveStepper.h"
 #include "inputToInt.h"
@@ -10,8 +9,6 @@
 #include "MoveServo.h"
 #include "MoveStepper.h"
 #include "recieveManager.h"
-
-
 
 // defines pins numbers
 const int buzzerPin = 14;
