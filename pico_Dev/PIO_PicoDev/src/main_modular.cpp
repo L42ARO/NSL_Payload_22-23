@@ -15,7 +15,7 @@
 const int buzzerPin = 14;
 const int stepPin = 6; 
 const int dirPin = 5; 
-MoveStepper stepper1(stepPin, dirPin); //create stepper object
+Stepper stepper1(stepPin, dirPin); //create stepper object
 
     
 const int microDelay = 5000;
