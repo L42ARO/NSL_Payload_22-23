@@ -18,8 +18,6 @@ const int dirPin = 5;
 Stepper stepper1(stepPin, dirPin); //create stepper object
 
     
-const int microDelay = 5000;
-const int betweenDelay = 250;
 Servo myservo;
 char incomingByte = 0;
 
