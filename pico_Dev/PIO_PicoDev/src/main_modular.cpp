@@ -17,6 +17,8 @@ const int stepPin = 6;
 const int dirPin = 5; 
 Stepper stepper1(stepPin, dirPin); //create stepper object
 
+
+
     
 Servo myservo;
 char incomingByte = 0;

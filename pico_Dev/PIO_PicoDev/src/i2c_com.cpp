@@ -1,6 +1,18 @@
 #include <Wire.h>
 #include <i2c_com.h>
 
+#include "buzzerNotification.h"
+#include "MoveStepper.h"
+#include "MoveServo.h"
+#include "mini_steppers.h"
+
+const int buzzerPin = 14;
+const int stepPin = 6; 
+const int dirPin = 5; 
+MoveStepper stepper1(stepPin, dirPin); //create stepper object
+buzzer time_keeper(buzzerPin); //create buzzer object
+
+
 I2C_Comm* I2C_Comm::instance = 0;
 I2C_Comm::I2C_Comm() {
     instance = this;
@@ -38,27 +50,51 @@ void I2C_Comm::receiveEvent(int howMany) {
 }
 void I2C_Comm::processCommand(int commandNumber, int value){
     switch(commandNumber){
+        case 0:
+        //WAIT
+            Serial.print("Command 0 recieved with value: ");
+            Serial.println(value);
+            if(value == '1'){
+                time_keeper.setUseBuzzer(1);
+            }else if(value == '0'){
+                time_keeper.setUseBuzzer(0);
+            }
+            break;
         case 1:
+        //RUN SERVO
             Serial.print("Command 1 received with value: ");
             Serial.println(value);
+            time_keeper.setUseBuzzer(0);
+            MoveServo(0, value);
             break;
         case 2:
+        //RUN STEPPER BIG
+            int dir = 1; //CHECK ACTUAL DIRECTIONS dont know if 
             Serial.print("Command 2 received with value: ");
             Serial.println(value);
+            time_keeper.setUseBuzzer(0);
+            if(value <0){
+                value = value * (-1); // do abs() if brave
+                dir = 0;
+            }
+            stepper1.rotate(value, dir)
             break;
         case 3:
+        //Run radio frequency decoding
             Serial.print("Command 3 received with value: ");
             Serial.println(value);
+            time_keeper.setUseBuzzer(0);
             break;
         case 4:
+        //Run Stepper Small
             Serial.print("Command 4 received with value: ");
             Serial.println(value);
-            break;
-        case 5:
-            Serial.print("Command 5 received with value: ");
-            Serial.println(value);
+            time_keeper.setUseBuzzer(0);
+            MoveMiniBase(value);
             break;
         default:
+            time_keeper.setUseBuzzer(0);
             Serial.println("Invalid command received");
+            break;
     }
 }
