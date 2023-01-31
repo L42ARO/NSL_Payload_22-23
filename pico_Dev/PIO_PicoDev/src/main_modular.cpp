@@ -9,18 +9,17 @@
 #include "MoveServo.h"
 #include "MoveStepper.h"
 #include "recieveManager.h"
+#include "microstepper.h"
 
 // defines pins numbers
 const int buzzerPin = 14;
 const int stepPin = 6; 
 const int dirPin = 5; 
-MoveStepper stepper1(stepPin, dirPin); //create stepper object
+Stepper stepper1(stepPin, dirPin); //create stepper object
 
 
 
     
-const int microDelay = 5000;
-const int betweenDelay = 250;
 Servo myservo;
 char incomingByte = 0;
 
