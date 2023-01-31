@@ -12,13 +12,9 @@ public:
     int timerCurrent;
     int timerLimit;
 
-    buzzer(const int givenBuzzerPin, int buzzStato = 0, int useBuzzeru = 0, int starto = -1, int currento = 0, int limito = 1000){
-        useBuzzer = useBuzzeru;
-        buzzState = buzzStato;
-        buzzerPin_ = givenBuzzerPin;
-        timerStart = starto;
-        timerCurrent = currento;
-        timerLimit = limito;
+    buzzer(const int givenBuzzerPin, int buzzStato = 0, int useBuzzeru = 0, int starto = -1, int currento = 0, int limito = 1000)
+        : useBuzzer(useBuzzeru), buzzState(buzzStato), buzzerPin_(givenBuzzerPin), timerStart(starto), timerCurrent(currento), timerLimit(limito)
+    {
     };
 
     ~buzzer(){//make sure buzzing stops as a destructor
