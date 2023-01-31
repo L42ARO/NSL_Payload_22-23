@@ -20,6 +20,8 @@ void Microstepper::rotate(double angle, bool clockwise)
   int steps{ round(angle / (2*PI) * full_rot_count) };
   if (current_idx == -1) 
     current_idx = clockwise ? 0 : 7;
+  else
+    clockwise ? ++current_idx : --current_idx;
 
   for (int i{0}; i < steps; ++i) {
     digitalWrite(pins.A_plus, rotation_bitmap[current_idx][0]);
