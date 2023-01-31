@@ -3,8 +3,6 @@
 
 #include <Arduino.h>
 
-
-
 int inputToInt(String data){
     int numchar = data.length()-2;
     int moveamount =0;
