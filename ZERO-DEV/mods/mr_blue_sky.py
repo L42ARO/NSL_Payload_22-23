@@ -92,6 +92,8 @@ def computeOrientation(holeList, imu1_gravity, imu2_gravity, imu1_axis=[0,1], ax
     #take two angles and find shortest rotation path
     rotationAngle = getAngleBetween(holeAngle, cameraAngle)
 
+    #deal with possible negative angles - sending negative values is inconvenient
+
     return rotationAngle
 
 #closest angle function // chooses hole
@@ -126,7 +128,7 @@ def getAngleBetween(holeAngle, cameraAngle):
         angle -= 2*math.pi
     elif (angle < -math.pi):
         angle += 2*math.pi
-    
+        
     return angle
 
 def moveToHole():
