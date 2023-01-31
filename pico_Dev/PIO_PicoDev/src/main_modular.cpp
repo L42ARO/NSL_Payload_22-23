@@ -12,7 +12,6 @@
 #include "microstepper.h"
 
 // defines pins numbers
-const int buzzerPin = 14;
 const int stepPin = 6; 
 const int dirPin = 5; 
 Stepper stepper1(stepPin, dirPin); //create stepper object
