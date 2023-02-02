@@ -2,8 +2,6 @@
 #include "microstepper.h"
 
 // Initializing static member variables in Microstepper class.
-const double Microstepper::phase_shift_B = 1.5708;
-const double Microstepper::delta_time_factor = 0.3;
 const int Microstepper::rotation_bitmap[8][4] = {
       {HIGH, LOW, LOW, LOW},
       {HIGH, LOW, HIGH, LOW},

@@ -25,11 +25,9 @@ class Microstepper {
     void begin();
 
   private:
-    const int full_rot_count = 42;
-    const int delay_btwn_loop = 50;
+    const int full_rot_count;
+    const int delay_btwn_loop;
     const PinList pins;
-    static const double phase_shift_B;   // pi/2
-    static const double delta_time_factor;
     static const int rotation_bitmap[8][4];
 
     // Keeps track of where in the rotation bitmap it is at.
