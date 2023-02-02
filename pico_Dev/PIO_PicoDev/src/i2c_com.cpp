@@ -93,6 +93,7 @@ void I2C_Comm::processCommand(int commandNumber, int value){
             Serial.print("Command 4 received with value: ");
             Serial.println(value);
             time_keeper.setUseBuzzer(0);
+            micro1.begin();     // Sets the pins up
             micro1.rotate(value);
             break;
         
@@ -101,6 +102,7 @@ void I2C_Comm::processCommand(int commandNumber, int value){
             Serial.print("Command 4 received with value: ");
             Serial.println(value);
             time_keeper.setUseBuzzer(0);
+            micro2.begin();     // Sets the pins up
             micro2.rotate(value);
             break;
 
