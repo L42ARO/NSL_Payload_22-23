@@ -17,10 +17,10 @@ class Microstepper {
     {
       // Calibration to set current_idx to some value.  PI/3 is arbitary.  The microstpeper sometimes overshoot
       // in its first run because current_idx is unknown.
-      rotate(PI/3, true);
+      rotate(30);
       delay(1000);
     }
-    void rotate(double angle, bool clockwise);
+    void rotate(int angle);
 
   private:
     const int full_rot_count = 42;

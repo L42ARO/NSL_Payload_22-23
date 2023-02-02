@@ -5,6 +5,7 @@
 #include "MoveStepper.h"
 #include "MoveServo.h"
 #include "mini_steppers.h"
+#include "microstepper.h"
 
 const int buzzerPin = 14;
 const int stepPin = 6; 
@@ -12,7 +13,8 @@ const int dirPin = 5;
 Stepper stepper1(stepPin, dirPin); //create stepper object
 MainServo mainServo(9);
 buzzer time_keeper(buzzerPin); //create buzzer object
-
+Microstepper micro1(42, 500, {3, 11, 9, 10});
+Microstepper micro2(42, 50, {4, 6, 7, 8});
 
 I2C_Comm* I2C_Comm::instance = 0;
 I2C_Comm::I2C_Comm() {
@@ -87,12 +89,21 @@ void I2C_Comm::processCommand(int commandNumber, int value){
             time_keeper.setUseBuzzer(0);
             break;
         case 4:
-        //Run Stepper Small
+        //Run 360 degrees microstepper
             Serial.print("Command 4 received with value: ");
             Serial.println(value);
             time_keeper.setUseBuzzer(0);
-            MoveMiniBase(value);
+            micro1.rotate(value);
             break;
+        
+        case 5:
+        //Run camera tilting microstepper
+            Serial.print("Command 4 received with value: ");
+            Serial.println(value);
+            time_keeper.setUseBuzzer(0);
+            micro2.rotate(value);
+            break;
+
         default:
             time_keeper.setUseBuzzer(0);
             Serial.println("Invalid command received");

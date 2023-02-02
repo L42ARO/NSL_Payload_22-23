@@ -15,9 +15,11 @@ const int Microstepper::rotation_bitmap[8][4] = {
       {HIGH, LOW, LOW, HIGH}
 };
 
-void Microstepper::rotate(double angle, bool clockwise)
+void Microstepper::rotate(int angle)
 {
-  int steps{ round(angle / (2*PI) * full_rot_count) };
+  bool clockwise{ angle < 0 };
+  int steps{  angle / 360 * full_rot_count };
+
   if (current_idx == -1) 
     current_idx = clockwise ? 0 : 7;
   else
