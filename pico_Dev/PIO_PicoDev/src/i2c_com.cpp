@@ -10,6 +10,7 @@ const int buzzerPin = 14;
 const int stepPin = 6; 
 const int dirPin = 5; 
 Stepper stepper1(stepPin, dirPin); //create stepper object
+MainServo mainServo(9);
 buzzer time_keeper(buzzerPin); //create buzzer object
 
 
@@ -65,7 +66,7 @@ void I2C_Comm::processCommand(int commandNumber, int value){
             Serial.print("Command 1 received with value: ");
             Serial.println(value);
             time_keeper.setUseBuzzer(0);
-            MoveServo(0, value);
+            mainServo.rotate(0, value);
             break;
         case 2:
         //RUN STEPPER BIG
@@ -77,7 +78,7 @@ void I2C_Comm::processCommand(int commandNumber, int value){
                 value = value * (-1); // do abs() if brave
                 dir = 0;
             }
-            stepper1.rotate(value, dir)
+            stepper1.rotate(value, dir);
             break;
         case 3:
         //Run radio frequency decoding

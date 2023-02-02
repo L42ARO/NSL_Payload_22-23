@@ -5,7 +5,7 @@
 
 class buzzer{
 public:
-    const int buzzerPin_;
+    int buzzerPin_;
     int buzzState;
     int useBuzzer;
     int timerStart;
