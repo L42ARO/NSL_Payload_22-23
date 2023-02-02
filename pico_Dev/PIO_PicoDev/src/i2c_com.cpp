@@ -23,6 +23,8 @@ I2C_Comm::I2C_Comm() {
 void I2C_Comm::begin() {
     Wire.begin(_address);                // join i2c bus with address #8
     Wire.onReceive(receiveEvent); // register event
+    micro1.begin();     // Sets the pins up
+    micro2.begin();     // for the microsteppers
 }
 
 void I2C_Comm::loop() {
@@ -93,7 +95,6 @@ void I2C_Comm::processCommand(int commandNumber, int value){
             Serial.print("Command 4 received with value: ");
             Serial.println(value);
             time_keeper.setUseBuzzer(0);
-            micro1.begin();     // Sets the pins up
             micro1.rotate(value);
             break;
         
@@ -101,8 +102,7 @@ void I2C_Comm::processCommand(int commandNumber, int value){
         //Run camera tilting microstepper
             Serial.print("Command 4 received with value: ");
             Serial.println(value);
-            time_keeper.setUseBuzzer(0);
-            micro2.begin();     // Sets the pins up
+            time_keeper.setUseBuzzer(0)
             micro2.rotate(value);
             break;
 
