@@ -7,21 +7,16 @@
 
 class MainServo {
   public:
-    MainServo(int pin){
-      myservo.attach(pin);
-    }
-    void rotate(int startAngle, int endAngle) 
+    MainServo(int pin) 
+      : pin(pin)
     {
-      const int i = startAngle > endAngle ? -1 : 1;
-
-      for (int pos{ startAngle }; pos != endAngle; pos+=i) {
-        myservo.write(pos);
-        delay(15);
-      }
-      myservo.write(endAngle);
     }
+
+    void rotate(int startAngle, int endAngle);
+    void begin();
 
   private:
+    int pin;
     Servo myservo;
 };
 
