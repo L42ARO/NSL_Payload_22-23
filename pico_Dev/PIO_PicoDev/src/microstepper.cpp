@@ -47,3 +47,8 @@ void Microstepper::rotate(int angle)
   // Undo last increment because rotation direction might change
   clockwise ? --current_idx : ++current_idx;
 }
+
+Microstepper::PinList Microstepper::getPins()
+{
+  return pins;
+}
