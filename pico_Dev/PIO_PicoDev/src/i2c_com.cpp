@@ -25,6 +25,7 @@ void I2C_Comm::begin() {
     Wire.onReceive(receiveEvent); // register event
     micro1.begin();     // Sets the pins up
     micro2.begin();     // for the microsteppers
+    time_keeper.begin();
 }
 
 void I2C_Comm::loop() {
