@@ -6,6 +6,12 @@ Stepper::Stepper(const int stepPinu, const int dirPinu)
 {
 }
 
+void Stepper::begin()
+{
+    pinMode(dirPin_, OUTPUT);
+    pinMode(stepPin_, OUTPUT);
+}
+
 void Stepper::rotate(int degrees, bool dir)
 //~HinazukiKayo: if a negative value is passed then we would have to change the other function that gives us the final angle to move, to also give back a bool instead of a negative value. Maybe it would be better to just handle it in this function as in if degrees<0 then dir = 1 idfk?
 {

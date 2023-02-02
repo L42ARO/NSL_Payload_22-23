@@ -23,9 +23,11 @@ I2C_Comm::I2C_Comm() {
 void I2C_Comm::begin() {
     Wire.begin(_address);                // join i2c bus with address #8
     Wire.onReceive(receiveEvent); // register event
-    micro1.begin();     // Sets the pins up
-    micro2.begin();     // for the microsteppers
+    // Setting the pins up
+    micro1.begin();
+    micro2.begin();
     time_keeper.begin();
+    stepper1.begin();
 }
 
 void I2C_Comm::loop() {

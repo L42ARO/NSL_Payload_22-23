@@ -7,6 +7,8 @@ public:
     Stepper(const int stepPinu, const int dirPinu);
     ~Stepper();
     void rotate(int degrees, bool dir = 1);
+    void begin();
+
 private:
     const int stepPin_;
     const int dirPin_;
