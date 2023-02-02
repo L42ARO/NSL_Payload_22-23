@@ -12,7 +12,7 @@ const int stepPin = 6;
 const int dirPin = 5; 
 Stepper stepper1(stepPin, dirPin); //create stepper object
 MainServo mainServo(9);
-buzzer time_keeper(buzzerPin); //create buzzer object
+Buzzer time_keeper(buzzerPin); //create buzzer object
 Microstepper micro1(42, 500, {3, 11, 9, 10});
 Microstepper micro2(42, 50, {4, 6, 7, 8});
 
