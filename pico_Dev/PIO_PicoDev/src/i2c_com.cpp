@@ -102,7 +102,7 @@ void I2C_Comm::processCommand(int commandNumber, int value){
         //Run camera tilting microstepper
             Serial.print("Command 4 received with value: ");
             Serial.println(value);
-            time_keeper.setUseBuzzer(0)
+            time_keeper.setUseBuzzer(0);
             micro2.rotate(value);
             break;
 
