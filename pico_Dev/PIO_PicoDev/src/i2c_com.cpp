@@ -28,6 +28,7 @@ void I2C_Comm::begin() {
     micro2.begin();
     time_keeper.begin();
     stepper1.begin();
+    mainServo.begin();
 }
 
 void I2C_Comm::loop() {
