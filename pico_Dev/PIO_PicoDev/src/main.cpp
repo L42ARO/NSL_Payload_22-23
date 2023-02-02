@@ -1,12 +1,13 @@
 #include <Arduino.h>
+#include "i2c_com.h"
 
+I2C_Comm i2c;
 
 void setup(){
-  pinMode(LED_BUILTIN, OUTPUT);
+  i2c.begin();
 }
+
 void loop(){
-  digitalWrite(LED_BUILTIN,HIGH);
-  delay(1000);
-  digitalWrite(LED_BUILTIN, LOW);
-  delay(1000);
+  
+  i2c.loop();
 }
