@@ -22,6 +22,7 @@ class Microstepper {
     }
     void rotate(int angle);
     PinList getPins();
+    void begin();
 
   private:
     const int full_rot_count = 42;

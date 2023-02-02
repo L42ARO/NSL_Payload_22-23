@@ -48,7 +48,16 @@ void Microstepper::rotate(int angle)
   clockwise ? --current_idx : ++current_idx;
 }
 
+// probably not needed
 Microstepper::PinList Microstepper::getPins()
 {
   return pins;
+}
+
+void Microstepper::begin()
+{
+  pinMode(pins.A_plus, OUTPUT);
+  pinMode(pins.A_minus, OUTPUT);
+  pinMode(pins.B_plus, OUTPUT);
+  pinMode(pins.B_minus, OUTPUT);
 }
