@@ -57,6 +57,7 @@ void I2C_Comm::receiveEvent(int howMany) {
     Serial.println("received command and sent ready");
   }
 }
+
 void I2C_Comm::processCommand(int commandNumber, int value){
     switch(commandNumber){
         case 0:
@@ -104,7 +105,7 @@ void I2C_Comm::processCommand(int commandNumber, int value){
         
         case 5:
         //Run camera tilting microstepper
-            Serial.print("Command 4 received with value: ");
+            Serial.print("Command 5 received with value: ");
             Serial.println(value);
             time_keeper.setUseBuzzer(0);
             micro2.rotate(value);
