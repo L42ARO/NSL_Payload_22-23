@@ -3,7 +3,7 @@ import board
 import RPi.GPIO as io
 import time
 
-myservo = Servo(12)
+myservo = Servo(21)
 
 myservo.write(180)
 time.sleep(3)
