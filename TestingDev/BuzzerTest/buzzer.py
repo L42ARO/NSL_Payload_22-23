@@ -1,5 +1,6 @@
 #!/user/bin/python
 
+import board
 import RPi.GPIO as io
 import time
 
@@ -16,3 +17,4 @@ def buzzTest():
         io.output(buzzPin, False)
         time.sleep(2)
 
+buzzTest()
