@@ -28,11 +28,11 @@ def begin(pin):
     return myservo
 
 if __name__ == "__main__":
-    pin = 21
+    pin = 17
     startAngle = 0
     endAngle = 180
     
-    rotate(begin(21), 0, 180)
+    rotate(begin(pin), 0, 180)
 
 
 '''
