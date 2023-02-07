@@ -21,10 +21,10 @@ def rotate(servo_, startAngle, endAngle):
     for pos in range(startAngle, endAngle, i):
         servo_.write(pos)
         time.sleep(15)
-    piservo.write(endAngle)
+    servo_.write(endAngle)
     
 def begin(pin):
-    myservo = piservo(pin)
+    myservo = Servo(pin)
     return myservo
 
 if __name__ == "__main__":
