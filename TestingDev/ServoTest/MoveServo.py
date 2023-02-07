@@ -1,3 +1,4 @@
+#has to run sudo pigpiod before running
 from piservo import Servo
 import board
 import RPi.GPIO as io
