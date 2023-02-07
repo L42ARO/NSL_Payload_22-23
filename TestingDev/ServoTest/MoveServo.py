@@ -1,4 +1,4 @@
-import piservo
+from piservo import Servo
 import board
 import RPi.GPIO as io
 import time
