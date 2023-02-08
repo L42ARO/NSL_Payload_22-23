@@ -21,7 +21,7 @@ def setservozero(servo_):
 
 def rotate(servo_, startAngle, endAngle):
     i = -1 if startAngle > endAngle else 1
-
+    #Pull
     for pos in range(startAngle, endAngle, i):
         servo_.write(pos)
         time.sleep(0.0015)
@@ -39,7 +39,8 @@ if __name__ == "__main__":
     
     bruh = begin(pin)
     setservozero(bruh)
-    rotate(bruh, 0, 180)
+    time.sleep(1)
+    rotate(bruh, 0, 90)
 
 
 '''
