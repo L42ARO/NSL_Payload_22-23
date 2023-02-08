@@ -12,20 +12,19 @@ def rotate(servo_, startAngle, endAngle):
 
     servo_.write(endAngle)
     
-def begin(pin, restarter = False):
+def begin(pin, restarter = False, startAngle = 0):
     myservo = Servo(pin)
     if(restarter == True):
-        myservo.write(0)
+        myservo.write(startAngle)
         time.sleep(0.1)
     return myservo
+
 
 if __name__ == "__main__":
     pin = 19
     startAngle = 0
     endAngle = 180
     
-    bruh = begin(pin)
-    setservozero(bruh)
+    bruh = begin(pin, True)
     time.sleep(1)
     rotate(bruh, 0, 90)
-
