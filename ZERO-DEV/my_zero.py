@@ -4,13 +4,23 @@ import mods.talking_heads as talking_heads
 import mods.bullseye as bullseye
 import mods.utils as utils
 import math
+import mods.MoveServo as MoveServo
 
 if __name__=="__main__":
     utils.exitListen()
     print("Starting ZERO-DEV")
     happy_landing.checkForLanding()
     mr_blue_sky.moveToHole()
-    mr_blue_sky.servoMover(0)
+
+    #define pins
+    Servo1Pin = 18
+    Servo2Pin = 19
+    Servo3Pin = 12
+
+    MoveServo.begin(Servo1Pin,True)
+    MoveServo.begin(Servo2Pin,True)
+    MoveServo.begin(Servo3Pin,True)
+    
     mr_blue_sky.servoMover(90)
     #bullseye.TakePhoto("1stlaunch")
     bullseye.SeriesOfPics()
