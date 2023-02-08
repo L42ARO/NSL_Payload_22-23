@@ -15,12 +15,17 @@ myservo.stop()
 
 '''
 
+def setservozero(servo_):
+    servo_.write(0)
+    time.sleep(0.1)
+
 def rotate(servo_, startAngle, endAngle):
     i = -1 if startAngle > endAngle else 1
 
     for pos in range(startAngle, endAngle, i):
         servo_.write(pos)
         time.sleep(15)
+
     servo_.write(endAngle)
     
 def begin(pin):
@@ -32,7 +37,9 @@ if __name__ == "__main__":
     startAngle = 0
     endAngle = 180
     
-    rotate(begin(pin), 0, 180)
+    bruh = begin(pin)
+    setservozero(bruh)
+    rotate(bruh, 0, 180)
 
 
 '''
