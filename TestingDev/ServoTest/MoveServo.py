@@ -33,7 +33,7 @@ def begin(pin):
     return myservo
 
 if __name__ == "__main__":
-    pin = 17
+    pin = 19
     startAngle = 0
     endAngle = 180
     
