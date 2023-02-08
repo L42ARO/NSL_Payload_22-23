@@ -24,7 +24,7 @@ def rotate(servo_, startAngle, endAngle):
 
     for pos in range(startAngle, endAngle, i):
         servo_.write(pos)
-        time.sleep(15)
+        time.sleep(0.0015)
 
     servo_.write(endAngle)
     
