@@ -32,5 +32,5 @@ if (__name__=="__main__"):
     startBuzzer()
     while (i < 100):
         updateBuzzer()
-    i += 1
+        i+=1
     turnoffBuzzer()
