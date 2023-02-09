@@ -60,23 +60,23 @@ void I2C_Comm::receiveEvent(int howMany) {
 
 void I2C_Comm::processCommand(int commandNumber, int value){
     switch(commandNumber){
-        case 0:
-        //WAIT
-            Serial.print("Command 0 recieved with value: ");
-            Serial.println(value);
-            if(value == '1'){
-                time_keeper.setUseBuzzer(1);
-            }else if(value == '0'){
-                time_keeper.setUseBuzzer(0);
-            }
-            break;
-        case 1:
-        //RUN SERVO
-            Serial.print("Command 1 received with value: ");
-            Serial.println(value);
-            time_keeper.setUseBuzzer(0);
-            mainServo.rotate(0, value);
-            break;
+        // case 0:
+        // //WAIT
+        //     Serial.print("Command 0 recieved with value: ");
+        //     Serial.println(value);
+        //     if(value == '1'){
+        //         time_keeper.setUseBuzzer(1);
+        //     }else if(value == '0'){
+        //         time_keeper.setUseBuzzer(0);
+        //     }
+        //     break;
+        // case 1:
+        // //RUN SERVO
+        //     Serial.print("Command 1 received with value: ");
+        //     Serial.println(value);
+        //     time_keeper.setUseBuzzer(0);
+        //     mainServo.rotate(0, value);
+        //     break;
         case 2:
         //RUN STEPPER BIG
             int dir = 1; //CHECK ACTUAL DIRECTIONS dont know if 
