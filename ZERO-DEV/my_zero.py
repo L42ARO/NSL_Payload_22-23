@@ -1,4 +1,5 @@
 import mods.mr_blue_sky as mr_blue_sky
+import mods.vector_perkins as vector
 import mods.happy_landing as happy_landing
 import mods.talking_heads as talking_heads
 import mods.bullseye as bullseye
@@ -10,20 +11,31 @@ if __name__=="__main__":
     utils.exitListen()
     print("Starting ZERO-DEV")
     happy_landing.checkForLanding()
-    mr_blue_sky.moveToHole()
 
-    #define pins
-    Servo1Pin = 18
-    Servo2Pin = 19
-    Servo3Pin = 12
+    # Move hole cover
+    servo1Pin = 18
+    servo1 = MoveServo.begin(servo1Pin,True)
+    MoveServo.rotate(servo1, 0, 360)
 
-    MoveServo.begin(Servo1Pin,True)
-    MoveServo.begin(Servo2Pin,True)
-    MoveServo.begin(Servo3Pin,True)
-    
-    mr_blue_sky.servoMover(90)
-    #bullseye.TakePhoto("1stlaunch")
-    bullseye.SeriesOfPics()
+    # Find the best hole and move the stepper
+    holes = [0, math.pi/2, math.pi, 3*math.pi/2]
+    angle = vector.computeStepperTravelAngle(0, holes, mr_blue_sky.getAcceleration())
+    talking_heads.talk('2-'+str(int(angle/math.pi * 180)))  # Convert to degrees before sending on I2C
+
+    # Move camera extender
+    servo2Pin = 19
+    servo2 = MoveServo.begin(servo2Pin, True)
+    MoveServo.rotate(servo2, 0, 90)
+
+    # Move camera-tilting microstepper
+    angle = vector.GetTravelAngle(holes)
+    talking_heads.talk('5-'+str(int(angle/math.pi * 180)))
+
+    # Rotate 90 degrees and take 3 pics 
+    for i in range(4):
+        bullseye.SeriesOfPics()
+        talking_heads.talk('5-'+90)
+        
 
 
     #Check For Landing
