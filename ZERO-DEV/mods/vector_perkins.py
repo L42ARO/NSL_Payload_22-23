@@ -77,6 +77,13 @@ def computeStepperTravelAngle(cameraAngle, holeList, imu1_accel):
     imu1_hole_angle = closestAngle(holeList, vertical_angle)
     return getAngleBetween(imu1_hole_angle, vertical_angle)
 
+def computeCameraTiltAngle(holes):
+    imu1_ref = [np.array([1,0,0]), np.array([0,0,1])]
+    imu2_ref = [np.array([0,0,-1]), np.array([0,1,0])]
+    imu1_data = IMU_DATA(np.array([-1,0,-1]),imu1_ref)
+    imu2_data = IMU_DATA(np.array([0,-1,0]),imu2_ref)
+    return GetTravelAngle(imu1_data, imu2_data, holes, np.array([0,-1,0]))
+
 
 if __name__=="__main__":
     data=open_json_file("imu_data.json")
