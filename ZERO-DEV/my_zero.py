@@ -5,7 +5,7 @@ import mods.bullseye as bullseye
 import mods.utils as utils
 import math
 import mods.MoveServo as MoveServo
-alkdsjfslakj
+
 if __name__=="__main__":
     utils.exitListen()
     print("Starting ZERO-DEV")
