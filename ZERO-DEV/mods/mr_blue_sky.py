@@ -67,7 +67,7 @@ def getAcceleration():
     print(f"accel (x,y,z): {accel}")
     return accel
 
-def computeOrientation(holeList, imu1_gravity, imu2_gravity, imu1_axis=[0,1], imu2_axis=[0,1],imus_inverted=False):
+def computeOrientation(holeList, imu1_gravity, imu2_gravity, imu1_axis=[0,1], imu2_axis=[0,1],imus_inverted=False, cameraAngle=0):
     #accel = sensor.acceleration
     #cameraAccel = sensor2.acceleration
     #create a function that using the before statement can get an angle 
