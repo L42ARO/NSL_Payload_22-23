@@ -67,7 +67,7 @@ def getAcceleration():
     print(f"accel (x,y,z): {accel}")
     return accel
 
-def computeOrientation(holeList, imu1_gravity, imu2_gravity, imu1_axis=[0,1], axis2,imus_inverted=False):
+def computeOrientation(holeList, imu1_gravity, imu2_gravity, imu1_axis=[0,1], imu2_axis=[0,1],imus_inverted=False):
     #accel = sensor.acceleration
     #cameraAccel = sensor2.acceleration
     #create a function that using the before statement can get an angle 
@@ -85,9 +85,7 @@ def computeOrientation(holeList, imu1_gravity, imu2_gravity, imu1_axis=[0,1], ax
     holeAngle = angleCalc(holeList, imu1_verticalAngle)
     verticalDeviation = getAngleBetween(holeAngle, imu1_verticalAngle)
     if(imus_inverted): verticalDeviation = -verticalDeviation
-    imu2_verticalAngle = getAngleFromCoordinate(imu2_gravity[imu2_axis], imu2_gravity[imu2_axis])
-
-    imu2_destiny = 
+    imu2_verticalAngle = getAngleFromCoordinate(imu2_gravity[imu2_axis], imu2_gravity[imu2_axis]) 
     
     #take two angles and find shortest rotation path
     rotationAngle = getAngleBetween(holeAngle, cameraAngle)
