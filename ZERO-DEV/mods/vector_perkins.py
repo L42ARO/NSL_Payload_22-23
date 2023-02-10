@@ -68,6 +68,15 @@ def open_json_file(file_path):
         data = json.load(json_file)
     return data
 
+def computeStepperTravelAngle(cameraAngle, holeList, imu1_accel):
+    imu1_ref = [np.array([1,0,0]), np.array([0,0,1])]
+    imu1_data = IMU_DATA(imu1_accel,imu1_ref)
+    imu1_gravity=projection_on_plane(imu1_data.refVectors[0], imu1_data.refVectors[1], imu1_data.gravityVector)
+    imu1_vertical = -1 * imu1_gravity
+    vertical_angle = getAngleFromCoordinate(imu1_vertical[0], imu1_vertical[1])
+    imu1_hole_angle = closestAngle(holeList, vertical_angle)
+    return getAngleBetween(imu1_hole_angle, vertical_angle)
+
 
 if __name__=="__main__":
     data=open_json_file("imu_data.json")
