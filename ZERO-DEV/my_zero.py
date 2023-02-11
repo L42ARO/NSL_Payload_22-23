@@ -20,7 +20,7 @@ if __name__=="__main__":
     # Find the best hole and move the stepper
     holes = [0, math.pi/2, math.pi, 3*math.pi/2]
     angle = vector.computeStepperTravelAngle(0, holes, mr_blue_sky.getAcceleration())
-    talking_heads.talk('2-'+str(int(angle/math.pi * 180)))  # Convert to degrees before sending on I2C
+    talking_heads.talk(2, int(angle/math.pi * 180))  # Convert to degrees before sending on I2C
 
     # Move camera extender
     servo2Pin = 19
@@ -34,7 +34,7 @@ if __name__=="__main__":
     # Rotate 90 degrees and take 3 pics 
     for i in range(4):
         bullseye.SeriesOfPics()
-        talking_heads.talk('5-'+90)
+        talking_heads.talk(5, 90)
         
 
 
