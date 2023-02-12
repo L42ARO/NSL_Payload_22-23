@@ -29,7 +29,7 @@ if __name__=="__main__":
 
     # Move camera-tilting microstepper
     angle = vector.GetTravelAngle(holes)
-    talking_heads.talk('5-'+str(int(angle/math.pi * 180)))
+    talking_heads.talk(5, int(angle/math.pi * 180))
 
     # Rotate 90 degrees and take 3 pics 
     for i in range(4):
