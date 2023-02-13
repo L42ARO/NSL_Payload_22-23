@@ -6,6 +6,8 @@ import mods.bullseye as bullseye
 import mods.utils as utils
 import math
 import mods.MoveServo as MoveServo
+import numpy as np
+import mods.vector_perkins as vector_perkins 
 
 if __name__=="__main__":
     utils.exitListen()
@@ -16,11 +18,13 @@ if __name__=="__main__":
     servo1Pin = 18
     servo1 = MoveServo.begin(servo1Pin,True)
     MoveServo.rotate(servo1, 0, 360)
-
+    
     # Find the best hole and move the stepper
-    holes = [0, math.pi/2, math.pi, 3*math.pi/2]
-    angle = vector.computeStepperTravelAngle(0, holes, mr_blue_sky.getAcceleration())
-    talking_heads.talk(2, int(angle/math.pi * 180))  # Convert to degrees before sending on I2C
+    vector_perkins.begin()
+    angle = vector_perkins.getMainStepperAngle()
+    talking_heads.talk(2, int(angle/math.pi * 180))
+    # and may be perform check
+    vector_perkins.checkMainStepperRotation(angle)
 
     # Move camera extender
     servo2Pin = 19
@@ -28,7 +32,7 @@ if __name__=="__main__":
     MoveServo.rotate(servo2, 0, 90)
 
     # Move camera-tilting microstepper
-    angle = vector.GetTravelAngle(holes)
+    angle = vector_perkins.getMicroStepperAngle(angle)
     talking_heads.talk(5, int(angle/math.pi * 180))
 
     # Rotate 90 degrees and take 3 pics 
