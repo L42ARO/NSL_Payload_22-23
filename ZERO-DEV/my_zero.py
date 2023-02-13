@@ -6,7 +6,6 @@ import mods.bullseye as bullseye
 import mods.utils as utils
 import math
 import mods.MoveServo as MoveServo
-import numpy as np
 import mods.vector_perkins as vector_perkins 
 
 if __name__=="__main__":
@@ -23,7 +22,6 @@ if __name__=="__main__":
     vector_perkins.begin()
     angle = vector_perkins.getMainStepperAngle()
     talking_heads.talk(2, int(angle/math.pi * 180))
-    # and may be perform check
     vector_perkins.checkMainStepperRotation(angle)
 
     # Move camera extender
