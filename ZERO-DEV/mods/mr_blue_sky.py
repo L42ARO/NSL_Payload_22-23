@@ -6,7 +6,7 @@ import mods.talking_heads as talking_heads
 
 i2c = board.I2C()  # uses board.SCL and board.SDA
 
-sensor = adafruit_bno055.BNO055_I2C(i2c)
+sensor = adafruit_bno055.BNO055_I2C(i2c, 0x28)
 sensor2 = adafruit_bno055.BNO055_I2C(i2c, 0x29)
 #Return the average of all calibration values
 
