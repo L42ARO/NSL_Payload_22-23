@@ -34,15 +34,13 @@ void processCommand(int commandNumber, int value){
        //WAIT
            Serial.print("Command 0 recieved with value: ");
            Serial.println(value);
-           break;
-           
+           break;    
        case 1:
        //RUN SERVO
            Serial.print("Command 1 received with value: ");
            Serial.println(value);
            mainServo.rotate(0, value);
            break;
-
        case 2:
        //RUN STEPPER BIG
            int dir = 1; //CHECK ACTUAL DIRECTIONS dont know if 
@@ -55,27 +53,23 @@ void processCommand(int commandNumber, int value){
            }
            stepper1.rotate(value, dir);
            break;
-
        case 3:
        //Run radio frequency decoding
            Serial.print("Command 3 received with value: ");
            Serial.println(value);
            break;
-
        case 4:
        //Run 360 degrees microstepper
            Serial.print("Command 4 received with value: ");
            Serial.println(value);
            micro1.rotate(value);
            break;
-       
        case 5:
        //Run camera tilting microstepper
            Serial.print("Command 5 received with value: ");
            Serial.println(value);
            micro2.rotate(value);
            break;
-
        default:
            Serial.println("Invalid command received");
            break;
