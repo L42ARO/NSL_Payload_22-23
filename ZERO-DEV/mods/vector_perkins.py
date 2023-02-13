@@ -54,11 +54,8 @@ def getMicroStepperAngle(traveledAngle):
 def checkMainStepperRotation(traveledAngle):
     beforeRot = projection_on_plane(imu2_data.refVectors[0], imu2_data.refVectors[1], imu2_data.gravityVector)
     afterRot = projection_on_plane(imu2_data.refVectors[0], imu2_data.refVectors[1], np.array(getAcceleration()[1]))
-    errAmnt = abs(getAngleBetween(afterRot, beforeRot)) - abs(traveledAngle)
-    if (abs(errAmnt) <= math.pi/30):
-        return 0
-    else:
-        return errAmnt
+    # return val: positive if overshot, negative if undershot
+    return abs(getAngleBetween(afterRot, beforeRot)) - abs(traveledAngle)
     
     
 def GetTravelAngle(imu1_data, imu2_data, holeList, camera_vector):
