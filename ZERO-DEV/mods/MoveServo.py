@@ -1,15 +1,30 @@
-import piServoCtl
+from piservo import Servo
+import board
+import RPi.GPIO as io
+import time
 
-#has to run sudo pigpiod before running
-class MainServo:
-    def rotate(self, startAngle, endAngle):
-        i = -1 if startAngle > endAngle else 1
+def rotate(servo_, startAngle, endAngle):
+    i = -1 if startAngle > endAngle else 1
+    #Pull
+    for pos in range(startAngle, endAngle, i):
+        servo_.write(pos)
+        time.sleep(0.0015)
 
-        for pos in range(startAngle, endAngle, i):
-            piServoCtl.write(pos)
-            piServoCtl.delay(15)
-        piServoCtl.write(endAngle)
+    servo_.write(endAngle)
     
-    def begin(self):
-        piServoCtl.pinMode(pin, piServoCtl.OUTPUT)
-        piServoCtl.attach(pin)
+def begin(pin, restarter = False, startAngle = 0):
+    myservo = Servo(pin)
+    if(restarter == True):
+        myservo.write(startAngle)
+        time.sleep(0.1)
+    return myservo
+
+
+if __name__ == "__main__":
+    pin = 19
+    startAngle = 0
+    endAngle = 180
+    
+    bruh = begin(pin, True)
+    time.sleep(1)
+    rotate(bruh, 0, 90)
