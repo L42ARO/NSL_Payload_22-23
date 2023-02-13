@@ -64,8 +64,9 @@ def calib2():
 
 def getAcceleration():
     accel = sensor.acceleration
+    accel2 = sensor2.acceleration
     print(f"accel (x,y,z): {accel}")
-    return accel
+    return (accel, accel2)
 
 def computeOrientation(holeList, imu1_gravity, imu2_gravity, imu1_axis=[0,1], imu2_axis=[0,1],imus_inverted=False, cameraAngle=0):
     #accel = sensor.acceleration
