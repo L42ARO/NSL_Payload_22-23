@@ -3,9 +3,9 @@
     "refVec1":[1.0, 0.0, 0.0],
     "refVec2":[0.0,0.0,1.0]
     },
-    "holes": [],
     "imu2":{
         "refVec1":[1]
-    }
-    
+    },
+    "holes": [],
+    "cameraVec": []
 }
