@@ -8,19 +8,21 @@ class IMU_DATA:
         self.gravityVector = gravity
         self.refVectors = [axis[0], axis[1]]
 
-imu1_data = imu2_data = holeList = None
+imu1_data = imu2_data = holeList = camera_vector = None
 
 def begin(filename):
-    global imu1_data, imu2_data, holeList
+    global imu1_data, imu2_data, holeList, camera_vector
     data = open_json_file(filename)
     # Initialize holes
     holeList = data["holes"]
+    # Intialize camera vector
+    camera_vector = data["cameraVec"]
     # Initilize IMUs
     imu1_ref = [np.array(data["imu1"]["refVec1"]), np.array(data["imu1"]["refVec2"])]
     imu2_ref = [np.array(data["imu2"]["refVec1"]), np.array(data["imu2"]["refVec2"])]
     accel = getAcceleration()
     imu1_data = IMU_DATA(np.array(accel[0]),imu1_ref)
-    imu2_data = IMU_DATA(np.array(accel[1]),imu2_ref)   # imu2 gravity vector will have to be updated because main stepper rotates
+    imu2_data = IMU_DATA(np.array(accel[1]),imu2_ref)
 
 def getMainStepperAngle():
     # Project the gravity vector into the plane made by ref_vectors[0] and ref_vectors[1]
@@ -35,25 +37,30 @@ def getMainStepperAngle():
 def getMicroStepperAngle(traveledAngle):
     # Update imu2's gravity vector
     imu2_data.gravityVector = np.array(getAcceleration()[1])
-    #Fith invert the imu2 gravity vector
+    # Invert the imu2 gravity vector
     imu2_gravity = projection_on_plane(imu2_data.refVectors[0], imu2_data.refVectors[1], imu2_data.gravityVector)
     imu2_vertical = -1 * imu2_gravity
     imu2_vertical_angle = getAngleFromCoordinate(imu2_vertical[0], imu2_vertical[1])
-    #Sixth add the vertical deviation to the imu2 vertical angle
+    # Add the vertical deviation to the imu2 vertical angle
     imu2_hole_angle = imu2_vertical_angle + traveledAngle
-    #Get the angle between the align vector of imu2 and the hole
+    # The angle between the align vector of imu2 and the hole
     camera_2d = projection_on_plane(imu2_data.refVectors[0], imu2_data.refVectors[1], camera_vector)
     camera_angle = getAngleFromCoordinate(camera_2d[0], camera_2d[1])
     travel_angle = getAngleBetween(imu2_hole_angle, camera_angle)
-    #Return the angle to travel
+    # Return the angle to travel
     return travel_angle
 
-# Checks if the main stepper rotated by correct amount
+# Checks if the main stepper rotated by correct amount.  Returns how much to correct by in degrees 
 def checkMainStepperRotation(traveledAngle):
-    beforeRot = imu2_data.gravityVector;
-    afterRot = np.array(getAcceleration()[1])
+    beforeRot = projection_on_plane(imu2_data.refVectors[0], imu2_data.refVectors[1], imu2_data.gravityVector)
+    afterRot = projection_on_plane(imu2_data.refVectors[0], imu2_data.refVectors[1], np.array(getAcceleration()[1]))
+    errAmnt = abs(getAngleBetween(afterRot, beforeRot)) - abs(traveledAngle)
+    if (abs(errAmnt) <= math.pi/30):
+        return 0
+    else:
+        return errAmnt
     
-
+    
 def GetTravelAngle(imu1_data, imu2_data, holeList, camera_vector):
     #Project the gravity vector into the plane made by ref_vectors[0] and ref_vectors[1]
     imu1_gravity=projection_on_plane(imu1_data.refVectors[0], imu1_data.refVectors[1], imu1_data.gravityVector)
