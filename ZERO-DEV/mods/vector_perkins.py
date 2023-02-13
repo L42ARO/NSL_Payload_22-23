@@ -2,10 +2,17 @@ import numpy as np
 import math
 import json
 class IMU_DATA:
-    def __init__(self, gravity, axis):
-        self.gravityVector = gravity
+    def __init__(self, axis):
         self.refVectors = [axis[0], axis[1]]
+
+    #thorugh the program we will be updating the gravity vector
+    def setGravity(self, gravity):
+        self.gravityVector = gravity
     
+global imu2_data, imu1_data
+imu1_data: IMU_DATA
+imu2_data: IMU_DATA
+
 def GetTravelAngle(imu1_data, imu2_data, holeList, camera_vector):
     #Project the gravity vector into the plane made by ref_vectors[0] and ref_vectors[1]
     imu1_gravity=projection_on_plane(imu1_data.refVectors[0], imu1_data.refVectors[1], imu1_data.gravityVector)
@@ -68,12 +75,24 @@ def open_json_file(file_path):
         data = json.load(json_file)
     return data
 
+#Create IMU data objects with the reference vectors
+def LoadVectorProfile():
+    global imu1_data, imu2_data
+    imu1_ref = [np.array([1,0,0]), np.array([0,0,1])]
+    imu2_ref = [np.array([0,0,-1]), np.array([0,1,0])]
+    imu1_data = IMU_DATA(imu1_ref)
+    imu2_data = IMU_DATA(imu2_ref)
 
 if __name__=="__main__":
     data=open_json_file("imu_data.json")
-    imu1_ref = [np.array([1,0,0]), np.array([0,0,1])]
-    imu2_ref = [np.array([0,0,-1]), np.array([0,1,0])]
-    imu1_data = IMU_DATA(np.array([-1,0,-1]),imu1_ref)
-    imu2_data = IMU_DATA(np.array([0,-1,0]),imu2_ref)
+    LoadVectorProfile()
+
+    #In actual program we will be updating the gravity vector with IMU sensor data
+    gravity1 = np.array([-1, 0, -1])
+    gravity2 = np.array([0, -1, 0])
+    imu1_data.setGravity(gravity1)
+    imu2_data.setGravity(gravity2)
+
+    #In actual program this will run periodically
     angle=GetTravelAngle(imu1_data, imu2_data, [math.pi/4,3*math.pi/4, 5*math.pi/4, 7*math.pi/4], np.array([0,-1,0]))
     print(angle*180/math.pi)

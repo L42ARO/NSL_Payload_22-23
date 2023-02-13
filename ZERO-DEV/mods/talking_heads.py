@@ -5,10 +5,10 @@ import smbus
 import time
 
 bus = smbus.SMBus(1)
-address = 8
+address = 0x08
 
 #Returns 1 if successful, 0 if timeout
-def talk(command_number, value, timeout):
+def talk(command_number, value, timeout=5):
     try:
         command = str(command_number) + "_" + str(value)
         bus.write_i2c_block_data(address, 0, list(command.encode()))
@@ -55,4 +55,4 @@ def talk(command_number, value, timeout):
 
 
 if __name__ == "__main__":
-    talk()
+    talk("1", "-258")
