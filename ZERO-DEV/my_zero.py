@@ -22,7 +22,11 @@ if __name__=="__main__":
     vector_perkins.begin()
     angle = vector_perkins.getMainStepperAngle()
     talking_heads.talk(2, int(angle/math.pi * 180))
-    vector_perkins.checkMainStepperRotation(angle)
+    # Check if the stepper rotated by right amount and keep correcting
+    err = vector_perkins.checkMainStepperRotation(angle)
+    while (abs(err) <= math.pi/18): 
+        talking_heads.talk(5, int(err*180/math.pi))
+        err = vector_perkins.checkMainStepperRotation(angle)
 
     # Move camera extender
     servo2Pin = 19
