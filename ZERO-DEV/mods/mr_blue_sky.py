@@ -13,8 +13,9 @@ sensor2 = adafruit_bno055.BNO055_I2C(i2c, 0x29)
 
 def getAcceleration():
     accel = sensor.acceleration
+    accel2 = sensor2.acceleration
     print(f"accel (x,y,z): {accel}")
-    return accel
+    return (accel, accel2)
 
 def computeOrientation(holeList, imu1_gravity, imu2_gravity, imu1_axis=[0,1], axis2,imus_inverted=False):
     #accel = sensor.acceleration
@@ -86,7 +87,7 @@ def moveToHole():
         #setup vp profile
         vp.LoadVectorProfile()
         #get gravity vectors from both sensors
-        gravity1 = sensor1.acceleration
+        (gravity1, gravity2) = getAcceleration()
         #use vector perkins to get rotation angle
         #if angle is less than treshhold no need to rotate, break loop
         #else rotate  
