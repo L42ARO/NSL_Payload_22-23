@@ -94,8 +94,10 @@ def moveToHole():
         #use vector perkins to get rotation angle
         #if angle is less than treshhold no need to rotate, break loop
         #else rotate
-        if (vp.GetTravelAngle() < math.pi/90):
+        angle = vp.GetTravelAngle()
+        if (angle < math.pi/90):
             break;
+        talking_heads.talk(2, angle)
 
     #angle = computeOrientation()
     #talking_heads.talk('2-'+str(angle))
