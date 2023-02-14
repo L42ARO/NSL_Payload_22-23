@@ -88,7 +88,7 @@ def LoadVectorProfile():
     # Load camera vector
     camera_vector = np.array(data["cameraVec"])
     # Load holes
-    holeList = np.array(data["holes"])
+    holeList = np.deg2rad(np.array(data["holes"]))
 
 if __name__=="__main__":
     LoadVectorProfile()
