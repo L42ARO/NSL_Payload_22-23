@@ -8,8 +8,8 @@ import mods.talking_heads as talking_heads
 i2c = board.I2C()  # uses board.SCL and board.SDA
 rot_tresh = 1
 
-sensor = adafruit_bno055.BNO055_I2C(i2c)
-sensor2 = adafruit_bno055.BNO055_I2C(i2c, 0x29)
+sensor = adafruit_bno055.BNO055_I2C(i2c, 0x29)
+sensor2 = adafruit_bno055.BNO055_I2C(i2c)
 
 def getAcceleration():
     accel = sensor.acceleration
@@ -82,15 +82,20 @@ def getAngleBetween(holeAngle, cameraAngle):
     return angle
 
 def moveToHole():
+    #setup vp profile
+    vp.LoadVectorProfile()
+
     #enter loop for at least 10 iterations (or until code inside breaks out)
     for i in range(10):
-        #setup vp profile
-        vp.LoadVectorProfile()
         #get gravity vectors from both sensors
         (gravity1, gravity2) = getAcceleration()
+        vp.imu1_data.setGravity(gravity1)
+        vp.imu2_data.setGravity(gravity2)
         #use vector perkins to get rotation angle
         #if angle is less than treshhold no need to rotate, break loop
-        #else rotate  
+        #else rotate
+        if (vp.GetTravelAngle() < math.pi/90):
+            break;
 
     #angle = computeOrientation()
     #talking_heads.talk('2-'+str(angle))
