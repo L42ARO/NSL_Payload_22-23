@@ -15,10 +15,6 @@ class Microstepper {
     Microstepper(int full_rot_count, int delay_btwn_loop, PinList pins)
       : full_rot_count(full_rot_count), delay_btwn_loop(delay_btwn_loop), pins(pins)
     {
-      // Calibration to set current_idx to some value.  30 degrees is arbitary.  The microstpeper overshoots
-      // in its first run because current_idx is unknown.
-      rotate(30);
-      delay(1000);
     }
     void rotate(int angle);
     PinList getPins();

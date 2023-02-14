@@ -58,4 +58,9 @@ void Microstepper::begin()
   pinMode(pins.A_minus, OUTPUT);
   pinMode(pins.B_plus, OUTPUT);
   pinMode(pins.B_minus, OUTPUT);
+
+  // Calibration to set current_idx to some value.  30 degrees is arbitary.  The microstpeper overshoots
+  /// in its first run because current_idx is unknown.
+  rotate(30);
+  delay(1000);
 }
