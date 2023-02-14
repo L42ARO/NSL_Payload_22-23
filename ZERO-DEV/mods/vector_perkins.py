@@ -78,21 +78,21 @@ def open_json_file(file_path):
 #Create IMU data objects with the reference vectors
 def LoadVectorProfile():
     global imu1_data, imu2_data
-    imu1_ref = [np.array([1,0,0]), np.array([0,0,1])]
-    imu2_ref = [np.array([0,0,-1]), np.array([0,1,0])]
+    data=open_json_file("imu_data.json")
+    imu1_ref = [np.array(data["imu1"]["refVec1"]), np.array(data["imu1"]["refVec2"])]
+    imu2_ref = [np.array(data["imu2"]["refVec1"]), np.array(data["imu2"]["refVec2"])]
+    #imu1_ref = [np.array([1,0,0]), np.array([0,0,1])]
+    #imu2_ref = [np.array([0,0,-1]), np.array([0,1,0])]
     imu1_data = IMU_DATA(imu1_ref)
     imu2_data = IMU_DATA(imu2_ref)
 
 if __name__=="__main__":
-    data=open_json_file("imu_data.json")
     LoadVectorProfile()
-
     #In actual program we will be updating the gravity vector with IMU sensor data
     gravity1 = np.array([-1, 0, -1])
     gravity2 = np.array([0, -1, 0])
     imu1_data.setGravity(gravity1)
     imu2_data.setGravity(gravity2)
-
     #In actual program this will run periodically
     angle=GetTravelAngle(imu1_data, imu2_data, [math.pi/4,3*math.pi/4, 5*math.pi/4, 7*math.pi/4], np.array([0,-1,0]))
     print(angle*180/math.pi)
