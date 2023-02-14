@@ -9,11 +9,11 @@ class IMU_DATA:
     def setGravity(self, gravity):
         self.gravityVector = gravity
     
-global imu2_data, imu1_data
+global imu2_data, imu1_data, camera_vector, holeList
 imu1_data: IMU_DATA
 imu2_data: IMU_DATA
 
-def GetTravelAngle(imu1_data, imu2_data, holeList, camera_vector):
+def GetTravelAngle():
     #Project the gravity vector into the plane made by ref_vectors[0] and ref_vectors[1]
     imu1_gravity=projection_on_plane(imu1_data.refVectors[0], imu1_data.refVectors[1], imu1_data.gravityVector)
     imu1_vertical = -1 * imu1_gravity
@@ -77,7 +77,7 @@ def open_json_file(file_path):
 
 #Create IMU data objects with the reference vectors
 def LoadVectorProfile():
-    global imu1_data, imu2_data
+    global imu1_data, imu2_data, camera_vector, holeList
     data=open_json_file("imu_data.json")
     imu1_ref = [np.array(data["imu1"]["refVec1"]), np.array(data["imu1"]["refVec2"])]
     imu2_ref = [np.array(data["imu2"]["refVec1"]), np.array(data["imu2"]["refVec2"])]
@@ -85,6 +85,10 @@ def LoadVectorProfile():
     #imu2_ref = [np.array([0,0,-1]), np.array([0,1,0])]
     imu1_data = IMU_DATA(imu1_ref)
     imu2_data = IMU_DATA(imu2_ref)
+    # Load camera vector
+    camera_vector = np.array(data["cameraVec"])
+    # Load holes
+    holeList = np.array(data["holes"])
 
 if __name__=="__main__":
     LoadVectorProfile()
