@@ -10,8 +10,9 @@ address = 0x08
 #Returns 1 if successful, 0 if timeout
 def talk(command_number, value, timeout=5):
     try:
-        command = str(command_number) + "_" + str(value)
-        bus.write_i2c_block_data(address, 0, list(command.encode()))
+        sign = 0 if value >= 0 else 1
+        command = str(command_number) + str(sign) + str(value)
+        bus.write_i2c_block_data(address, 0, [int(x) for x in command])
         start_time = time.time()
         while True:
             data = bus.read_i2c_block_data(address, 0)
@@ -55,4 +56,4 @@ def talk(command_number, value, timeout=5):
 
 
 if __name__ == "__main__":
-    talk("1", "-258")
+    talk(0, -2)
