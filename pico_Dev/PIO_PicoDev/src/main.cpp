@@ -1,6 +1,6 @@
 #include <Arduino.h>
-#include <i2c_com.h>
 
+#include "i2c_com.h"
 #include "MoveStepper.h"
 #include "MoveServo.h"
 #include "buzzerNotification.h"
@@ -14,9 +14,11 @@ MainServo mainServo(9);
 Microstepper micro1(42, 500, {3, 11, 9, 10});
 Microstepper micro2(42, 50, {4, 6, 7, 8});
 
+void processCommand(int commandNumber, int value);
+
 void setup() {
   Serial.begin(9600);
-  i2c.getInstance().begin(8);
+  i2c.getInstance().begin(8, &processCommand);
   // Setting the pins up
   micro1.begin();
   micro2.begin();
