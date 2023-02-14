@@ -10,12 +10,13 @@ class I2C_Comm {
       return instance;
     }
     I2C_Comm() {};
-    void begin(int address);
-    static void processCommand(int commandNumber, int value);
+    void begin(int address, void (*processCommand)(int commandNumber, int value));
+    
   private:
     static void receiveEvent(int howMany);
     static I2C_Comm* instance;
     int _address;
+    void (*processCommand)(int commandNumber, int value);
 };
 
 #endif
