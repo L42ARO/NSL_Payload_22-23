@@ -14,7 +14,7 @@ void I2C_Comm::begin(int address, void (*processCommand)(int, int)) {
     _address = address;
     Wire.begin(_address);                // join i2c bus with address #8
     Wire.onReceive(receiveEvent); // register event
-    instance=this;
+    instance = this;
     instance->processCommand = processCommand;
 }
 
