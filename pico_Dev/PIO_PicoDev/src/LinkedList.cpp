@@ -1,4 +1,5 @@
 #include "LinkedList.h"
+#include <Arduino.h>
 
 LinkedListNode::LinkedListNode(int value, LinkedListNode* previous, LinkedListNode* next)
     :Data(value),Previous(previous),Next(next){}
@@ -14,7 +15,7 @@ LinkedList::~LinkedList(){
             Current = Temp;
         }
         delete Current;
-        Head = nullptr;
+        delete Head;
     }
 }
 

@@ -18,6 +18,7 @@ void processCommand(int commandNumber, int value);
 
 void setup() {
   Serial.begin(9600);
+  Serial.println("Starting up");
   i2c.begin(8, &processCommand);
   // Setting the pins up
   micro1.begin();

@@ -13,6 +13,7 @@ I2C_Comm* I2C_Comm::instance =0;
 void I2C_Comm::begin(int address, void (*processCommand)(int, int)) {
     _address = address;
     Wire.begin(_address);                // join i2c bus with address #8
+    Wire.onRequest(requestEvent); // register event
     Wire.onReceive(receiveEvent); // register event
     instance = this;
     instance->processCommand = processCommand;
@@ -29,7 +30,12 @@ void I2C_Comm::receiveEvent(int howMany) {
     for (int i = 3; i < howMany; i++) {
         valueBuffer.PushBack(Wire.read());
     }
-    int value = valueBuffer[0];
+    int value = 0;
+    for (int i = 0; i < valueBuffer.Length(); i++) {
+        value*=10;
+        value += valueBuffer[i];
+    }   
+
     //int commandNumber = command.substring(0, command.indexOf("_")).toInt();
     //int value = command.substring(command.indexOf("_") + 1).toInt();
     Serial.print("received command:");
@@ -37,9 +43,21 @@ void I2C_Comm::receiveEvent(int howMany) {
     // process the commandNumber and value here
     if(sign == 1)
         value *= -1;
-    Serial.print(" value:");
+    Serial.print("Value:");
     Serial.println(value);
     instance->processCommand(commandNumber, value);
-    Wire.write("ready");        // sends ready
+    instance->setReady(1);
+
+    //Wire.write("ready");        // sends ready
+    //Wire.endTransmission();     // stop transmitting
+}
+void I2C_Comm::requestEvent() {
+    Serial.println("requestEvent");
+    if(instance->_ready == 1){
+        Wire.write("ready");        // sends ready
+    }
+    else{
+        Wire.write("not ready");        // sends ready
+    }
     Wire.endTransmission();     // stop transmitting
 }

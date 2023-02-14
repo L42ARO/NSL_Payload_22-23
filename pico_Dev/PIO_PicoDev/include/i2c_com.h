@@ -11,11 +11,16 @@ class I2C_Comm {
     }
     I2C_Comm() {};
     void begin(int address, void (*processCommand)(int commandNumber, int value));
+    void setReady(int ready){
+        _ready = ready;
+    }
     
   private:
     static void receiveEvent(int howMany);
+    static void requestEvent();
     static I2C_Comm* instance;
     int _address;
+    int _ready;
     void (*processCommand)(int commandNumber, int value);
 };
 

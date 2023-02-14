@@ -11,19 +11,19 @@ address = 0x08
 def talk(command_number, value, timeout=5):
     try:
         sign = 0 if value >= 0 else 1
-        command = str(command_number) + str(sign) + str(value)
+        command = str(command_number) + str(sign) + str(abs(value))
         bus.write_i2c_block_data(address, 0, [int(x) for x in command])
         start_time = time.time()
-        while True:
-            data = bus.read_i2c_block_data(address, 0)
-            data = ''.join(map(chr, data))
-            if data == "ready":
-                print("Success")
-                return 1
-            if time.time() - start_time > timeout:
-                print("Error: Timeout")
-                return 0
-            time.sleep(0.1)
+        #while True:
+        #    data = bus.read_i2c_block_data(address, 0)
+        #    data = ''.join(map(chr, data))
+        #    if data == "ready":
+        #        print("Success")
+        #        return 1
+        #    if time.time() - start_time > timeout:
+        #        print("Error: Timeout")
+        #        return 0
+        #    time.sleep(0.1)
     except Exception as e:
         print(f'Error talking to Pico: {e}')
         return 0
