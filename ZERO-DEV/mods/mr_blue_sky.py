@@ -113,6 +113,8 @@ def moveToHole(waitTime=5):
             talking_heads.talk(2, angle)
             time.sleep(waitTime)
         except Exception as e:
+            i2c.deinit()
+            i2c = board.I2C()
             print(f"{i}th loop:  Exception occured. {e}  Tyring again...")
 
 
