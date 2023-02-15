@@ -4,6 +4,7 @@ import vector_perkins as vp
 import time
 import math
 import talking_heads as talking_heads
+import reset_arduino as reset_arduino
 
 i2c = board.I2C()  # uses board.SCL and board.SDA
 rot_tresh = 1
@@ -113,8 +114,7 @@ def moveToHole(waitTime=5):
             talking_heads.talk(2, angle)
             time.sleep(waitTime)
         except Exception as e:
-            i2c.deinit()
-            i2c = board.I2C()
+            reset_arduino.reset()
             print(f"{i}th loop:  Exception occured. {e}  Tyring again...")
 
 
