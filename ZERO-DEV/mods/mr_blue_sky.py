@@ -1,6 +1,6 @@
 import adafruit_bno055
 import board
-import vector_perkins as vp
+import mods.vector_perkins as vp
 import time
 import math
 import mods.talking_heads as talking_heads
