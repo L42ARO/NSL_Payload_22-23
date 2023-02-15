@@ -95,7 +95,7 @@ def moveToHole(waitTime=5):
         #use vector perkins to get rotation angle
         #if angle is less than treshhold no need to rotate, break loop
         #else rotate
-        angle = vp.GetTravelAngle()
+        angle = int(vp.GetTravelAngle()*180 / math.pi)
         print(f"Travel Angle: {angle}")
         if (angle < math.pi/90):
             break;
