@@ -22,7 +22,7 @@ def getAcceleration():
             print("sensor1 measuring None")
         if (None in accel2):
             print("sensor2 measuring None")
-        time.sleep(0.1)
+        time.sleep(0.5)
 
     print(f"accel (x,y,z): {accel}")
     print(f'accel2; {accel2}')
@@ -97,20 +97,24 @@ def moveToHole(waitTime=5):
     vp.LoadVectorProfile()
     
     #enter loop for at least 10 iterations (or until code inside breaks out)
-    for i in range(10):
-        #get gravity vectors from both sensors
-        (gravity1, gravity2) = getAcceleration()
-        vp.imu1_data.setGravity([gravity1[0], gravity1[1], gravity1[2]])
-        vp.imu2_data.setGravity([gravity2[0], gravity2[1], gravity2[2]])
-        #use vector perkins to get rotation angle
-        #if angle is less than treshhold no need to rotate, break loop
-        #else rotate
-        angle = int(vp.GetTravelAngle()*180 / math.pi)
-        print(f"Travel Angle: {angle}")
-        if (angle < math.pi/90):
-            break;
-        talking_heads.talk(2, angle)
-        time.sleep(waitTime)
+    for i in range(100):
+        try:
+            #get gravity vectors from both sensors
+            (gravity1, gravity2) = getAcceleration()
+            vp.imu1_data.setGravity([gravity1[0], gravity1[1], gravity1[2]])
+            vp.imu2_data.setGravity([gravity2[0], gravity2[1], gravity2[2]])
+            #use vector perkins to get rotation angle
+            #if angle is less than treshhold no need to rotate, break loop
+            #else rotate
+            angle = int(vp.GetTravelAngle()*180 / math.pi)
+            print(f"Travel Angle: {angle}")
+            if (angle < math.pi/90):
+                break
+            talking_heads.talk(2, angle)
+            time.sleep(waitTime)
+        except Exception as e:
+            print(f"Exception occured. {e}  Tyring again...")
+
 
     #angle = computeOrientation()
     #talking_heads.talk('2-'+str(angle))
