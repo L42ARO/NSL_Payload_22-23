@@ -13,6 +13,7 @@ global imu2_data, imu1_data, camera_vector, holeList
 imu1_data: IMU_DATA
 imu2_data: IMU_DATA
 
+#Important: Positive Angle Means counterclockwise viewed from the Front Endcap of the Stepper Motor
 def GetTravelAngle():
     #Project the gravity vector into the plane made by ref_vectors[0] and ref_vectors[1]
     imu1_gravity=projection_on_plane(imu1_data.refVectors[0], imu1_data.refVectors[1], imu1_data.gravityVector)
