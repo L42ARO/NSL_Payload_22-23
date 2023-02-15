@@ -113,7 +113,7 @@ def moveToHole(waitTime=5):
             talking_heads.talk(2, angle)
             time.sleep(waitTime)
         except Exception as e:
-            print(f"Exception occured. {e}  Tyring again...")
+            print(f"{i}th loop:  Exception occured. {e}  Tyring again...")
 
 
     #angle = computeOrientation()
@@ -121,4 +121,4 @@ def moveToHole(waitTime=5):
 
 
 if __name__=="__main__":
-    moveToHole(0.5)
+    moveToHole(1)
