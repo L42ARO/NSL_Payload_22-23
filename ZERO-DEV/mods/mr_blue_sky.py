@@ -12,8 +12,18 @@ sensor = adafruit_bno055.BNO055_I2C(i2c, 0x29)
 sensor2 = adafruit_bno055.BNO055_I2C(i2c)
 
 def getAcceleration():
-    accel = sensor.acceleration
-    accel2 = sensor2.acceleration
+    while True:
+        accel = sensor.acceleration
+        accel2 = sensor2.acceleration
+        
+        if (None not in accel and None not in accel2):
+            break
+        if (None in accel):
+            print("sensor1 measuring None")
+        if (None in accel2):
+            print("sensor2 measuring None")
+        time.sleep(0.1)
+
     print(f"accel (x,y,z): {accel}")
     print(f'accel2; {accel2}')
     return (accel, accel2)
