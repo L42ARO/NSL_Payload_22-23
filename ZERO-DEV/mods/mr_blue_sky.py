@@ -84,7 +84,7 @@ def getAngleBetween(holeAngle, cameraAngle):
 def moveToHole():
     #setup vp profile
     vp.LoadVectorProfile()
-
+    
     #enter loop for at least 10 iterations (or until code inside breaks out)
     for i in range(10):
         #get gravity vectors from both sensors
@@ -95,6 +95,7 @@ def moveToHole():
         #if angle is less than treshhold no need to rotate, break loop
         #else rotate
         angle = vp.GetTravelAngle()
+        print(f"Travel Angle: {angle}")
         if (angle < math.pi/90):
             break;
         talking_heads.talk(2, angle)
