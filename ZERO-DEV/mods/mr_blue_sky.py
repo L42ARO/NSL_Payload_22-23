@@ -15,7 +15,7 @@ def getAcceleration():
     accel = sensor.acceleration
     accel2 = sensor2.acceleration
     print(f"accel (x,y,z): {accel}")
-    print(type(accel))
+    print(f'accel2; {accel2}')
     return (accel, accel2)
 
 def computeOrientation(holeList, imu1_gravity, imu2_gravity, axis2, imu1_axis=[0,1],imus_inverted=False):
@@ -82,7 +82,7 @@ def getAngleBetween(holeAngle, cameraAngle):
         
     return angle
 
-def moveToHole():
+def moveToHole(waitTime=5):
     #setup vp profile
     vp.LoadVectorProfile()
     
@@ -100,10 +100,11 @@ def moveToHole():
         if (angle < math.pi/90):
             break;
         talking_heads.talk(2, angle)
+        time.sleep(waitTime)
 
     #angle = computeOrientation()
     #talking_heads.talk('2-'+str(angle))
 
 
 if __name__=="__main__":
-    moveToHole()
+    moveToHole(0.5)
