@@ -108,7 +108,7 @@ def moveToHole(waitTime=5):
             #else rotate
             angle = int(vp.GetTravelAngle()*180 / math.pi)
             print(f"Travel Angle: {angle}")
-            if (angle < math.pi/90):
+            if (abs(angle) < 2):
                 break
             talking_heads.talk(2, angle)
             time.sleep(waitTime)
