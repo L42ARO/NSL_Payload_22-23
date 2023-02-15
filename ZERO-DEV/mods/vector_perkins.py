@@ -7,7 +7,7 @@ class IMU_DATA:
 
     #thorugh the program we will be updating the gravity vector
     def setGravity(self, gravity):
-        self.gravityVector = gravity
+        self.gravityVector = np.array(gravity)
     
 global imu2_data, imu1_data, camera_vector, holeList
 imu1_data: IMU_DATA
@@ -42,7 +42,10 @@ def projection_on_plane(x_axis_vector, y_axis_vector, other_vector):
     #Calculating the normal vector of the plane
     normal_vector = np.cross(x_axis_vector, y_axis_vector)
     #Calculating the projection
-    projection = other_vector - (np.dot(other_vector, normal_vector) * normal_vector)
+    print(f'normal type:{type(normal_vector)}')
+    dot = np.dot(other_vector, normal_vector)
+    print(f'Dot type:{type(dot)}')
+    projection = other_vector - (dot * normal_vector)
     zero_index = np.where(projection==0)[0]
     #If size is greater than 1, then it's [0,0,0] keep into account for later implementation of Try catches
     projection_2d = np.delete(projection, zero_index[0])
@@ -93,10 +96,10 @@ def LoadVectorProfile():
 if __name__=="__main__":
     LoadVectorProfile()
     #In actual program we will be updating the gravity vector with IMU sensor data
-    gravity1 = np.array([-1, 0, -1])
-    gravity2 = np.array([0, -1, 0])
+    gravity1 = [-1.009, 0, -1]
+    gravity2 = [0, -1.9908, 0]
     imu1_data.setGravity(gravity1)
     imu2_data.setGravity(gravity2)
     #In actual program this will run periodically
-    angle=GetTravelAngle(imu1_data, imu2_data, [math.pi/4,3*math.pi/4, 5*math.pi/4, 7*math.pi/4], np.array([0,-1,0]))
+    angle=GetTravelAngle()
     print(angle*180/math.pi)

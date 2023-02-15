@@ -1,9 +1,9 @@
 import adafruit_bno055
 import board
-import mods.vector_perkins as vp
+import vector_perkins as vp
 import time
 import math
-import mods.talking_heads as talking_heads
+import talking_heads as talking_heads
 
 i2c = board.I2C()  # uses board.SCL and board.SDA
 rot_tresh = 1
@@ -15,6 +15,7 @@ def getAcceleration():
     accel = sensor.acceleration
     accel2 = sensor2.acceleration
     print(f"accel (x,y,z): {accel}")
+    print(type(accel))
     return (accel, accel2)
 
 def computeOrientation(holeList, imu1_gravity, imu2_gravity, axis2, imu1_axis=[0,1],imus_inverted=False):
@@ -89,8 +90,8 @@ def moveToHole():
     for i in range(10):
         #get gravity vectors from both sensors
         (gravity1, gravity2) = getAcceleration()
-        vp.imu1_data.setGravity(gravity1)
-        vp.imu2_data.setGravity(gravity2)
+        vp.imu1_data.setGravity([gravity1[0], gravity1[1], gravity1[2]])
+        vp.imu2_data.setGravity([gravity2[0], gravity2[1], gravity2[2]])
         #use vector perkins to get rotation angle
         #if angle is less than treshhold no need to rotate, break loop
         #else rotate
