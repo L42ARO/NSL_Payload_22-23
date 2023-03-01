@@ -29,6 +29,28 @@ def SeriesOfPics():
     for i in range(3):
         TakePhoto(i)
 
+def take_grayscale_picture(camera):
+    # Set camera resolution and color mode to grayscale
+    camera.resolution = (640, 480)
+    camera.color_effects = (128, 128)
+    camera.start_preview()
+    sleep(2)  # Wait for camera to warm up
+
+    # Capture grayscale image
+    image = np.empty((camera.resolution[1], camera.resolution[0], 3), dtype=np.uint8)
+    camera.capture(image, 'rgb')
+
+    # Convert to grayscale
+    gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+
+    return gray
+
+def convert_to_grayscale(image):
+    # Convert image to grayscale
+    gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+
+    return gray
+
 def add_timestamp(img):
     # Get current time
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -47,6 +69,25 @@ def rotate_image(img, degree):
     # Return rotated image
     return img_rotated
 
+def operateCam (command):
+    if command == "A1":
+        #turn_camera_right60()
+    elif command == "B2":
+        #turn_camera_left60()
+    elif command == "C3":
+        #take_picture()
+    elif command == "D4":
+        #set_camera_mode("G")
+    elif command == "E5":
+        #set_camera_mode("C")
+    elif command == "F6":
+        #rotate_image180()
+    elif command == "G7":
+        #apply_filter()
+    elif command == "H8":
+        #remove_filters()
+    else:
+        print("Error: Invalid Input.")
 
 if __name__=="__main__":
     for i in range(3):
