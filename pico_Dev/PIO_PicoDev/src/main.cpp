@@ -12,8 +12,7 @@ const int dirPin = 12;
 const int rstPin = 11;
 Stepper stepper1(stepPin, dirPin, rstPin); //create stepper object
 MainServo mainServo(9);
-Microstepper micro1(42, 500, {3, 11, 9, 10});
-Microstepper micro2(42, 50, {4, 6, 7, 8});
+Microstepper micro(42, 500, {3, 11, 9, 10});    // purpose, orange yellow, green or blue, black, red, white
 
 void processCommand(int commandNumber, int value);
 
@@ -22,8 +21,7 @@ void setup() {
   Serial.println("Starting up");
   i2c.begin(8, &processCommand);
   // Setting the pins up
-  micro1.begin();
-  micro2.begin();
+  micro.begin();
   stepper1.begin();
   mainServo.begin();
 }
@@ -69,14 +67,14 @@ void processCommand(int commandNumber, int value){
        //Run 360 degrees microstepper
            Serial.print("Command 4 received with value: ");
            Serial.println(value);
-           micro1.rotate(value);
+           micro.rotate(value);
            break;
-       case 5:
-       //Run camera tilting microstepper
-           Serial.print("Command 5 received with value: ");
-           Serial.println(value);
-           micro2.rotate(value);
-           break;
+    //    case 5:
+    //    //Run camera tilting microstepper
+    //        Serial.print("Command 5 received with value: ");
+    //        Serial.println(value);
+    //        micro2.rotate(value);
+    //        break;
        default:
            Serial.println("Invalid command received");
            break;

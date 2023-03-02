@@ -2,6 +2,8 @@
 from picamera import PiCamera
 from time import sleep
 from datetime import datetime
+import mods.talking_heads as talking_heads
+
 run = True
 try:
     camera = PiCamera()
@@ -29,7 +31,29 @@ def SeriesOfPics():
     for i in range(3):
         TakePhoto(i)
 
-'''def add_timestamp(img):
+def take_grayscale_picture(camera):
+    # Set camera resolution and color mode to grayscale
+    camera.resolution = (640, 480)
+    camera.color_effects = (128, 128)
+    camera.start_preview()
+    sleep(2)  # Wait for camera to warm up
+
+    # Capture grayscale image
+    image = np.empty((camera.resolution[1], camera.resolution[0], 3), dtype=np.uint8)
+    camera.capture(image, 'rgb')
+
+    # Convert to grayscale
+    gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+
+    return gray
+
+def convert_to_grayscale(image):
+    # Convert image to grayscale
+    gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+
+    return gray
+
+def add_timestamp(img):
     # Get current time
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Add timestamp to the upper right corner of the image
@@ -47,6 +71,33 @@ def rotate_image(img, degree):
     # Return rotated image
     return img_rotated'''
 
+def operateCam (command):
+    if command == "A1":
+        talking_heads.talk(4, -60)
+        #turn_camera_right60()
+    elif command == "B2":
+        talking_heads.talk(4, 60)
+        #turn_camera_left60()
+    elif command == "C3":
+        print("")
+        #take_picture()
+    elif command == "D4":
+        print("")
+        #set_camera_mode("G")
+    elif command == "E5":
+        print("")
+        #set_camera_mode("C")
+    elif command == "F6":
+        print("")
+        #rotate_image180()
+    elif command == "G7":
+        print("")
+        #apply_filter()
+    elif command == "H8":
+        print("")
+        #remove_filters()
+    else:
+        print("Error: Invalid Input.")
 
 if __name__=="__main__":
     for i in range(3):
