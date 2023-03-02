@@ -71,20 +71,28 @@ def rotate_image(img, degree):
 
 def operateCam (command):
     if command == "A1":
+        print("")
         #turn_camera_right60()
     elif command == "B2":
+        print("")
         #turn_camera_left60()
     elif command == "C3":
+        print("")
         #take_picture()
     elif command == "D4":
+        print("")
         #set_camera_mode("G")
     elif command == "E5":
+        print("")
         #set_camera_mode("C")
     elif command == "F6":
+        print("")
         #rotate_image180()
     elif command == "G7":
+        print("")
         #apply_filter()
     elif command == "H8":
+        print("")
         #remove_filters()
     else:
         print("Error: Invalid Input.")
