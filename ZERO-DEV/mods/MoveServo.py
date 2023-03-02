@@ -21,10 +21,21 @@ def begin(pin, restarter = False, startAngle = 0):
 
 
 if __name__ == "__main__":
-    pin = 19
+    b = begin(19, True)
+    
+    pin = 18
     startAngle = 0
     endAngle = 180
     
     bruh = begin(pin, True)
     time.sleep(1)
     rotate(bruh, 0, 90)
+    
+    pin = 12
+    startAngle = 0
+    endAngle = 180
+    
+    bruh2 = begin(pin, True)
+    time.sleep(1)
+    #rotate(bruh2, 0, 90)
+    

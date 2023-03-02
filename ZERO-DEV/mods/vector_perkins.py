@@ -34,6 +34,18 @@ def GetTravelAngle():
     camera_angle = getAngleFromCoordinate(camera_2d[0], camera_2d[1])
     travel_angle = getAngleBetween(imu2_hole_angle, camera_angle)
     #Return the angle to travel
+    return travel_angle, imu1_hole_angle
+
+def GetGimbalTravelAngle():
+    #Get vertical angle to align IMU
+    imu2_gravity = projection_on_plane(imu2_data.refVectors[0], imu2_data.refVectors[1], imu2_data.gravityVector)
+    imu2_vertical = -1 * imu2_gravity
+    imu2_vertical_angle = getAngleFromCoordinate(imu2_vertical[0], imu2_vertical[1])
+    #Get the camera angle
+    camera_2d = projection_on_plane(imu2_data.refVectors[0], imu2_data.refVectors[1], camera_vector)
+    camera_angle = getAngleFromCoordinate(camera_2d[0], camera_2d[1])
+    #Get difference between angles
+    travel_angle = getAngleBetween(imu2_vertical_angle, camera_angle)
     return travel_angle
     
 def projection_on_plane(x_axis_vector, y_axis_vector, other_vector):

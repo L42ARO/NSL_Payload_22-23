@@ -1,8 +1,8 @@
 #include "MoveStepper.h"
 #include <Arduino.h> 
 
-Stepper::Stepper(const int stepPinu, const int dirPinu)
-    : stepPin_(stepPinu), dirPin_(dirPinu) 
+Stepper::Stepper(const int stepPinu, const int dirPinu, const int rstPinu)
+    : stepPin_(stepPinu), dirPin_(dirPinu) , rstPin_(rstPinu)
 {
 }
 
@@ -10,6 +10,8 @@ void Stepper::begin()
 {
     pinMode(dirPin_, OUTPUT);
     pinMode(stepPin_, OUTPUT);
+    pinMode(rstPin_ , OUTPUT);
+    digitalWrite(rstPin_, HIGH);
 }
 
 void Stepper::rotate(int degrees, bool dir)

@@ -7,9 +7,10 @@
 #include "microstepper.h"
 
 I2C_Comm &i2c = I2C_Comm::getInstance();
-const int stepPin = 6; 
-const int dirPin = 5; 
-Stepper stepper1(stepPin, dirPin); //create stepper object
+const int stepPin = 13; 
+const int dirPin = 12; 
+const int rstPin = 11;
+Stepper stepper1(stepPin, dirPin, rstPin); //create stepper object
 MainServo mainServo(9);
 Microstepper micro1(42, 500, {3, 11, 9, 10});
 Microstepper micro2(42, 50, {4, 6, 7, 8});
@@ -26,9 +27,12 @@ void setup() {
   stepper1.begin();
   mainServo.begin();
 }
-
+int c = 0;
 void loop() {
-  delay(100);
+  //delay(100);
+  if (c==0){
+    stepper1.rotate(180, 1);
+  }
 }
 
 void processCommand(int commandNumber, int value){

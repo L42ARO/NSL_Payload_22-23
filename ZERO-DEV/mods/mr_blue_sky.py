@@ -1,10 +1,11 @@
 import adafruit_bno055
 import board
-import vector_perkins as vp
+import mods.vector_perkins as vp
 import time
 import math
-import talking_heads as talking_heads
-import reset_arduino as reset_arduino
+import mods.talking_heads as talking_heads
+import mods.reset_arduino as reset_arduino
+import mods.MoveServo as ms
 
 i2c = board.I2C()  # uses board.SCL and board.SDA
 rot_tresh = 1
@@ -107,19 +108,36 @@ def moveToHole(waitTime=5):
             #use vector perkins to get rotation angle
             #if angle is less than treshhold no need to rotate, break loop
             #else rotate
-            angle = int(vp.GetTravelAngle()*180 / math.pi)
-            print(f"Travel Angle: {angle}")
+            travelAngle, holeAngle = vp.GetTravelAngle()
+            angle = int(travelAngle*180 / math.pi)
+            holeAngleDeg = int(holeAngle*180/math.pi)
+            print(f"Travel Angle: {travelAngle} rad : {angle} deg")
+            print(f"ChosenHole (relative to base IMU): {holeAngle} rad : {holeAngleDeg} deg")
             if (abs(angle) < 2):
                 break
-            talking_heads.talk(2, angle)
+            #talking_heads.talk(2, angle)
             time.sleep(waitTime)
         except Exception as e:
             reset_arduino.reset()
-            print(f"{i}th loop:  Exception occured. {e}  Tyring again...")
+            print(f"{i}th loop:  Exception occured. {e}  \nTyring again...")
 
 
     #angle = computeOrientation()
     #talking_heads.talk('2-'+str(angle))
+
+def MoveGimbal(servo):
+    for i in range(3):
+        try:
+            (gravity1, gravity2)= getAcceleration()
+            vp.imu2_data.setGravity([gravity2[0], gravity2[1], gravity2[2]])
+            gimbal_angle = vp.GetGimbalTravelAngle()
+            angle = int(gimbal_angle*180/math.pi)
+            fAngle = 90+angle
+            ms.rotate(servo, 90, fAngle)
+        except Exception as e:
+            reset_arduino.reset()
+            print(f'{i}th loop MoveGimbal: Excepion occured: {e} \n Trying again')
+        
 
 
 if __name__=="__main__":

@@ -1,4 +1,4 @@
-import cv2
+#import cv2
 from picamera import PiCamera
 from time import sleep
 from datetime import datetime
@@ -29,7 +29,7 @@ def SeriesOfPics():
     for i in range(3):
         TakePhoto(i)
 
-def add_timestamp(img):
+'''def add_timestamp(img):
     # Get current time
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Add timestamp to the upper right corner of the image
@@ -45,7 +45,7 @@ def rotate_image(img, degree):
     # Perform rotation
     img_rotated = cv2.warpAffine(img,M,(cols,rows))
     # Return rotated image
-    return img_rotated
+    return img_rotated'''
 
 
 if __name__=="__main__":
