@@ -2,6 +2,8 @@ import cv2
 from picamera import PiCamera
 from time import sleep
 from datetime import datetime
+import mods.talking_heads as talking_heads
+
 run = True
 try:
     camera = PiCamera()
@@ -71,10 +73,10 @@ def rotate_image(img, degree):
 
 def operateCam (command):
     if command == "A1":
-        print("")
+        talking_heads.talk(4, -60)
         #turn_camera_right60()
     elif command == "B2":
-        print("")
+        talking_heads.talk(4, 60)
         #turn_camera_left60()
     elif command == "C3":
         print("")
