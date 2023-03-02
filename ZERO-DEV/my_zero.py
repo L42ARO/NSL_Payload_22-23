@@ -37,4 +37,4 @@ if __name__=="__main__":
 
         bullseye.SeriesOfPics()
     except Exception as e:
-        if(g[gp]])
+        print('failed')
