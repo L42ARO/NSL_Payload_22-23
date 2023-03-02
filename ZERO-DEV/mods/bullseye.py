@@ -5,6 +5,9 @@ from datetime import datetime
 import mods.talking_heads as talking_heads
 
 run = True
+grayScale = False 
+photo_id = 0
+
 try:
     camera = PiCamera()
 except:
@@ -22,16 +25,20 @@ def TakePhoto(a):
         camera.capture(imagename)
         camera.stop_preview()
         print(imagename)
+        if (grayScale):
+            convert_to_grayscale(imagename) 
     except Exception as e:
         print(f'Error taking photo: {e}')
         run=False
+
 def SeriesOfPics():
     global run
     if run == False: return
     for i in range(3):
         TakePhoto(i)
 
-def take_grayscale_picture(camera):
+def take_grayscale_picture():
+    global camera
     # Set camera resolution and color mode to grayscale
     camera.resolution = (640, 480)
     camera.color_effects = (128, 128)
@@ -48,10 +55,10 @@ def take_grayscale_picture(camera):
     return gray
 
 def convert_to_grayscale(image):
-    # Convert image to grayscale
-    gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+    # Overwrite the image to grayscale
+    cv2.imwrite(image, cv2.cvtColor(image, cv2.COLOR_RGB2GRAY))
 
-    return gray
+    
 
 def add_timestamp(img):
     # Get current time
@@ -79,13 +86,15 @@ def operateCam (command):
         talking_heads.talk(4, 60)
         #turn_camera_left60()
     elif command == "C3":
-        print("")
+        global photo_id
+        TakePhoto("gray_" if grayScale else "regular_" + photo_id)
+        photo_id += 1
         #take_picture()
     elif command == "D4":
-        print("")
+        grayScale = True
         #set_camera_mode("G")
     elif command == "E5":
-        print("")
+        grayScale = False
         #set_camera_mode("C")
     elif command == "F6":
         print("")
