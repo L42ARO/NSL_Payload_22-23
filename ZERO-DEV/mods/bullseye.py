@@ -69,7 +69,7 @@ def rotate_image(img, degree):
     # Perform rotation
     img_rotated = cv2.warpAffine(img,M,(cols,rows))
     # Return rotated image
-    return img_rotated'''
+    return img_rotated
 
 def operateCam (command):
     if command == "A1":
