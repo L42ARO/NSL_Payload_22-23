@@ -11,7 +11,7 @@ const int stepPin = 6;
 const int dirPin = 5; 
 Stepper stepper1(stepPin, dirPin); //create stepper object
 MainServo mainServo(9);
-Microstepper micro(42, 500, {3, 11, 9, 10});
+Microstepper micro(42, 500, {3, 11, 9, 10});    // purpose, orange yellow, green or blue, black, red, white
 
 void processCommand(int commandNumber, int value);
 
