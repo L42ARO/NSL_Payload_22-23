@@ -1,4 +1,5 @@
-#import cv2
+import cv2
+import numpy as np
 from picamera import PiCamera
 from time import sleep
 from datetime import datetime
@@ -26,7 +27,8 @@ def TakePhoto(a):
         camera.stop_preview()
         print(imagename)
         if (grayScale):
-            convert_to_grayscale(imagename) 
+            convert_to_grayscale(imagename)
+        return imagename 
     except Exception as e:
         print(f'Error taking photo: {e}')
         run=False
@@ -78,13 +80,41 @@ def rotate_image(img, degree):
     # Return rotated image
     return img_rotated
 
+def rotate_existing_image(image_path, degree):
+    # Load existing image
+    img = cv2.imread(image_path)
+    # Get image size
+    rows,cols = img.shape[:2]
+    # Define rotation matrix
+    M = cv2.getRotationMatrix2D((cols/2,rows/2),degree,1)
+    # Perform rotation
+    img_rotated = cv2.warpAffine(img,M,(cols,rows))
+    # Save rotated image
+    cv2.imwrite(image_path, img_rotated)
+
+def apply_filter(image_path, kernel):
+    # Load existing image
+    img = cv2.imread(image_path)
+    # Apply filter using filter2D function
+    filtered_img = cv2.filter2D(img, -1, kernel)
+    # Save filtered image
+    cv2.imwrite('filtered_image.jpg', filtered_img)
+
+def apply_edgedet_filter(image_path):
+    kernel = np.array([[-1,-1,-1],
+                   [-1, 8,-1],
+                   [-1,-1,-1]])
+    apply_filter(image_path, kernel)
+
+
+
 def operateCam (command):
     if command == "A1":
-        talking_heads.talk(4, -60)
-        #turn_camera_right60()
+        #turns camera right 60 degrees
+        talking_heads.talk(4, -60) #case 4 microstepper gives value to rotate
     elif command == "B2":
-        talking_heads.talk(4, 60)
-        #turn_camera_left60()
+        #turns camera left 60 degrees
+        talking_heads.talk(4, 60) #case 4 microstepper, pass rotation value
     elif command == "C3":
         global photo_id
         TakePhoto("gray_" if grayScale else "regular_" + photo_id)
@@ -97,8 +127,7 @@ def operateCam (command):
         grayScale = False
         #set_camera_mode("C")
     elif command == "F6":
-        print("")
-        #rotate_image180()
+        rotate_existing_image(photo_id, 180)
     elif command == "G7":
         print("")
         #apply_filter()
@@ -109,5 +138,12 @@ def operateCam (command):
         print("Error: Invalid Input.")
 
 if __name__=="__main__":
-    for i in range(3):
-        TakePhoto(i)
+    behelit = TakePhoto(photo_id)
+    apply_edgedet_filter(behelit)
+    photo_id += 1
+    grayScale=True
+    TakePhoto("gray_" if grayScale else "regular_" + photo_id)
+    photo_id += 1
+    Xena = TakePhoto("gray_" if grayScale else "regular_" + photo_id)
+    rotate_existing_image(Xena)
+    photo_id += 1     
