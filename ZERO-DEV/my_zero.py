@@ -13,6 +13,7 @@ parser = argparse.ArgumentParser(description='ZERO-DEV')
 parser.add_argument('--test', action='store_true', help='Run test. Will not run the await loop.')
 args = parser.parse_args()
 
+#Define Pins
 buzzerPin = 10
 Servo1Pin = 19
 Servo2Pin = 12
