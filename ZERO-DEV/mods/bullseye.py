@@ -20,8 +20,6 @@ def writeDB(imagename):
     with open("index.txt", "a") as db:
         db.write(f"{imagename}\n")
         
-    
-
 def TakePhoto():
     global run, photo_id
     if run==False: return
