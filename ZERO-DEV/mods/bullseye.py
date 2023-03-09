@@ -22,12 +22,12 @@ def TakePhoto(a):
         global camera
         camera.start_preview()
         sleep(2)
-        imagename='./image'+str(a)+'.jpg'
+        imagename='./og-pics/'+str(a)+'.jpg'
         camera.capture(imagename)
         camera.stop_preview()
         print(imagename)
-        if (grayScale):
-            convert_to_grayscale(imagename)
+        #if (grayScale):
+        #    convert_to_grayscale(imagename)
         return imagename 
     except Exception as e:
         print(f'Error taking photo: {e}')
