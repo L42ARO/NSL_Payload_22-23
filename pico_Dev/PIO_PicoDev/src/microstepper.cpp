@@ -16,7 +16,7 @@ const int Microstepper::rotation_bitmap[8][4] = {
 void Microstepper::rotate(int angle)
 {
   bool clockwise{ angle < 0 };
-  int steps{  angle / 360 * full_rot_count };
+  int steps{  angle / 360.0 * full_rot_count };
 
   if (current_idx == -1) 
     current_idx = clockwise ? 0 : 7;
