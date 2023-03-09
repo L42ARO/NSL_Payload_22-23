@@ -35,6 +35,8 @@ void I2C_Comm::receiveEvent(int howMany) {
         value*=10;
         value += valueBuffer[i];
     }   
+    Serial.println(howMany);
+    delay(1000);
 
     //int commandNumber = command.substring(0, command.indexOf("_")).toInt();
     //int value = command.substring(command.indexOf("_") + 1).toInt();

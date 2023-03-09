@@ -21,12 +21,14 @@ void Stepper::rotate(int degrees, bool dir)
         Serial.println("Illogical degree input given");
         return;
     }
-    int steps = double((degrees*200) / 360);
+    double steps = double(degrees/360.0)*200.0; // 200 steps per rotation  
+    if(steps<0) steps = steps * -1;
+    Serial.println("Steps: " + String(steps));
     if(dir) digitalWrite(dirPin_,HIGH); // Enables the motor to move in a particular direction
     else digitalWrite(dirPin_, LOW);
   
   // Makes 200 pulses for making one full cycle rotation
-    for(int x = 0; x < steps; x++) {
+    for(double x = 0; x < steps; x++) {
         digitalWrite(stepPin_, HIGH); 
         delayMicroseconds(microDelay); 
         digitalWrite(stepPin_, LOW); 

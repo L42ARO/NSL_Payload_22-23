@@ -19,12 +19,20 @@ def getAcceleration():
         accel2 = sensor2.acceleration
         
         if (None not in accel and None not in accel2):
+            #Check if the accelerometer is measuring 0,0,0
+            if(accel[0] == 0 and accel[1] == 0 and accel[2] == 0):
+                print("sensor1 measuring 0,0,0")
+                continue
+            if(accel2[0] == 0 and accel2[1] == 0 and accel2[2] == 0):
+                print("sensor2 measuring 0,0,0")
+                continue
             break
         if (None in accel):
             print("sensor1 measuring None")
         if (None in accel2):
             print("sensor2 measuring None")
         time.sleep(0.5)
+
 
     print(f"accel (x,y,z): {accel}")
     print(f'accel2; {accel2}')
@@ -115,7 +123,7 @@ def moveToHole(waitTime=5):
             print(f"ChosenHole (relative to base IMU): {holeAngle} rad : {holeAngleDeg} deg")
             if (abs(angle) < 2):
                 break
-            #talking_heads.talk(2, angle)
+            talking_heads.talk(2, angle)
             time.sleep(waitTime)
         except Exception as e:
             reset_arduino.reset()
@@ -125,15 +133,15 @@ def moveToHole(waitTime=5):
     #angle = computeOrientation()
     #talking_heads.talk('2-'+str(angle))
 
-def MoveGimbal(servo):
-    for i in range(3):
+def MoveGimbal(servo, startAngle):
+    for i in range(100):
         try:
             (gravity1, gravity2)= getAcceleration()
             vp.imu2_data.setGravity([gravity2[0], gravity2[1], gravity2[2]])
-            gimbal_angle = vp.GetGimbalTravelAngle()
+            gimbal_angle = vp.GetGimbalTravelAngle(startAngle)
             angle = int(gimbal_angle*180/math.pi)
-            fAngle = 90+angle
-            ms.rotate(servo, 90, fAngle)
+            ms.rotate(servo, 90, angle)
+            break
         except Exception as e:
             reset_arduino.reset()
             print(f'{i}th loop MoveGimbal: Excepion occured: {e} \n Trying again')
@@ -141,4 +149,4 @@ def MoveGimbal(servo):
 
 
 if __name__=="__main__":
-    moveToHole(1)
+    moveToHole(4)
