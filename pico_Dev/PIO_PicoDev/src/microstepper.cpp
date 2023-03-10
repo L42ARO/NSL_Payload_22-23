@@ -16,14 +16,14 @@ const int Microstepper::rotation_bitmap[8][4] = {
 void Microstepper::rotate(int angle)
 {
   bool clockwise{ angle < 0 };
-  int steps{  angle / 360.0 * full_rot_count };
+  double steps{  angle / 360.0 * full_rot_count };
 
   if (current_idx == -1) 
     current_idx = clockwise ? 0 : 7;
   else
     clockwise ? ++current_idx : --current_idx;
 
-  for (int i{0}; i < steps; ++i) {
+  for (double i{0}; i < steps; ++i) {
     digitalWrite(pins.A_plus, rotation_bitmap[current_idx][0]);
     digitalWrite(pins.A_minus, rotation_bitmap[current_idx][1]);
     digitalWrite(pins.B_plus, rotation_bitmap[current_idx][2]);

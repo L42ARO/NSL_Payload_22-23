@@ -17,20 +17,26 @@ except:
     print("Camera error")
     run=False
 
-def TakePhoto(a):
-    global run
+# appends the filename to index.txt
+def writeDB(imagename):
+    with open("index.txt", "a") as db:
+        db.write(f"{imagename}\n")
+        
+def TakePhoto():
+    global run, photo_id
     if run==False: return
     try:
         global camera
         camera.start_preview()
         sleep(2)
-        imagename='./og-pics/'+str(a)+'.jpg'
+        timestamp = str(datetime.now().timestamp()).replace('.', '_')
+        imagename='./og-pics/'+str(photo_id)+'_'+timestamp+'.jpg'
+        photo_id += 1
         camera.capture(imagename)
         camera.stop_preview()
-        print(imagename)
-        #if (grayScale):
-        #    convert_to_grayscale(imagename)
-        return imagename 
+        writeDB(imagename)
+        print("Photo taken.  Filename: " + imagename)
+    
     except Exception as e:
         print(f'Error taking photo: {e}')
         run=False
@@ -76,7 +82,7 @@ def post_process():
 
 def add_timestamp(img):
     # Get current time
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Add timestamp to the upper right corner of the image
     cv2.putText(img, timestamp, (img.shape[1]-150,30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255), 2, cv2.LINE_AA)
     # Return the image
@@ -126,9 +132,7 @@ def operateCam (command):
         #turns camera left 60 degrees
         talking_heads.talk(4, 60) #case 4 microstepper, pass rotation value
     elif command == "C3":
-        global photo_id
-        TakePhoto("gray_" if grayScale else "regular_" + photo_id)
-        photo_id += 1
+        TakePhoto()
         #take_picture()
     elif command == "D4":
         grayScale = True
