@@ -47,7 +47,7 @@ def SeriesOfPics():
     global run
     if run == False: return
     for i in range(3):
-        TakePhotoi)
+        TakePhoto(i)
 
 def take_grayscale_picture():
     global camera
@@ -69,17 +69,18 @@ def take_grayscale_picture():
 def convert_to_grayscale(i):
     # Overwrite the image to grayscale
     #cv2.imwrite(image, cv2.cvtColor(image, cv2.COLOR_RGB2GRAY))
-    image = Image.open(i)
-    gray_image = image.convert("L")
-    gray_image.save('./mission/grayscale.jpg')
+    gray_image = i.convert("L")
+    return gray_image
 
 def post_process():
     path = os.path.realpath(__file__)
     dir = os.path.dirname(path)
     with open(dir+'/og-pics/index.txt', 'r') as f:
         last_image = f.readlines()[-1]
+    image = Image.open(last_image)
     if(grayScale):
-        convert_to_grayscale(last_image)
+        image=convert_to_grayscale(image)
+    image.save('./mission/processed_image.jpg')
         
 def add_timestamp(img):
     # Get current time
