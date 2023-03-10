@@ -4,6 +4,8 @@ from picamera import PiCamera
 from time import sleep
 from datetime import datetime
 import mods.talking_heads as talking_heads
+import os
+from PIL import Image
 
 run = True
 grayScale = False 
@@ -60,7 +62,17 @@ def convert_to_grayscale(image):
     # Overwrite the image to grayscale
     cv2.imwrite(image, cv2.cvtColor(image, cv2.COLOR_RGB2GRAY))
 
-    
+def post_process():
+    path = os.path.realpath(__file__)
+    dir = os.path.dirname(path)
+    dir = dir.replace('mods', 'og-pics')
+    os.chdir(dir)
+    with open('index.txt', 'r') as f:
+        last_image = f.readlines()[-1]
+    if(grayScale):
+        image = Image.open(last_image)
+        gray_image = image.convert("L")
+        gray_image.save('./mission/grayscale.jpg')
 
 def add_timestamp(img):
     # Get current time
@@ -105,8 +117,6 @@ def apply_edgedet_filter(image_path):
                    [-1, 8,-1],
                    [-1,-1,-1]])
     apply_filter(image_path, kernel)
-
-
 
 def operateCam (command):
     if command == "A1":
