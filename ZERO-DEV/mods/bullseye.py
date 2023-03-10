@@ -3,6 +3,7 @@ import numpy as np
 from picamera import PiCamera
 from time import sleep
 from datetime import datetime
+from wand.image import Image 
 import mods.talking_heads as talking_heads
 
 run = True
@@ -60,8 +61,6 @@ def convert_to_grayscale(image):
     # Overwrite the image to grayscale
     cv2.imwrite(image, cv2.cvtColor(image, cv2.COLOR_RGB2GRAY))
 
-    
-
 def add_timestamp(img):
     # Get current time
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -99,6 +98,22 @@ def apply_filter(image_path, kernel):
     filtered_img = cv2.filter2D(img, -1, kernel)
     # Save filtered image
     cv2.imwrite('filtered_image.jpg', filtered_img)
+
+#Requires the Wand package from python
+#May need to edit the file location for function to work as intended
+def distortion():
+    with open('./og-pics/index.txt') as file:
+        #Grabs the last character from the index.txt file
+        imgNum = file.readlines()[-1]
+    #Saves the image for distortion from its original location
+    image = './og-pics/' + str(imgNum) + '.jpg'
+    #Arguments for the distortion to occur
+    args = (0.2, 0.0, 0.0, 1.5)
+    #Distorts image using a barrel distortion
+    with Image(filename = image) as img:
+        img.distort('barrel', args)
+        img.save(filename = './Mission/' + str(imgNum) + '.jpg')
+    print("Barrel distortion has been applied to the image.")
 
 def apply_edgedet_filter(image_path):
     kernel = np.array([[-1,-1,-1],
