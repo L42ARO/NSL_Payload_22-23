@@ -5,6 +5,8 @@ from time import sleep
 from datetime import datetime
 from wand.image import Image 
 import mods.talking_heads as talking_heads
+import os
+from PIL import Image
 
 run = True
 grayScale = False 
@@ -16,20 +18,28 @@ except:
     print("Camera error")
     run=False
 
-def TakePhoto(a):
-    global run
+# appends the filename to index.txt
+def writeDB(imagename):
+    with open("index.txt", "a") as db:
+        db.write(f"{imagename}\n")
+        
+def TakePhoto():
+    global run, photo_id
     if run==False: return
     try:
         global camera
         camera.start_preview()
         sleep(2)
-        imagename='./og-pics/'+str(a)+'.jpg'
+        path = os.path.realpath(__file__)   # __file__ = absolute path of myzero.py
+        dir = os.path.dirname(path)
+        timestamp = str(datetime.now().timestamp()).replace('.', '_')
+        imagename = os.path.join(dir, "og-pics", str(photo_id)+'_'+timestamp+'.jpg')
+        photo_id += 1
         camera.capture(imagename)
         camera.stop_preview()
-        print(imagename)
-        #if (grayScale):
-        #    convert_to_grayscale(imagename)
-        return imagename 
+        writeDB(imagename)
+        print("Photo taken.  Filename: " + imagename)
+    
     except Exception as e:
         print(f'Error taking photo: {e}')
         run=False
@@ -38,7 +48,7 @@ def SeriesOfPics():
     global run
     if run == False: return
     for i in range(3):
-        TakePhoto(i)
+        TakePhoto()
 
 def take_grayscale_picture():
     global camera
@@ -57,13 +67,24 @@ def take_grayscale_picture():
 
     return gray
 
-def convert_to_grayscale(image):
+def convert_to_grayscale(i):
     # Overwrite the image to grayscale
-    cv2.imwrite(image, cv2.cvtColor(image, cv2.COLOR_RGB2GRAY))
+    #cv2.imwrite(image, cv2.cvtColor(image, cv2.COLOR_RGB2GRAY))
+    image = Image.open(i)
+    gray_image = image.convert("L")
+    gray_image.save('./mission/grayscale.jpg')
 
+def post_process():
+    path = os.path.realpath(__file__)
+    dir = os.path.dirname(path)
+    with open(dir+'/og-pics/index.txt', 'r') as f:
+        last_image = f.readlines()[-1]
+    if(grayScale):
+        convert_to_grayscale(last_image)
+        
 def add_timestamp(img):
     # Get current time
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Add timestamp to the upper right corner of the image
     cv2.putText(img, timestamp, (img.shape[1]-150,30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255), 2, cv2.LINE_AA)
     # Return the image
@@ -121,8 +142,6 @@ def apply_edgedet_filter(image_path):
                    [-1,-1,-1]])
     apply_filter(image_path, kernel)
 
-
-
 def operateCam (command):
     if command == "A1":
         #turns camera right 60 degrees
@@ -131,9 +150,7 @@ def operateCam (command):
         #turns camera left 60 degrees
         talking_heads.talk(4, 60) #case 4 microstepper, pass rotation value
     elif command == "C3":
-        global photo_id
-        TakePhoto("gray_" if grayScale else "regular_" + photo_id)
-        photo_id += 1
+        TakePhoto()
         #take_picture()
     elif command == "D4":
         grayScale = True
