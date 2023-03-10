@@ -47,7 +47,7 @@ def SeriesOfPics():
     global run
     if run == False: return
     for i in range(3):
-        TakePhotoi)
+        TakePhoto()
 
 def take_grayscale_picture():
     global camera
