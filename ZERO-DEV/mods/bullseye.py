@@ -29,8 +29,10 @@ def TakePhoto():
         global camera
         camera.start_preview()
         sleep(2)
+        path = os.path.realpath(__file__)   # __file__ = absolute path of myzero.py
+        dir = os.path.dirname(path)
         timestamp = str(datetime.now().timestamp()).replace('.', '_')
-        imagename='./og-pics/'+str(photo_id)+'_'+timestamp+'.jpg'
+        imagename = os.path.join(dir, "og-pics", str(photo_id)+'_'+timestamp+'.jpg')
         photo_id += 1
         camera.capture(imagename)
         camera.stop_preview()
@@ -45,7 +47,7 @@ def SeriesOfPics():
     global run
     if run == False: return
     for i in range(3):
-        TakePhoto(i)
+        TakePhotoi)
 
 def take_grayscale_picture():
     global camera
