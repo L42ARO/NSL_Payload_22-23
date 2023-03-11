@@ -1,10 +1,11 @@
-import cv2
+import json
 import numpy as np
 from picamera import PiCamera
 from time import sleep
 from datetime import datetime
 #from wand.image import Image 
 import mods.talking_heads as talking_heads
+from mods.utils import Database
 import os
 from PIL import Image
 
@@ -28,18 +29,13 @@ mission_folder = os.path.join(folder_path, mission_folder)
 final_folder = os.path.join(folder_path, final_folder)
 
 #Setting up the camera
-global camera
+global camera, og_images_db, mission_db, final_db
 try:
     camera = PiCamera()
 except:
     print("Camera error")
     run=False
 
-# appends the filename to index.txt
-def writeDB(imagename):
-    with open("index.txt", "a") as db:
-        db.write(f"{imagename}\n")
-        
 def TakePhoto():
     global run, photo_id
     if run==False:
@@ -49,14 +45,16 @@ def TakePhoto():
         global camera
         camera.start_preview()
         sleep(2)
-        path = os.path.realpath(__file__)   # __file__ = absolute path of myzero.py
-        dir = os.path.dirname(path)
-        timestamp = str(datetime.now().timestamp()).replace('.', '_')
-        imagename = os.path.join(dir, "og-pics", str(photo_id)+'_'+timestamp+'.jpg')
+        timestamp = datetime.now().timestamp()
+        timestr = str(datetime.now().timestamp()).replace('.', '_')
+        imagename = os.path.join(og_images_folder, str(photo_id)+'_'+timestr+'.jpg')
         photo_id += 1
         camera.capture(imagename)
         camera.stop_preview()
-        writeDB(imagename)
+
+        db_entry = {"name": imagename, "timestamp": timestamp}
+        og_images_db.add_entry(db_entry)
+
         print("Photo taken.  Filename: " + imagename)
     
     except Exception as e:
@@ -64,46 +62,31 @@ def TakePhoto():
         run=False
 
 def SeriesOfPics(sequence):
-    #sequence: array<strings>
+    global og_images_db, mission_db, final_db
+
+    og_images_db = Database(og_images_folder)
+    mission_db = Database(mission_folder)
+    final_db = Database(final_folder)
+
     for cmd in sequence:
         operateCam(cmd)
 
-def take_grayscale_picture():
-    global camera
-    # Set camera resolution and color mode to grayscale
-    camera.resolution = (640, 480)
-    camera.color_effects = (128, 128)
-    camera.start_preview()
-    sleep(2)  # Wait for camera to warm up
-
-    # Capture grayscale image
-    image = np.empty((camera.resolution[1], camera.resolution[0], 3), dtype=np.uint8)
-    camera.capture(image, 'rgb')
-
-    # Convert to grayscale
-    gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
-
-    return gray
-
 def convert_to_grayscale(i):
     # Overwrite the image to grayscale
-    #cv2.imwrite(image, cv2.cvtColor(image, cv2.COLOR_RGB2GRAY))
     gray_image = i.convert("L")
     return gray_image
 
 def post_process():
     try:
-        path = os.path.realpath(__file__)
-        dir = os.path.dirname(path)
-        with open(dir+'/og-pics/index.txt', 'r') as f:
-            last_image = f.readlines()[-1]
-        image = Image.open(last_image)
+        image, name = latestImage(og_images_folder)
         if(grayScale):
             print("Applying grayscale filter")
             image=convert_to_grayscale(image)
         if(filterMode):
             print("Applying distortion filter")
-        image.save('./mission/processed_image.jpg')
+            image = Easy_filter(image)
+        savepath = os.path.join(mission_folder, name)
+        image.save(savepath)
     except Exception as e:
         print(f'Failed to post process: {e}')
         
@@ -111,41 +94,52 @@ def add_timestamp(img):
     # Get current time
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Add timestamp to the upper right corner of the image
-    cv2.putText(img, timestamp, (img.shape[1]-150,30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255), 2, cv2.LINE_AA)
     # Return the image
     return img
-def latestImage(folder):
-    files = os.listdir(folder_path)
-    image_files = [f for f in files if f.endswith('.jpg') or f.endswith('.png')]
-    image_files.sort(key=lambda x: os.path.getmtime(os.path.join(folder_path, x)), reverse=True)
-    latest_image_path = os.path.join(folder_path, image_files[0])
 
-    return Image.open(latest_image_path)
+def latestImage(folder):
+    files = os.listdir(folder)
+    image_files = [f for f in files if f.endswith('.jpg') or f.endswith('.png')]
+    image_files.sort(key=lambda x: os.path.getmtime(os.path.join(folder, x)), reverse=True)
+    latest_image_path = os.path.join(folder_path, image_files[0])
+    image_name = image_files[0]
+    return Image.open(latest_image_path), image_name
         
 def rotate_existing_image():
     try:
-        image = latestImage('mission')
+        image, name = latestImage(mission_folder)
+        rotated=image.rotate(180)
+        #Will overwrite the image
+        savepath= os.path.join(mission_folder, name)
+        rotated.save(savepath)
+
     except Exception as e:
         print(f'Failed to rotate image: {e}')
 
 #Requires the Wand package from python
 #May need to edit the file location for function to work as intended
-def distortion():
-    with open('./og-pics/index.txt') as file:
-        #Grabs the last character from the index.txt file
-        imgNum = file.readlines()[-1]
-    #Saves the image for distortion from its original location
-    image = './og-pics/' + str(imgNum) + '.jpg'
-    #Arguments for the distortion to occur
-    args = (0.2, 0.0, 0.0, 1.5)
-    #Distorts image using a barrel distortion
-    with Image(filename = image) as img:
-        img.distort('barrel', args)
-        img.save(filename = './Mission/' + str(imgNum) + '.jpg')
-    print("Barrel distortion has been applied to the image.")
+#def distortion():
+#    with open('./og-pics/index.txt') as file:
+#        #Grabs the last character from the index.txt file
+#        imgNum = file.readlines()[-1]
+#    #Saves the image for distortion from its original location
+#    image = './og-pics/' + str(imgNum) + '.jpg'
+#    #Arguments for the distortion to occur
+#    args = (0.2, 0.0, 0.0, 1.5)
+#    #Distorts image using a barrel distortion
+#    with Image(filename = image) as img:
+#        img.distort('barrel', args)
+#        img.save(filename = './Mission/' + str(imgNum) + '.jpg')
+#    print("Barrel distortion has been applied to the image.")
+
+#dubious type of gaming out here
+def Easy_filter(image):
+    from PIL.ImageFilter import(CONTOUR)
+    filtered_image = image.filter(CONTOUR)
+    return filtered_image
 
 def operateCam (command:str):
-    global grayScale
+    global grayScale, filterMode
     print(f'Executing {command}: ')
     if command == "A1":
         #turns camera right 60 degrees
