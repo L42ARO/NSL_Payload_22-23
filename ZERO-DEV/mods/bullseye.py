@@ -38,6 +38,13 @@ except:
 
 def TakePhoto():
     global run, photo_id
+    timestamp = str(datetime.now().timestamp())
+    timestr = timestamp.replace('.', '_')
+    imagename = str(photo_id)+'_'+timestr+'.jpg'
+    imagepath = os.path.join(og_images_folder, imagename)
+    db_entry = {"name": imagename, "path":imagepath, "timestamp": timestamp}
+    og_images_db.add_entry(db_entry)
+
     if run==False:
         print("Camera failed to initialize")
         return
@@ -45,17 +52,12 @@ def TakePhoto():
         global camera
         camera.start_preview()
         sleep(2)
-        timestamp = datetime.now().timestamp()
-        timestr = str(datetime.now().timestamp()).replace('.', '_')
-        imagename = os.path.join(og_images_folder, str(photo_id)+'_'+timestr+'.jpg')
         photo_id += 1
-        camera.capture(imagename)
+        camera.capture(imagepath)
         camera.stop_preview()
 
-        db_entry = {"name": imagename, "timestamp": timestamp}
-        og_images_db.add_entry(db_entry)
 
-        print("Photo taken.  Filename: " + imagename)
+        print("Photo taken.  Filename: " + imagepath)
     
     except Exception as e:
         print(f'Error taking photo: {e}')
@@ -78,14 +80,14 @@ def convert_to_grayscale(i):
 
 def post_process():
     try:
-        image, name = latestImage(og_images_folder)
+        image, imgObj = latestImage(og_images_db)
         if(grayScale):
             print("Applying grayscale filter")
             image=convert_to_grayscale(image)
         if(filterMode):
             print("Applying distortion filter")
             image = Easy_filter(image)
-        savepath = os.path.join(mission_folder, name)
+        savepath = os.path.join(mission_folder, imgObj["name"])
         image.save(savepath)
     except Exception as e:
         print(f'Failed to post process: {e}')
@@ -97,21 +99,27 @@ def add_timestamp(img):
     # Return the image
     return img
 
-def latestImage(folder):
-    files = os.listdir(folder)
-    image_files = [f for f in files if f.endswith('.jpg') or f.endswith('.png')]
-    image_files.sort(key=lambda x: os.path.getmtime(os.path.join(folder, x)), reverse=True)
-    latest_image_path = os.path.join(folder_path, image_files[0])
-    image_name = image_files[0]
-    return Image.open(latest_image_path), image_name
+def latestImage(db:Database):
+    #files = os.listdir(folder)
+    #image_files = [f for f in files if f.endswith('.jpg') or f.endswith('.png')]
+    #image_files.sort(key=lambda x: os.path.getmtime(os.path.join(folder, x)), reverse=True)
+    #latest_image_path = os.path.join(folder_path, image_files[0])
+    #image_name = image_files[0]
+    #return Image.open(latest_image_path), image_name
+    data = db.data
+    sorted_data = sorted(data, key=lambda x: x['timestamp'], reverse=True)
+    latest_obj = sorted_data[0]
+    latest_path = latest_obj["path"]
+    return Image.open(latest_path), latest_obj
+
         
 def rotate_existing_image():
     try:
-        image, name = latestImage(mission_folder)
+        image, jsonObj = latestImage(mission_db)
         rotated=image.rotate(180)
         #Will overwrite the image
-        savepath= os.path.join(mission_folder, name)
-        rotated.save(savepath)
+        #savepath= os.path.join(mission_folder, jsonObj["name"])
+        rotated.save(jsonObj["path"])
 
     except Exception as e:
         print(f'Failed to rotate image: {e}')
@@ -163,7 +171,7 @@ def operateCam (command:str):
         #set_camera_mode("C")
     elif command == "F6":
         print("Rotate last image by 180 degrees")
-        rotate_existing_image(photo_id, 180)
+        rotate_existing_image()
     elif command == "G7":
         print("Changing to filter mode")
         filterMode = True
