@@ -3,15 +3,32 @@ import numpy as np
 from picamera import PiCamera
 from time import sleep
 from datetime import datetime
-from wand.image import Image 
+#from wand.image import Image 
 import mods.talking_heads as talking_heads
 import os
 from PIL import Image
 
 run = True
 grayScale = False 
+filterMode = False
 photo_id = 0
 
+#Declaring folder names
+og_images_folder = "og-images"
+mission_folder = "mission"
+final_folder = "final"
+
+#Processing path depending on current directory being called from
+folder_path = os.path.basename(os.getcwd())
+if not (os.path.basename(os.getcwd()) == 'mods'):
+    folder_path = os.path.join(folder_path, 'mods')
+
+og_images_folder = os.path.join(folder_path, og_images_folder)
+mission_folder = os.path.join(folder_path, mission_folder)
+final_folder = os.path.join(folder_path, final_folder)
+
+#Setting up the camera
+global camera
 try:
     camera = PiCamera()
 except:
@@ -25,7 +42,9 @@ def writeDB(imagename):
         
 def TakePhoto():
     global run, photo_id
-    if run==False: return
+    if run==False:
+        print("Camera failed to initialize")
+        return
     try:
         global camera
         camera.start_preview()
@@ -44,11 +63,10 @@ def TakePhoto():
         print(f'Error taking photo: {e}')
         run=False
 
-def SeriesOfPics():
-    global run
-    if run == False: return
-    for i in range(3):
-        TakePhoto()
+def SeriesOfPics(sequence):
+    #sequence: array<strings>
+    for cmd in sequence:
+        operateCam(cmd)
 
 def take_grayscale_picture():
     global camera
@@ -74,14 +92,20 @@ def convert_to_grayscale(i):
     return gray_image
 
 def post_process():
-    path = os.path.realpath(__file__)
-    dir = os.path.dirname(path)
-    with open(dir+'/og-pics/index.txt', 'r') as f:
-        last_image = f.readlines()[-1]
-    image = Image.open(last_image)
-    if(grayScale):
-        image=convert_to_grayscale(image)
-    image.save('./mission/processed_image.jpg')
+    try:
+        path = os.path.realpath(__file__)
+        dir = os.path.dirname(path)
+        with open(dir+'/og-pics/index.txt', 'r') as f:
+            last_image = f.readlines()[-1]
+        image = Image.open(last_image)
+        if(grayScale):
+            print("Applying grayscale filter")
+            image=convert_to_grayscale(image)
+        if(distortion):
+            print("Applying distortion filter")
+        image.save('./mission/processed_image.jpg')
+    except Exception as e:
+        print(f'Failed to post process: {e}')
         
 def add_timestamp(img):
     # Get current time
@@ -90,36 +114,19 @@ def add_timestamp(img):
     cv2.putText(img, timestamp, (img.shape[1]-150,30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255), 2, cv2.LINE_AA)
     # Return the image
     return img
+def latestImage(folder):
+    files = os.listdir(folder_path)
+    image_files = [f for f in files if f.endswith('.jpg') or f.endswith('.png')]
+    image_files.sort(key=lambda x: os.path.getmtime(os.path.join(folder_path, x)), reverse=True)
+    latest_image_path = os.path.join(folder_path, image_files[0])
 
-def rotate_image(img, degree):
-    # Get image size
-    rows,cols = img.shape[:2]
-    # Define rotation matrix
-    M = cv2.getRotationMatrix2D((cols/2,rows/2),degree,1)
-    # Perform rotation
-    img_rotated = cv2.warpAffine(img,M,(cols,rows))
-    # Return rotated image
-    return img_rotated
-
-def rotate_existing_image(image_path, degree):
-    # Load existing image
-    img = cv2.imread(image_path)
-    # Get image size
-    rows,cols = img.shape[:2]
-    # Define rotation matrix
-    M = cv2.getRotationMatrix2D((cols/2,rows/2),degree,1)
-    # Perform rotation
-    img_rotated = cv2.warpAffine(img,M,(cols,rows))
-    # Save rotated image
-    cv2.imwrite(image_path, img_rotated)
-
-def apply_filter(image_path, kernel):
-    # Load existing image
-    img = cv2.imread(image_path)
-    # Apply filter using filter2D function
-    filtered_img = cv2.filter2D(img, -1, kernel)
-    # Save filtered image
-    cv2.imwrite('filtered_image.jpg', filtered_img)
+    return Image.open(latest_image_path)
+        
+def rotate_existing_image():
+    try:
+        image = latestImage('mission')
+    except Exception as e:
+        print(f'Failed to rotate image: {e}')
 
 #Requires the Wand package from python
 #May need to edit the file location for function to work as intended
@@ -143,40 +150,44 @@ def apply_edgedet_filter(image_path):
                    [-1,-1,-1]])
     apply_filter(image_path, kernel)
 
-def operateCam (command):
+def operateCam (command:str):
+    global grayScale
+    print(f'Executing {command}: ')
     if command == "A1":
         #turns camera right 60 degrees
+        print("Turn camera right 60 deg")
         talking_heads.talk(4, -60) #case 4 microstepper gives value to rotate
     elif command == "B2":
         #turns camera left 60 degrees
+        print("Turn camera left 60 deg")
         talking_heads.talk(4, 60) #case 4 microstepper, pass rotation value
     elif command == "C3":
+        print("Taking photo")
         TakePhoto()
         #take_picture()
     elif command == "D4":
+        print("Changing to grayscale mode")
         grayScale = True
         #set_camera_mode("G")
     elif command == "E5":
+        print("Exiting grayscale mode")
         grayScale = False
         #set_camera_mode("C")
     elif command == "F6":
+        print("Rotate last image by 180 degrees")
         rotate_existing_image(photo_id, 180)
     elif command == "G7":
-        print("")
+        print("Changing to filter mode")
+        filterMode = True
         #apply_filter()
     elif command == "H8":
-        print("")
+        print("Exiting filter mode")
+        filterMode = False
         #remove_filters()
     else:
-        print("Error: Invalid Input.")
+        print("Invalid Input.")
 
 if __name__=="__main__":
-    behelit = TakePhoto(photo_id)
-    apply_edgedet_filter(behelit)
-    photo_id += 1
-    grayScale=True
-    TakePhoto("gray_" if grayScale else "regular_" + photo_id)
-    photo_id += 1
-    Xena = TakePhoto("gray_" if grayScale else "regular_" + photo_id)
-    rotate_existing_image(Xena)
-    photo_id += 1     
+    import contact
+    seq = contact.GetRAFCOSequence()
+    SeriesOfPics(seq)
