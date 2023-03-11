@@ -140,7 +140,8 @@ def MoveGimbal(servo, startAngle):
             vp.imu2_data.setGravity([gravity2[0], gravity2[1], gravity2[2]])
             gimbal_angle = vp.GetGimbalTravelAngle(startAngle)
             angle = int(gimbal_angle*180/math.pi)
-            ms.rotate(servo, 90, angle)
+            servo.rotate(angle)
+            time.sleep(1)
             break
         except Exception as e:
             reset_arduino.reset()

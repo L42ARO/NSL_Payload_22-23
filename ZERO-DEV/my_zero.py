@@ -4,7 +4,7 @@ import mods.happy_landing as happy_landing
 import mods.talking_heads as talking_heads
 #import mods.bullseye as bullseye
 import mods.utils as utils
-import mods.MoveServo as MoveServo
+from mods.MoveServo import ServoMotor
 import mods.contact as contact
 import time
 import argparse
@@ -28,14 +28,18 @@ if __name__=="__main__":
 
         utils.exitListen()
 
-        coverServo = MoveServo.begin(Servo1Pin, True)
-        extenderServo = MoveServo.begin(Servo2Pin,True)
-        gimbalServo = MoveServo.begin(Servo3Pin,True)
+        coverServo = ServoMotor(Servo1Pin)
+        extenderServo = ServoMotor(Servo2Pin)
+        gimbalServo = ServoMotor(Servo3Pin)
+
+        coverServo.rotate(0)
+        extenderServo.rotate(0)
+        gimbalServo.rotate(0)
 
         time.sleep(1)
 
         #Cover the holes
-        MoveServo.rotate(coverServo, 0, 180)
+        coverServo.rotate(180)
 
         if runAwait:
             try:
@@ -48,20 +52,22 @@ if __name__=="__main__":
             time.sleep(1)
 
         #Remove the cover
-        MoveServo.rotate(coverServo, 180, 0)
+        coverServo.rotate(0)
         time.sleep(1)
 
         #Move the extender to the desired hole
         mr_blue_sky.moveToHole(1)
         
         #Extend the extender
-        MoveServo.rotate(extenderServo, 0, 45)
-
+        extenderServo.rotate(180)
+        time.sleep(1)
         #Move the gimbal to the true vertical
         mr_blue_sky.MoveGimbal(gimbalServo, 0)
 
         #Get RAFCO sequence
         seq = contact.GetRAFCOSequence()
-        #bullseye.SeriesOfPics()
+
+        #Take pictures
+        #bullseye.SeriesOfPics(seq)
     except Exception as e:
         print('failed')

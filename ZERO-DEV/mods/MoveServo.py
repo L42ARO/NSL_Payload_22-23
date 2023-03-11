@@ -1,4 +1,32 @@
-from piservo import Servo
+import RPi.GPIO as GPIO
+import time
+
+GPIO.setmode(GPIO.BCM)
+
+class ServoMotor:
+    def __init__(self, pin):
+        # Set up GPIO pin
+        self.pin = pin
+        GPIO.setup(self.pin, GPIO.OUT)
+
+        # Set up PWM signal
+        self.pwm = GPIO.PWM(self.pin, 50)  # 50 Hz frequency
+        self.pwm.start(0)
+
+    def rotate(self, angle):
+        # Convert angle to duty cycle
+        duty_cycle = 2.5 + angle / 18
+
+        # Move servo to specified angle
+        self.pwm.ChangeDutyCycle(duty_cycle)
+        time.sleep(0.75)  # Wait for servo to move
+    
+    #def __del__(self):
+    #    # Clean up GPIO pin
+    #    self.pwm.stop()
+    #    GPIO.cleanup(self.pin)
+
+'''from piservo import Servo
 import board
 import RPi.GPIO as io
 import time
@@ -38,4 +66,4 @@ if __name__ == "__main__":
     bruh2 = begin(pin, True)
     time.sleep(1)
     #rotate(bruh2, 0, 90)
-    
+    '''

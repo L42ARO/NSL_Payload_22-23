@@ -9,7 +9,7 @@ public:
     LinkedListNode * GetNext() const{
         return Next;
     }
-    LinkedListNode * SetNext(LinkedListNode * next){
+    void * SetNext(LinkedListNode * next){
         this->Next=next;
     }
     LinkedListNode * GetPrev() const{
