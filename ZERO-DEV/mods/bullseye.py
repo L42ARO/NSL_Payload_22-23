@@ -1,4 +1,4 @@
-import cv2
+#import cv2
 import numpy as np
 from picamera import PiCamera
 from time import sleep
@@ -130,19 +130,29 @@ def rotate_existing_image():
 
 #Requires the Wand package from python
 #May need to edit the file location for function to work as intended
-def distortion():
-    with open('./og-pics/index.txt') as file:
-        #Grabs the last character from the index.txt file
-        imgNum = file.readlines()[-1]
-    #Saves the image for distortion from its original location
-    image = './og-pics/' + str(imgNum) + '.jpg'
-    #Arguments for the distortion to occur
-    args = (0.2, 0.0, 0.0, 1.5)
-    #Distorts image using a barrel distortion
-    with Image(filename = image) as img:
-        img.distort('barrel', args)
-        img.save(filename = './Mission/' + str(imgNum) + '.jpg')
-    print("Barrel distortion has been applied to the image.")
+#def distortion():
+#    with open('./og-pics/index.txt') as file:
+#        #Grabs the last character from the index.txt file
+#        imgNum = file.readlines()[-1]
+#    #Saves the image for distortion from its original location
+#    image = './og-pics/' + str(imgNum) + '.jpg'
+#    #Arguments for the distortion to occur
+#    args = (0.2, 0.0, 0.0, 1.5)
+#    #Distorts image using a barrel distortion
+#    with Image(filename = image) as img:
+#        img.distort('barrel', args)
+#        img.save(filename = './Mission/' + str(imgNum) + '.jpg')
+#    print("Barrel distortion has been applied to the image.")
+
+#dubious type of gaming out here
+def Easy_filter(image):
+
+    from PIL.ImageFilter import(CONTOUR)
+    filtered_image = image.filter(CONTOUR)
+    return filtered_image
+
+
+
 
 def apply_edgedet_filter(image_path):
     kernel = np.array([[-1,-1,-1],
