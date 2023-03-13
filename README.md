@@ -3,6 +3,8 @@ repository for the nsl payload code for the 2022-2023 competition 🚀
 
 EE/CS MEMBERS
 
+Alvaro Lazaro
+
 Ryotaro Okada
 
 Alessandro Lovadina
