@@ -4,6 +4,7 @@ import math
 import time
 import mods.talking_heads as talking_heads
 import mods.buzzer as buzzer
+import mods.reset_arduino as reset_arduino
 
 i2c = board.I2C()  # uses board.SCL and board.SDA
 sensor = adafruit_bno055.BNO055_I2C(i2c)
@@ -12,11 +13,16 @@ def checkForLanding():
     print("Awaiting launch ...")
     flag = 1
     while(flag == 1):
-        velocity = sensor.linear_acceleration
+        try:
+            velocity = sensor.linear_acceleration
+        except:
+            print("Erro reading velocity, reseting")
+            reset_arduino.reset()
+            continue
         if ((velocity[0] == None) or (velocity[1] == None) or (velocity[2] == None)):
             continue
         magnitude = math.sqrt( (velocity[0] ** 2) + (velocity[1] ** 2) + (velocity[2] ** 2) )
-        print(f"Velocity: {velocity} magnitude: {magnitude}", end="\r")
+        print(f"Velocity: {velocity} magnitude: {magnitude}")
         if (magnitude >= 30):
             flag = 0
         buzzer.updateBuzzer()
