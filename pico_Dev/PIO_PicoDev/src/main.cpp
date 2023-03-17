@@ -26,7 +26,7 @@ void setup() {
   micro.begin();
   stepper1.begin();
   mainServo.begin();
-  micro.rotate(360);
+//  micro.rotate(360);
   delay(1000);
 }
 int c = 0;
