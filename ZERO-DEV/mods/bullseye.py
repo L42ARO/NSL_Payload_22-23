@@ -8,6 +8,7 @@ import mods.talking_heads as talking_heads
 from mods.utils import Database
 import os
 from PIL import Image
+import mods.reset_arduino as reset_arduino
 
 run = True
 grayScale = False 
@@ -20,7 +21,7 @@ mission_folder = "mission"
 final_folder = "final"
 
 #Processing path depending on current directory being called from
-folder_path = os.path.basename(os.getcwd())
+folder_path = os.getcwd()
 if not (os.path.basename(os.getcwd()) == 'mods'):
     folder_path = os.path.join(folder_path, 'mods')
 
@@ -65,13 +66,18 @@ def TakePhoto():
 
 def SeriesOfPics(sequence):
     global og_images_db, mission_db, final_db
-
-    og_images_db = Database(og_images_folder)
-    mission_db = Database(mission_folder)
-    final_db = Database(final_folder)
-
+    try:
+        og_images_db = Database(og_images_folder)
+        mission_db = Database(mission_folder)
+        final_db = Database(final_folder)
+    except Exception as e:
+        print(f'Unable to setup databases:{e}')
     for cmd in sequence:
-        operateCam(cmd)
+        try:
+            operateCam(cmd)
+        except:
+            print(f'Unable to run command {cmd}')
+            reset_arduino.reset()
 
 def convert_to_grayscale(i):
     # Overwrite the image to grayscale
@@ -153,10 +159,12 @@ def operateCam (command:str):
         #turns camera right 60 degrees
         print("Turn camera right 60 deg")
         talking_heads.talk(4, -60) #case 4 microstepper gives value to rotate
+        sleep(3)
     elif command == "B2":
         #turns camera left 60 degrees
         print("Turn camera left 60 deg")
         talking_heads.talk(4, 60) #case 4 microstepper, pass rotation value
+        sleep(3)
     elif command == "C3":
         print("Taking photo")
         TakePhoto()

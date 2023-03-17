@@ -14,25 +14,36 @@ sensor = adafruit_bno055.BNO055_I2C(i2c, 0x29)
 sensor2 = adafruit_bno055.BNO055_I2C(i2c)
 
 def getAcceleration():
+    idx=0
     while True:
+        idx+=1
+        print(f'Sensor reading attempt {idx}')
         accel = sensor.acceleration
         accel2 = sensor2.acceleration
-        
         if (None not in accel and None not in accel2):
             #Check if the accelerometer is measuring 0,0,0
             if(accel[0] == 0 and accel[1] == 0 and accel[2] == 0):
                 print("sensor1 measuring 0,0,0")
-                continue
+                if(idx>=200):
+                    print("Max number of readings reached, using dummy data for sensor 1")
+                    accel=(1,1,1)
+                else:
+                    reset_arduino.reset()
+                    continue
             if(accel2[0] == 0 and accel2[1] == 0 and accel2[2] == 0):
                 print("sensor2 measuring 0,0,0")
-                continue
+                if(idx>=200):
+                    print("Max number of readings reached, using dummy data for sensor 2")
+                    accel2=(1,1,1)
+                else:
+                    reset_arduino.reset()
+                    continue
             break
         if (None in accel):
             print("sensor1 measuring None")
         if (None in accel2):
             print("sensor2 measuring None")
         time.sleep(0.5)
-
 
     print(f"accel (x,y,z): {accel}")
     print(f'accel2; {accel2}')

@@ -2,12 +2,13 @@ import mods.mr_blue_sky as mr_blue_sky
 import mods.buzzer as buzzer
 import mods.happy_landing as happy_landing
 import mods.talking_heads as talking_heads
-#import mods.bullseye as bullseye
+import mods.bullseye as bullseye
 import mods.utils as utils
 from mods.MoveServo import ServoMotor
 import mods.contact as contact
 import time
 import argparse
+import mods.reset_arduino as reset_arduino
 
 parser = argparse.ArgumentParser(description='ZERO-DEV')
 parser.add_argument('--test', action='store_true', help='Run test. Will not run the await loop.')
@@ -21,6 +22,7 @@ Servo3Pin = 18
 runAwait = True
 
 if __name__=="__main__":
+    reset_arduino.reset()
     if args.test:
         runAwait = False
     try:
@@ -48,10 +50,11 @@ if __name__=="__main__":
             except Exception as e:
                 print(f'Failed to check for landing: {e}')
                 print('Executing default landing sequence awaiting for 2 hours')
-                time.sleep(7200)
+                time.sleep(180)
         else:
             time.sleep(1)
-
+            
+        buzzer.startBuzzer()
         #Remove the cover
         coverServo.rotate(0)
         time.sleep(1)
@@ -69,6 +72,6 @@ if __name__=="__main__":
         seq = contact.GetRAFCOSequence()
 
         #Take pictures
-        #bullseye.SeriesOfPics(seq)
+        bullseye.SeriesOfPics(seq)
     except Exception as e:
-        print('failed')
+        print(f'failed: {e}')
