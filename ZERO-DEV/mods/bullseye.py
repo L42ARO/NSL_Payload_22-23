@@ -13,6 +13,7 @@ import mods.reset_arduino as reset_arduino
 run = True
 grayScale = False 
 filterMode = False
+rotateMode = False
 photo_id = 0
 
 #Declaring folder names
@@ -56,8 +57,6 @@ def TakePhoto():
         photo_id += 1
         camera.capture(imagepath)
         camera.stop_preview()
-
-
         print("Photo taken.  Filename: " + imagepath)
     
     except Exception as e:
@@ -93,6 +92,8 @@ def post_process():
         if(filterMode):
             print("Applying distortion filter")
             image = Easy_filter(image)
+        if(rotateMode):
+            image = image.rotate(180)
         savepath = os.path.join(mission_folder, imgObj["name"])
         image.save(savepath)
     except Exception as e:
@@ -119,16 +120,16 @@ def latestImage(db:Database):
     return Image.open(latest_path), latest_obj
 
         
-def rotate_existing_image():
-    try:
-        image, jsonObj = latestImage(mission_db)
-        rotated=image.rotate(180)
-        #Will overwrite the image
-        #savepath= os.path.join(mission_folder, jsonObj["name"])
-        rotated.save(jsonObj["path"])
-
-    except Exception as e:
-        print(f'Failed to rotate image: {e}')
+#def rotate_existing_image():
+#    try:
+#        image, jsonObj = latestImage(mission_db)
+#        rotated=image.rotate(180)
+#        #Will overwrite the image
+#        #savepath= os.path.join(mission_folder, jsonObj["name"])
+#        rotated.save(jsonObj["path"])
+#
+#    except Exception as e:
+#        print(f'Failed to rotate image: {e}')
 
 #Requires the Wand package from python
 #May need to edit the file location for function to work as intended
@@ -153,7 +154,7 @@ def Easy_filter(image):
     return filtered_image
 
 def operateCam (command:str):
-    global grayScale, filterMode
+    global grayScale, filterMode, rotateMode
     print(f'Executing {command}: ')
     if command == "A1":
         #turns camera right 60 degrees
@@ -168,6 +169,7 @@ def operateCam (command:str):
     elif command == "C3":
         print("Taking photo")
         TakePhoto()
+        post_process()
         #take_picture()
     elif command == "D4":
         print("Changing to grayscale mode")
@@ -178,8 +180,11 @@ def operateCam (command:str):
         grayScale = False
         #set_camera_mode("C")
     elif command == "F6":
-        print("Rotate last image by 180 degrees")
-        rotate_existing_image()
+        print("Rotate FOLLOWING image by 180 degrees")
+        if(rotateMode):
+            rotateMode = False
+        else:
+            rotateMode = True
     elif command == "G7":
         print("Changing to filter mode")
         filterMode = True
