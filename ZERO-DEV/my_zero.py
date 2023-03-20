@@ -63,6 +63,8 @@ if __name__=="__main__":
         mr_blue_sky.moveToHole(1)
         
         #Extend the extender
+        gimbalServo.rotate(90)
+        time.sleep(1)
         extenderServo.rotate(180)
         time.sleep(1)
         #Move the gimbal to the true vertical

@@ -17,6 +17,7 @@ rotateMode = False
 photo_id = 0
 
 #Declaring folder names
+#comment out og images and final
 og_images_folder = "og-images"
 mission_folder = "mission"
 final_folder = "final"
@@ -26,6 +27,8 @@ folder_path = os.getcwd()
 if not (os.path.basename(os.getcwd()) == 'mods'):
     folder_path = os.path.join(folder_path, 'mods')
 
+
+#comment out og images and final
 og_images_folder = os.path.join(folder_path, og_images_folder)
 mission_folder = os.path.join(folder_path, mission_folder)
 final_folder = os.path.join(folder_path, final_folder)
@@ -45,6 +48,7 @@ def TakePhoto():
     imagename = str(photo_id)+'_'+timestr+'.jpg'
     imagepath = os.path.join(og_images_folder, imagename)
     db_entry = {"name": imagename, "path":imagepath, "timestamp": timestamp}
+    #comment down below
     og_images_db.add_entry(db_entry)
 
     if run==False:
