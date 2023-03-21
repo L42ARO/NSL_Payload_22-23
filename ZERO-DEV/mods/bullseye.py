@@ -3,7 +3,7 @@ import numpy as np
 from picamera import PiCamera
 from time import sleep
 from datetime import datetime
-from wand.image import Image as wandimage
+#from wand.image import Image as wandimage
 import mods.talking_heads as talking_heads
 #from mods.utils import Database
 import os
@@ -89,7 +89,8 @@ def post_process(imagepath, imagename, timestamp):
             image=convert_to_grayscale(image)
         if(filterMode):
             print("Applying distortion filter")
-            image = distortion(imagepath)
+            #image = distortion(imagepath)
+            image = Easy_filter(image)
         if(rotateMode):
             image = image.rotate(180)
         #apply timestamps
@@ -147,8 +148,9 @@ def distortion(imagepath):
 
 #dubious type of gaming out here
 def Easy_filter(image):
-    from PIL.ImageFilter import(CONTOUR)
-    filtered_image = image.filter(CONTOUR)
+    from PIL.ImageFilter import(EDGE_ENHANCE_MORE)
+    filtered_image = image.filter(EDGE_ENHANCE_MORE)
+    filtered_image = filtered_image.filter(EDGE_ENHANCE_MORE)
     return filtered_image
 
 def operateCam (command:str):
