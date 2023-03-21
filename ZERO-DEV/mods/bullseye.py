@@ -8,6 +8,9 @@ import mods.talking_heads as talking_heads
 from mods.utils import Database
 import os
 from PIL import Image
+from PIL import ImageDraw
+from PIL import ImageFont
+import matplolib.pyplot as plt
 import mods.reset_arduino as reset_arduino
 
 run = True
@@ -104,8 +107,13 @@ def post_process():
         print(f'Failed to post process: {e}')
         
 def add_timestamp(img):
+    font = ImageFont.truetype("arial.ttf", 20)
+    draw = ImageDraw.Draw(img)
     # Get current time
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    draw.text((0,0), timestamp, (255,255,255), font=font)
+    plt.subplot(1,2,1)
+    plt.title("white text")
     # Add timestamp to the upper right corner of the image
     # Return the image
     return img
