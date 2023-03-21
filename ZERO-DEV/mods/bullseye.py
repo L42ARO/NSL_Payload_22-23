@@ -82,28 +82,29 @@ def convert_to_grayscale(i):
 def post_process(imagepath, imagename, timestamp):
     try:
         savepath = os.path.join(mission_folder, imagename)
-
+        imagetext = timestamp 
         image = Image.open(imagepath)
         if(grayScale):
             print("Applying grayscale filter")
             image=convert_to_grayscale(image)
         if(filterMode):
             print("Applying distortion filter")
+            imagetext += "-FILTER:EDGE_ENHANCEMENT"
             #image = distortion(imagepath)
             image = Easy_filter(image)
         if(rotateMode):
             image = image.rotate(180)
-        #apply timestamps
+        image = add_timestamp(image, imagetext)
         image.save(savepath)
         print("Succesful post-processing.")
     except Exception as e:
         print(f'Failed to post process: {e}')
         
-def add_timestamp(img):
+def add_timestamp(img, timestamp):
     font = ImageFont.truetype("arial.ttf", 20)
     draw = ImageDraw.Draw(img)
     # Get current time
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    #timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Add timestamp to the upper left corner of the image
     draw.text((0,0), timestamp, (255,255,255), font=font)
     # Return the image
