@@ -7,7 +7,7 @@ from datetime import datetime
 import mods.talking_heads as talking_heads
 #from mods.utils import Database
 import os
-from PIL import Image, ImageOps, ImageDraw,ImageFont
+from PIL import Image, ImageOps, ImageDraw, ImageFont
 import mods.reset_arduino as reset_arduino
 
 run = True
@@ -101,13 +101,16 @@ def post_process(imagepath, imagename, timestamp):
         print(f'Failed to post process: {e}')
         
 def add_timestamp(img, timestamp):
-    font = ImageFont.truetype("arial.ttf", 20)
-    draw = ImageDraw.Draw(img)
-    # Get current time
-    #timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    # Add timestamp to the upper left corner of the image
-    draw.text((0,0), timestamp, (255,255,255), font=font)
-    # Return the image
+    try:    
+        font = ImageFont.truetype("Roboto-Regular.ttf", 20)
+        draw = ImageDraw.Draw(img)
+        # Get current time
+        #timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        # Add timestamp to the upper left corner of the image
+        draw.text((0,0), timestamp, (255,102,0), font=font)
+        # Return the image
+    except Exception as e:
+        print(f"Failed to write timestamp: {e}")
     return img
 
 #def latestImage(db:Database):
