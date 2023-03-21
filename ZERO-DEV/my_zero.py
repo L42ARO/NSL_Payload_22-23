@@ -46,7 +46,7 @@ if __name__=="__main__":
 
         if runAwait:
             try:
-                happy_landing.checkForLanding()
+                happy_landing.checkForLanding(20)
             except Exception as e:
                 print(f'Failed to check for landing: {e}')
                 print('Executing default landing sequence awaiting for 2 hours')
@@ -74,6 +74,7 @@ if __name__=="__main__":
         seq = contact.GetRAFCOSequence()
 
         #Take pictures
-        bullseye.SeriesOfPics(seq)
+        bullseye.TakePhoto()
+        #bullseye.SeriesOfPics(seq)
     except Exception as e:
         print(f'failed: {e}')

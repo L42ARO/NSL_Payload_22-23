@@ -119,6 +119,7 @@ def moveToHole(waitTime=5):
     
     #enter loop for at least 10 iterations (or until code inside breaks out)
     for i in range(100):
+        print(f'********* {i}th attempt at MoveToHole ')
         try:
             #get gravity vectors from both sensors
             (gravity1, gravity2) = getAcceleration()

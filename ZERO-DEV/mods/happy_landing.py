@@ -8,7 +8,7 @@ import mods.reset_arduino as reset_arduino
 
 i2c = board.I2C()  # uses board.SCL and board.SDA
 sensor = adafruit_bno055.BNO055_I2C(i2c)
-def checkForLanding():
+def checkForLanding(sleeptime = 120):
     buzzer.startBuzzer()
     print("Awaiting launch ...")
     flag = 1
@@ -29,7 +29,7 @@ def checkForLanding():
         time.sleep(0.25)
     buzzer.turnoffBuzzer()
     print("Starting 120 second countdown ...")
-    time.sleep(120)
+    time.sleep(sleeptime)
     print("Checking for having landed ...")
     buzzer.startBuzzer()
     flag = 1

@@ -3,11 +3,11 @@ import numpy as np
 from picamera import PiCamera
 from time import sleep
 from datetime import datetime
-#from wand.image import Image 
+from wand.image import Image as wandimage
 import mods.talking_heads as talking_heads
-from mods.utils import Database
+#from mods.utils import Database
 import os
-from PIL import Image
+from PIL import Image, ImageOps
 import mods.reset_arduino as reset_arduino
 
 run = True
@@ -34,7 +34,7 @@ mission_folder = os.path.join(folder_path, mission_folder)
 final_folder = os.path.join(folder_path, final_folder)
 
 #Setting up the camera
-global camera, og_images_db, mission_db, final_db
+global camera
 try:
     camera = PiCamera()
 except:
@@ -47,9 +47,6 @@ def TakePhoto():
     timestr = timestamp.replace('.', '_')
     imagename = str(photo_id)+'_'+timestr+'.jpg'
     imagepath = os.path.join(og_images_folder, imagename)
-    db_entry = {"name": imagename, "path":imagepath, "timestamp": timestamp}
-    #comment down below
-    og_images_db.add_entry(db_entry)
 
     if run==False:
         print("Camera failed to initialize")
@@ -62,19 +59,13 @@ def TakePhoto():
         camera.capture(imagepath)
         camera.stop_preview()
         print("Photo taken.  Filename: " + imagepath)
-    
+        post_process(imagepath, imagename, timestamp)
+
     except Exception as e:
         print(f'Error taking photo: {e}')
         run=False
 
 def SeriesOfPics(sequence):
-    global og_images_db, mission_db, final_db
-    try:
-        og_images_db = Database(og_images_folder)
-        mission_db = Database(mission_folder)
-        final_db = Database(final_folder)
-    except Exception as e:
-        print(f'Unable to setup databases:{e}')
     for cmd in sequence:
         try:
             operateCam(cmd)
@@ -85,21 +76,25 @@ def SeriesOfPics(sequence):
 def convert_to_grayscale(i):
     # Overwrite the image to grayscale
     gray_image = i.convert("L")
+    gray_image = ImageOps.invert(gray_image)
     return gray_image
 
-def post_process():
+def post_process(imagepath, imagename, timestamp):
     try:
-        image, imgObj = latestImage(og_images_db)
+        savepath = os.path.join(mission_folder, imagename)
+
+        image = Image.open(imagepath)
         if(grayScale):
             print("Applying grayscale filter")
             image=convert_to_grayscale(image)
         if(filterMode):
             print("Applying distortion filter")
-            image = Easy_filter(image)
+            image = distortion(imagepath)
         if(rotateMode):
             image = image.rotate(180)
-        savepath = os.path.join(mission_folder, imgObj["name"])
+        #apply timestamps
         image.save(savepath)
+        print("Succesful post-processing.")
     except Exception as e:
         print(f'Failed to post process: {e}')
         
@@ -110,18 +105,18 @@ def add_timestamp(img):
     # Return the image
     return img
 
-def latestImage(db:Database):
-    #files = os.listdir(folder)
-    #image_files = [f for f in files if f.endswith('.jpg') or f.endswith('.png')]
-    #image_files.sort(key=lambda x: os.path.getmtime(os.path.join(folder, x)), reverse=True)
-    #latest_image_path = os.path.join(folder_path, image_files[0])
-    #image_name = image_files[0]
-    #return Image.open(latest_image_path), image_name
-    data = db.data
-    sorted_data = sorted(data, key=lambda x: x['timestamp'], reverse=True)
-    latest_obj = sorted_data[0]
-    latest_path = latest_obj["path"]
-    return Image.open(latest_path), latest_obj
+#def latestImage(db:Database):
+#    #files = os.listdir(folder)
+#    #image_files = [f for f in files if f.endswith('.jpg') or f.endswith('.png')]
+#    #image_files.sort(key=lambda x: os.path.getmtime(os.path.join(folder, x)), reverse=True)
+#    #latest_image_path = os.path.join(folder_path, image_files[0])
+#    #image_name = image_files[0]
+#    #return Image.open(latest_image_path), image_name
+#    data = db.data
+#    sorted_data = sorted(data, key=lambda x: x['timestamp'], reverse=True)
+#    latest_obj = sorted_data[0]
+#    latest_path = latest_obj["path"]
+#    return Image.open(latest_path), latest_obj
 
         
 #def rotate_existing_image():
@@ -137,19 +132,15 @@ def latestImage(db:Database):
 
 #Requires the Wand package from python
 #May need to edit the file location for function to work as intended
-#def distortion():
-#    with open('./og-pics/index.txt') as file:
-#        #Grabs the last character from the index.txt file
-#        imgNum = file.readlines()[-1]
-#    #Saves the image for distortion from its original location
-#    image = './og-pics/' + str(imgNum) + '.jpg'
-#    #Arguments for the distortion to occur
-#    args = (0.2, 0.0, 0.0, 1.5)
-#    #Distorts image using a barrel distortion
-#    with Image(filename = image) as img:
-#        img.distort('barrel', args)
-#        img.save(filename = './Mission/' + str(imgNum) + '.jpg')
-#    print("Barrel distortion has been applied to the image.")
+def distortion(imagepath):
+    #Arguments for the distortion to occur
+    args = (0.2, 0.0, 0.0, 1.5)
+    #Distorts image using a barrel distortion
+    with wandimage(filename = imagepath) as img:
+        img.distort('barrel', args)
+        img.save(filename = "temp.jpg")
+    print("Barrel distortion has been applied to the image.")
+    return Image.open("temp.jpg")
 
 #dubious type of gaming out here
 def Easy_filter(image):
@@ -173,7 +164,6 @@ def operateCam (command:str):
     elif command == "C3":
         print("Taking photo")
         TakePhoto()
-        post_process()
         #take_picture()
     elif command == "D4":
         print("Changing to grayscale mode")
