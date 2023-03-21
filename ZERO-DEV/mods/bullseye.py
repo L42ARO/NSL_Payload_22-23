@@ -7,9 +7,7 @@ from wand.image import Image as wandimage
 import mods.talking_heads as talking_heads
 #from mods.utils import Database
 import os
-from PIL import Image, ImageOps
-from PIL import ImageDraw
-from PIL import ImageFont
+from PIL import Image, ImageOps, ImageDraw,ImageFont
 import mods.reset_arduino as reset_arduino
 
 run = True
