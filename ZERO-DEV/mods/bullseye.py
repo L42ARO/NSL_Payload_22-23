@@ -10,7 +10,6 @@ import os
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
-import matplolib.pyplot as plt
 import mods.reset_arduino as reset_arduino
 
 run = True
@@ -111,10 +110,8 @@ def add_timestamp(img):
     draw = ImageDraw.Draw(img)
     # Get current time
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # Add timestamp to the upper left corner of the image
     draw.text((0,0), timestamp, (255,255,255), font=font)
-    plt.subplot(1,2,1)
-    plt.title("white text")
-    # Add timestamp to the upper right corner of the image
     # Return the image
     return img
 
