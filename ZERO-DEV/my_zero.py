@@ -75,6 +75,6 @@ if __name__=="__main__":
 
         #Take pictures
         bullseye.TakePhoto()
-        #bullseye.SeriesOfPics(seq)
+        bullseye.SeriesOfPics(seq)
     except Exception as e:
         print(f'failed: {e}')
