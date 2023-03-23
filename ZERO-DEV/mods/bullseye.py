@@ -59,8 +59,7 @@ def TakePhoto():
         camera.capture(imagepath)
         camera.stop_preview()
         print("Photo taken.  Filename: " + imagepath)
-        post_process(imagepath, imagename, timestamp)
-
+        post_process(imagepath, imagename, datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     except Exception as e:
         print(f'Error taking photo: {e}')
         run=False
