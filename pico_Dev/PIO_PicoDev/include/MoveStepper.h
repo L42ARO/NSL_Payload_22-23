@@ -6,7 +6,7 @@ class Stepper
 public:
     Stepper(const int stepPinu, const int dirPinu, const int rstPinu);
     ~Stepper();
-    void rotate(int degrees, bool dir = 1);
+    void rotate(int degrees);
     void begin();
 
 private:

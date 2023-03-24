@@ -14,14 +14,14 @@ void Stepper::begin()
     digitalWrite(rstPin_, HIGH);
 }
 
-void Stepper::rotate(int degrees, bool dir)
+void Stepper::rotate(int degrees)
 //~HinazukiKayo: if a negative value is passed then we would have to change the other function that gives us the final angle to move, to also give back a bool instead of a negative value. Maybe it would be better to just handle it in this function as in if degrees<0 then dir = 1 idfk?
 {
-    if(degrees < 0 || degrees > 360){
-        Serial.println("Illogical degree input given");
-        return;
-    }
+    if(degrees == 0) return;
+    //If degrees negative dir=0 else dir=1
+    bool dir = degrees > 0 ? 1 : 0;
     double steps = double(degrees/360.0)*200.0; // 200 steps per rotation  
+    if(steps==0) return;
     if(steps<0) steps = steps * -1;
     Serial.println("Steps: " + String(steps));
     if(dir) digitalWrite(dirPin_,HIGH); // Enables the motor to move in a particular direction

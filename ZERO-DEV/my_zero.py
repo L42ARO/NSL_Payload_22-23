@@ -46,7 +46,8 @@ if __name__=="__main__":
 
         if runAwait:
             try:
-                happy_landing.checkForLanding(20)
+                happy_landing.checkForLanding(10)
+
             except Exception as e:
                 print(f'Failed to check for landing: {e}')
                 print('Executing default landing sequence awaiting for 2 hours')
@@ -76,5 +77,6 @@ if __name__=="__main__":
         #Take pictures
         bullseye.TakePhoto()
         bullseye.SeriesOfPics(seq)
+        reset_arduino.reset()
     except Exception as e:
         print(f'failed: {e}')

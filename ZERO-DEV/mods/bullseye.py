@@ -75,7 +75,8 @@ def SeriesOfPics(sequence):
 def convert_to_grayscale(i):
     # Overwrite the image to grayscale
     gray_image = i.convert("L")
-    gray_image = ImageOps.invert(gray_image)
+    #gray_image = ImageOps.invert(gray_image)
+    gray_image = ImageOps.colorize(gray_image, "#000000", "#ffffff")
     return gray_image
 
 def post_process(imagepath, imagename, timestamp):
@@ -163,11 +164,13 @@ def operateCam (command:str):
         #turns camera right 60 degrees
         print("Turn camera right 60 deg")
         talking_heads.talk(4, -60) #case 4 microstepper gives value to rotate
+        reset_arduino.reset()
         sleep(3)
     elif command == "B2":
         #turns camera left 60 degrees
         print("Turn camera left 60 deg")
         talking_heads.talk(4, 60) #case 4 microstepper, pass rotation value
+        reset_arduino.reset()
         sleep(3)
     elif command == "C3":
         print("Taking photo")

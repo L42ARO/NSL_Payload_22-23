@@ -15,14 +15,19 @@ const int Microstepper::rotation_bitmap[8][4] = {
 
 void Microstepper::rotate(int angle)
 {
+  if(angle == 0) return;
+
   bool clockwise{ angle < 0 };
-  double steps{  angle / 360.0 * full_rot_count };
+  int absAngle = (angle<0 ?-1:1) * angle;
+  double steps{  absAngle / 360.0 * full_rot_count };
+  Serial.print("Steps: ");
+  Serial.println(steps);
+  if(steps == 0) return;
 
   if (current_idx == -1) 
     current_idx = clockwise ? 0 : 7;
   else
     clockwise ? ++current_idx : --current_idx;
-
   for (double i{0}; i < steps; ++i) {
     digitalWrite(pins.A_plus, rotation_bitmap[current_idx][0]);
     digitalWrite(pins.A_minus, rotation_bitmap[current_idx][1]);
