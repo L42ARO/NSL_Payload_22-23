@@ -1,7 +1,7 @@
 import serial
 
 # Open serial port to USB device
-ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
+ser = serial.Serial('/dev/ttyAMA0', 9600, timeout=1)
 
 # Send command to USB device
 ser.write(b'Hello, USB device!\r\n')
