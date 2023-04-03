@@ -1,0 +1,21 @@
+import serial
+
+# Open serial port to DireWolf
+ser = serial.Serial('/dev/ttyS0', 9600, timeout=1)
+
+# Send command to DireWolf to set frequency to 144.390 MHz
+ser.write(b'APRS%03dWIDE1-1\r\n' % 14439)
+
+# Read response from DireWolf
+response = ser.readline().decode('utf-8').strip()
+print(response)
+
+# Send command to DireWolf to set power level to 5W
+ser.write(b'APRS%03dWIDE1-1\r\n' % 500)
+
+# Read response from DireWolf
+response = ser.readline().decode('utf-8').strip()
+print(response)
+
+# Close serial port
+ser.close()

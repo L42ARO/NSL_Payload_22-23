@@ -1,7 +1,7 @@
 import serial
 
 # Open serial port
-ser = serial.Serial('COM1', 9600, timeout=1)
+ser = serial.Serial('/dev/ttyS0', 9600, timeout=1)
 
 # Send command to set frequency to 144.390 MHz
 ser.write(b'AT+DMOSETGROUP=0,144390000,0,0\r\n')
