@@ -46,7 +46,7 @@ if __name__=="__main__":
 
         if runAwait:
             try:
-                happy_landing.checkForLanding(10)
+                happy_landing.checkForLanding(120)
 
             except Exception as e:
                 print(f'Failed to check for landing: {e}')
@@ -61,12 +61,12 @@ if __name__=="__main__":
         time.sleep(1)
 
         #Move the extender to the desired hole
-        mr_blue_sky.moveToHole(1)
+        mr_blue_sky.moveToHole(3)
         
         #Extend the extender
         gimbalServo.rotate(90)
         time.sleep(1)
-        extenderServo.rotate(180)
+        extenderServo.rotate(160)
         time.sleep(1)
         #Move the gimbal to the true vertical
         mr_blue_sky.MoveGimbal(gimbalServo, 0)
