@@ -1,4 +1,5 @@
 import smbus
+import time
 
 # Open I2C bus and specify the device address
 bus = smbus.SMBus(1)
