@@ -116,10 +116,13 @@ def getAngleBetween(holeAngle, cameraAngle):
 def moveToHole(waitTime=5):
     #setup vp profile
     vp.LoadVectorProfile()
-    
+    ardu_fail=10
+    try_comp=False
     #enter loop for at least 10 iterations (or until code inside breaks out)
     for i in range(100):
         print(f'********* {i}th attempt at MoveToHole ')
+        if(i>30 and i-10>ardu_fail):
+            try_comp=True
         try:
             #get gravity vectors from both sensors
             (gravity1, gravity2) = getAcceleration()
@@ -133,11 +136,20 @@ def moveToHole(waitTime=5):
             holeAngleDeg = int(holeAngle*180/math.pi)
             print(f"Travel Angle: {travelAngle} rad : {angle} deg")
             print(f"ChosenHole (relative to base IMU): {holeAngle} rad : {holeAngleDeg} deg")
-            if (abs(angle) < 2):
+            if(try_comp and abs(angle)>10):
+                print("********* Attempting complement")
+                if(angle>0):
+                    angle=(360-angle) *-1
+                elif(angle<0):
+                    angle=(360+angle) *-1
+                print(f'New travel angle: {angle}')
+            if(abs(angle) < 5):
+                print("Angle is less than 5 degrees, not moving")
                 break
             talking_heads.talk(2, angle)
             time.sleep(waitTime)
         except Exception as e:
+            ardu_fail+=1
             reset_arduino.reset()
             print(f"{i}th loop:  Exception occured. {e}  \nTyring again...")
 
