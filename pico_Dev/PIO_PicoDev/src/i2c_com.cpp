@@ -63,3 +63,11 @@ void I2C_Comm::requestEvent() {
     }
     Wire.endTransmission();     // stop transmitting
 }
+void I2C_Comm::sendEvent(String msg){
+    Wire.begin();
+    Wire.beginTransmission(8); // transmit to device #8
+    Wire.write("jfjdf"); // sends the string
+    Wire.endTransmission(); // stop transmitting
+
+    delay(1000);
+}
