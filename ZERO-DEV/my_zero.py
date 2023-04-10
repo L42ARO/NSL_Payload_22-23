@@ -2,12 +2,13 @@ import mods.mr_blue_sky as mr_blue_sky
 import mods.buzzer as buzzer
 import mods.happy_landing as happy_landing
 import mods.talking_heads as talking_heads
-#import mods.bullseye as bullseye
+import mods.bullseye as bullseye
 import mods.utils as utils
-import mods.MoveServo as MoveServo
+from mods.MoveServo import ServoMotor
 import mods.contact as contact
 import time
 import argparse
+import mods.reset_arduino as reset_arduino
 
 parser = argparse.ArgumentParser(description='ZERO-DEV')
 parser.add_argument('--test', action='store_true', help='Run test. Will not run the await loop.')
@@ -21,6 +22,7 @@ Servo3Pin = 18
 runAwait = True
 
 if __name__=="__main__":
+    reset_arduino.reset()
     if args.test:
         runAwait = False
     try:
@@ -29,40 +31,52 @@ if __name__=="__main__":
 
         utils.exitListen()
 
-        coverServo = MoveServo.begin(Servo1Pin, True)
-        extenderServo = MoveServo.begin(Servo2Pin,True)
-        gimbalServo = MoveServo.begin(Servo3Pin,True)
+        coverServo = ServoMotor(Servo1Pin)
+        extenderServo = ServoMotor(Servo2Pin)
+        gimbalServo = ServoMotor(Servo3Pin)
+
+        coverServo.rotate(0)
+        extenderServo.rotate(0)
+        gimbalServo.rotate(0)
 
         time.sleep(1)
 
         #Cover the holes
-        MoveServo.rotate(coverServo, 0, 180)
+        coverServo.rotate(180)
 
         if runAwait:
             try:
-                happy_landing.checkForLanding()
+                happy_landing.checkForLanding(120)
+
             except Exception as e:
                 print(f'Failed to check for landing: {e}')
                 print('Executing default landing sequence awaiting for 2 hours')
-                time.sleep(7200)
+                time.sleep(180)
         else:
             time.sleep(1)
-
+            
+        buzzer.startBuzzer()
         #Remove the cover
-        MoveServo.rotate(coverServo, 180, 0)
+        coverServo.rotate(0)
         time.sleep(1)
 
         #Move the extender to the desired hole
-        mr_blue_sky.moveToHole(1)
+        mr_blue_sky.moveToHole(3)
         
         #Extend the extender
-        MoveServo.rotate(extenderServo, 0, 45)
-
+        gimbalServo.rotate(90)
+        time.sleep(1)
+        extenderServo.rotate(160)
+        time.sleep(1)
         #Move the gimbal to the true vertical
         mr_blue_sky.MoveGimbal(gimbalServo, 0)
 
         #Get RAFCO sequence
         seq = contact.GetRAFCOSequence()
-        #bullseye.SeriesOfPics()
+
+        #Take pictures
+        bullseye.TakePhoto()
+        bullseye.SeriesOfPics(seq)
+        reset_arduino.reset()
     except Exception as e:
-        print('failed')
+        print(f'failed: {e}')

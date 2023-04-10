@@ -14,25 +14,36 @@ sensor = adafruit_bno055.BNO055_I2C(i2c, 0x29)
 sensor2 = adafruit_bno055.BNO055_I2C(i2c)
 
 def getAcceleration():
+    idx=0
     while True:
+        idx+=1
+        print(f'Sensor reading attempt {idx}')
         accel = sensor.acceleration
         accel2 = sensor2.acceleration
-        
         if (None not in accel and None not in accel2):
             #Check if the accelerometer is measuring 0,0,0
             if(accel[0] == 0 and accel[1] == 0 and accel[2] == 0):
                 print("sensor1 measuring 0,0,0")
-                continue
+                if(idx>=200):
+                    print("Max number of readings reached, using dummy data for sensor 1")
+                    accel=(1,1,1)
+                else:
+                    reset_arduino.reset()
+                    continue
             if(accel2[0] == 0 and accel2[1] == 0 and accel2[2] == 0):
                 print("sensor2 measuring 0,0,0")
-                continue
+                if(idx>=200):
+                    print("Max number of readings reached, using dummy data for sensor 2")
+                    accel2=(1,1,1)
+                else:
+                    reset_arduino.reset()
+                    continue
             break
         if (None in accel):
             print("sensor1 measuring None")
         if (None in accel2):
             print("sensor2 measuring None")
         time.sleep(0.5)
-
 
     print(f"accel (x,y,z): {accel}")
     print(f'accel2; {accel2}')
@@ -105,9 +116,13 @@ def getAngleBetween(holeAngle, cameraAngle):
 def moveToHole(waitTime=5):
     #setup vp profile
     vp.LoadVectorProfile()
-    
+    ardu_fail=10
+    try_comp=False
     #enter loop for at least 10 iterations (or until code inside breaks out)
     for i in range(100):
+        print(f'********* {i}th attempt at MoveToHole ')
+        if(i>30 and i-10>ardu_fail):
+            try_comp=True
         try:
             #get gravity vectors from both sensors
             (gravity1, gravity2) = getAcceleration()
@@ -121,11 +136,20 @@ def moveToHole(waitTime=5):
             holeAngleDeg = int(holeAngle*180/math.pi)
             print(f"Travel Angle: {travelAngle} rad : {angle} deg")
             print(f"ChosenHole (relative to base IMU): {holeAngle} rad : {holeAngleDeg} deg")
-            if (abs(angle) < 2):
+            if(try_comp and abs(angle)>10):
+                print("********* Attempting complement")
+                if(angle>0):
+                    angle=(360-angle) *-1
+                elif(angle<0):
+                    angle=(360+angle) *-1
+                print(f'New travel angle: {angle}')
+            if(abs(angle) < 5):
+                print("Angle is less than 5 degrees, not moving")
                 break
             talking_heads.talk(2, angle)
             time.sleep(waitTime)
         except Exception as e:
+            ardu_fail+=1
             reset_arduino.reset()
             print(f"{i}th loop:  Exception occured. {e}  \nTyring again...")
 
@@ -140,7 +164,8 @@ def MoveGimbal(servo, startAngle):
             vp.imu2_data.setGravity([gravity2[0], gravity2[1], gravity2[2]])
             gimbal_angle = vp.GetGimbalTravelAngle(startAngle)
             angle = int(gimbal_angle*180/math.pi)
-            ms.rotate(servo, 90, angle)
+            servo.rotate(angle)
+            time.sleep(1)
             break
         except Exception as e:
             reset_arduino.reset()

@@ -1,182 +1,207 @@
-import cv2
+import json
 import numpy as np
 from picamera import PiCamera
 from time import sleep
 from datetime import datetime
-from wand.image import Image 
+#from wand.image import Image as wandimage
 import mods.talking_heads as talking_heads
+#from mods.utils import Database
 import os
-from PIL import Image
+from PIL import Image, ImageOps, ImageDraw, ImageFont
+import mods.reset_arduino as reset_arduino
 
 run = True
 grayScale = False 
+filterMode = False
+rotateMode = False
 photo_id = 0
 
+#Declaring folder names
+#comment out og images and final
+og_images_folder = "og-images"
+mission_folder = "mission"
+final_folder = "final"
+
+#Processing path depending on current directory being called from
+folder_path = os.getcwd()
+if not (os.path.basename(os.getcwd()) == 'mods'):
+    folder_path = os.path.join(folder_path, 'mods')
+
+
+#comment out og images and final
+og_images_folder = os.path.join(folder_path, og_images_folder)
+mission_folder = os.path.join(folder_path, mission_folder)
+final_folder = os.path.join(folder_path, final_folder)
+
+#Setting up the camera
+global camera
 try:
     camera = PiCamera()
 except:
     print("Camera error")
     run=False
 
-# appends the filename to index.txt
-def writeDB(imagename):
-    with open("index.txt", "a") as db:
-        db.write(f"{imagename}\n")
-        
 def TakePhoto():
     global run, photo_id
-    if run==False: return
+    timestamp = str(datetime.now().timestamp())
+    timestr = timestamp.replace('.', '_')
+    imagename = str(photo_id)+'_'+timestr+'.jpg'
+    imagepath = os.path.join(og_images_folder, imagename)
+
+    if run==False:
+        print("Camera failed to initialize")
+        return
     try:
         global camera
         camera.start_preview()
         sleep(2)
-        path = os.path.realpath(__file__)   # __file__ = absolute path of myzero.py
-        dir = os.path.dirname(path)
-        timestamp = str(datetime.now().timestamp()).replace('.', '_')
-        imagename = os.path.join(dir, "og-pics", str(photo_id)+'_'+timestamp+'.jpg')
         photo_id += 1
-        camera.capture(imagename)
+        camera.capture(imagepath)
         camera.stop_preview()
-        writeDB(imagename)
-        print("Photo taken.  Filename: " + imagename)
-    
+        print("Photo taken.  Filename: " + imagepath)
+        post_process(imagepath, imagename, datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     except Exception as e:
         print(f'Error taking photo: {e}')
         run=False
 
-def SeriesOfPics():
-    global run
-    if run == False: return
-    for i in range(3):
-        TakePhoto()
-
-def take_grayscale_picture():
-    global camera
-    # Set camera resolution and color mode to grayscale
-    camera.resolution = (640, 480)
-    camera.color_effects = (128, 128)
-    camera.start_preview()
-    sleep(2)  # Wait for camera to warm up
-
-    # Capture grayscale image
-    image = np.empty((camera.resolution[1], camera.resolution[0], 3), dtype=np.uint8)
-    camera.capture(image, 'rgb')
-
-    # Convert to grayscale
-    gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
-
-    return gray
+def SeriesOfPics(sequence):
+    for cmd in sequence:
+        try:
+            operateCam(cmd)
+        except:
+            print(f'Unable to run command {cmd}')
+            reset_arduino.reset()
 
 def convert_to_grayscale(i):
     # Overwrite the image to grayscale
-    #cv2.imwrite(image, cv2.cvtColor(image, cv2.COLOR_RGB2GRAY))
     gray_image = i.convert("L")
+    #gray_image = ImageOps.invert(gray_image)
+    gray_image = ImageOps.colorize(gray_image, "#000000", "#ffffff")
     return gray_image
 
-def post_process():
-    path = os.path.realpath(__file__)
-    dir = os.path.dirname(path)
-    with open(dir+'/og-pics/index.txt', 'r') as f:
-        last_image = f.readlines()[-1]
-    image = Image.open(last_image)
-    if(grayScale):
-        image=convert_to_grayscale(image)
-    image.save('./mission/processed_image.jpg')
+def post_process(imagepath, imagename, timestamp):
+    try:
+        savepath = os.path.join(mission_folder, imagename)
+        imagetext = timestamp 
+        image = Image.open(imagepath)
+        if(grayScale):
+            print("Applying grayscale filter")
+            image=convert_to_grayscale(image)
+        if(filterMode):
+            print("Applying distortion filter")
+            imagetext += "-FILTER:EDGE_ENHANCEMENT"
+            #image = distortion(imagepath)
+            image = Easy_filter(image)
+        if(rotateMode):
+            image = image.rotate(180)
+        image = add_timestamp(image, imagetext)
+        image.save(savepath)
+        print("Succesful post-processing.")
+    except Exception as e:
+        print(f'Failed to post process: {e}')
         
-def add_timestamp(img):
-    # Get current time
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    # Add timestamp to the upper right corner of the image
-    cv2.putText(img, timestamp, (img.shape[1]-150,30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255), 2, cv2.LINE_AA)
-    # Return the image
+def add_timestamp(img, timestamp):
+    try:    
+        font = ImageFont.truetype("Roboto-Regular.ttf", 20)
+        draw = ImageDraw.Draw(img)
+        # Get current time
+        #timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        # Add timestamp to the upper left corner of the image
+        draw.text((0,0), timestamp, (255,102,0), font=font)
+        # Return the image
+    except Exception as e:
+        print(f"Failed to write timestamp: {e}")
     return img
 
-def rotate_image(img, degree):
-    # Get image size
-    rows,cols = img.shape[:2]
-    # Define rotation matrix
-    M = cv2.getRotationMatrix2D((cols/2,rows/2),degree,1)
-    # Perform rotation
-    img_rotated = cv2.warpAffine(img,M,(cols,rows))
-    # Return rotated image
-    return img_rotated
+#def latestImage(db:Database):
+#    #files = os.listdir(folder)
+#    #image_files = [f for f in files if f.endswith('.jpg') or f.endswith('.png')]
+#    #image_files.sort(key=lambda x: os.path.getmtime(os.path.join(folder, x)), reverse=True)
+#    #latest_image_path = os.path.join(folder_path, image_files[0])
+#    #image_name = image_files[0]
+#    #return Image.open(latest_image_path), image_name
+#    data = db.data
+#    sorted_data = sorted(data, key=lambda x: x['timestamp'], reverse=True)
+#    latest_obj = sorted_data[0]
+#    latest_path = latest_obj["path"]
+#    return Image.open(latest_path), latest_obj
 
-def rotate_existing_image(image_path, degree):
-    # Load existing image
-    img = cv2.imread(image_path)
-    # Get image size
-    rows,cols = img.shape[:2]
-    # Define rotation matrix
-    M = cv2.getRotationMatrix2D((cols/2,rows/2),degree,1)
-    # Perform rotation
-    img_rotated = cv2.warpAffine(img,M,(cols,rows))
-    # Save rotated image
-    cv2.imwrite(image_path, img_rotated)
-
-def apply_filter(image_path, kernel):
-    # Load existing image
-    img = cv2.imread(image_path)
-    # Apply filter using filter2D function
-    filtered_img = cv2.filter2D(img, -1, kernel)
-    # Save filtered image
-    cv2.imwrite('filtered_image.jpg', filtered_img)
+        
+#def rotate_existing_image():
+#    try:
+#        image, jsonObj = latestImage(mission_db)
+#        rotated=image.rotate(180)
+#        #Will overwrite the image
+#        #savepath= os.path.join(mission_folder, jsonObj["name"])
+#        rotated.save(jsonObj["path"])
+#
+#    except Exception as e:
+#        print(f'Failed to rotate image: {e}')
 
 #Requires the Wand package from python
 #May need to edit the file location for function to work as intended
-def distortion():
-    with open('./og-pics/index.txt') as file:
-        #Grabs the last character from the index.txt file
-        imgNum = file.readlines()[-1]
-    #Saves the image for distortion from its original location
-    image = './og-pics/' + str(imgNum) + '.jpg'
+def distortion(imagepath):
     #Arguments for the distortion to occur
     args = (0.2, 0.0, 0.0, 1.5)
     #Distorts image using a barrel distortion
-    with Image(filename = image) as img:
+    with wandimage(filename = imagepath) as img:
         img.distort('barrel', args)
-        img.save(filename = './Mission/' + str(imgNum) + '.jpg')
+        img.save(filename = "temp.jpg")
     print("Barrel distortion has been applied to the image.")
+    return Image.open("temp.jpg")
 
-def apply_edgedet_filter(image_path):
-    kernel = np.array([[-1,-1,-1],
-                   [-1, 8,-1],
-                   [-1,-1,-1]])
-    apply_filter(image_path, kernel)
+#dubious type of gaming out here
+def Easy_filter(image):
+    from PIL.ImageFilter import(EDGE_ENHANCE_MORE)
+    filtered_image = image.filter(EDGE_ENHANCE_MORE)
+    filtered_image = filtered_image.filter(EDGE_ENHANCE_MORE)
+    return filtered_image
 
-def operateCam (command):
+def operateCam (command:str):
+    global grayScale, filterMode, rotateMode
+    print(f'Executing {command}: ')
     if command == "A1":
         #turns camera right 60 degrees
+        print("Turn camera right 60 deg")
         talking_heads.talk(4, -60) #case 4 microstepper gives value to rotate
+        reset_arduino.reset()
+        sleep(3)
     elif command == "B2":
         #turns camera left 60 degrees
+        print("Turn camera left 60 deg")
         talking_heads.talk(4, 60) #case 4 microstepper, pass rotation value
+        reset_arduino.reset()
+        sleep(3)
     elif command == "C3":
+        print("Taking photo")
         TakePhoto()
         #take_picture()
     elif command == "D4":
+        print("Changing to grayscale mode")
         grayScale = True
         #set_camera_mode("G")
     elif command == "E5":
+        print("Exiting grayscale mode")
         grayScale = False
         #set_camera_mode("C")
     elif command == "F6":
-        rotate_existing_image(photo_id, 180)
+        print("Rotate FOLLOWING image by 180 degrees")
+        if(rotateMode):
+            rotateMode = False
+        else:
+            rotateMode = True
     elif command == "G7":
-        print("")
+        print("Changing to filter mode")
+        filterMode = True
         #apply_filter()
     elif command == "H8":
-        print("")
+        print("Exiting filter mode")
+        filterMode = False
         #remove_filters()
     else:
-        print("Error: Invalid Input.")
+        print("Invalid Input.")
 
 if __name__=="__main__":
-    behelit = TakePhoto(photo_id)
-    apply_edgedet_filter(behelit)
-    photo_id += 1
-    grayScale=True
-    TakePhoto("gray_" if grayScale else "regular_" + photo_id)
-    photo_id += 1
-    Xena = TakePhoto("gray_" if grayScale else "regular_" + photo_id)
-    rotate_existing_image(Xena)
-    photo_id += 1     
+    import contact
+    seq = contact.GetRAFCOSequence()
+    SeriesOfPics(seq)
