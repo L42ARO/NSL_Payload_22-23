@@ -137,12 +137,34 @@ def create_audio_file(filename, samplenumber, time_taken, filename_Output = "Aud
     audio_file.close()
 """
 from pydub import AudioSegment
+import wave
+import struct
 
-def create_audio_file(filename = "DummyData1.txt", sampling_rate = 1000000.0 * 326/ (7800/326)):
+def create_audio_file(filename = "data1.txt", sampling_rate = 1000000.0 * 39484/ (39484/7800)):
     # Read float values from file
-    with open(filename, 'r') as f:
-        values = [float(line.strip()) for line in f.readlines()]
+    with open(filename, 'r', encoding='UTF-16') as f:
+        values = [int(line.strip()) for line in f.readlines()[:-3]]
+    
+    # Set the parameters for the wave file
+    nchannels = 1
+    sampwidth = 2
+    framerate = 7800
+    nframes = len(values)
 
+    # Create a new wave file and set its parameters
+    wav_file = wave.open('output.wav', 'w')
+    wav_file.setparams((nchannels, sampwidth, framerate, nframes, 'NONE', 'not compressed'))
+
+    # Convert the list of numbers to binary data and write it to the wave file
+    for value in values:
+        # Convert the value to a 2-byte binary data string (assuming 16-bit samples)
+        binary_data = struct.pack('<h', int(value * 4))
+        wav_file.writeframes(binary_data)
+
+    # Close the wave file
+    wav_file.close()
+    '''
+    
     # Convert float values to array of 16-bit integers
     max_vol = 2 ** 15 - 1
     audio_data = np.array(values) * max_vol
@@ -151,8 +173,8 @@ def create_audio_file(filename = "DummyData1.txt", sampling_rate = 1000000.0 * 3
     # Create audio file
     audio_segment = AudioSegment(audio_data.tobytes(), frame_rate=sampling_rate, sample_width=2, channels=1)
     audio_segment.export('output.wav', format='wav')
-
+'''
 
 if __name__ == "__main__":
-    create_audio_file ("DummyData1.txt")
+    create_audio_file ("data1.txt")
 
