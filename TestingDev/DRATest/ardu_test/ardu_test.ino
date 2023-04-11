@@ -46,18 +46,19 @@ void loop() {
       Serial.write(">");
       squelch = false;
     }  
-    Serial.print(sq_out*100);
-    Serial.print(",");
+    //Serial.print(sq_out*100);
+    //Serial.print(",");
     int reading = analogRead(A0);
-    Serial.println(reading);
+    
   if (squelch) {
+    //Serial.println(reading);
     unsigned long currentTime = micros();
-    if (currentTime - lastPrintTime >= 120) { // Print the data every 120 microseconds (8300 samples per second)
+    if (currentTime - lastPrintTime >= 120 || true) { // Print the data every 120 microseconds (8300 samples per second)
       
       byte high_byte = reading >> 8;
       byte low_byte = reading & 0xFF;
-      //Serial.write(high_byte);
-      //Serial.write(low_byte);
+      Serial.write(high_byte);
+      Serial.write(low_byte);
       lastPrintTime = currentTime;
       curr_sr+=1;
     }

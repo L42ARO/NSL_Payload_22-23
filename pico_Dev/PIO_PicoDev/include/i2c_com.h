@@ -22,6 +22,9 @@ class I2C_Comm {
     int _address;
     int _ready;
     void (*processCommand)(int commandNumber, int value);
+
+  static void sendEvent(String msg);
+  
 };
 
 #endif
