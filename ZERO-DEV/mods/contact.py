@@ -7,10 +7,12 @@
     F6—Rotate image 180º (upside down).
     G7—Special effects filter (Apply any filter or image distortion you want and
     state what filter or distortion was used).
+    H8-Remove all filters
 '''
 
 # Default sequence will be A1, C3, B2, B2, D4, C3, A1, C3, A1, A1, A1, F6, C3
-default_seq = ["A1", "C3", "B2", "B2", "D4", "C3", "A1", "C3", "G7","A1", "A1", "A1", "F6", "C3"]
+#default_seq = ["A1", "C3", "B2", "B2", "D4", "C3", "A1", "C3", "G7","A1", "A1", "A1", "F6", "C3"]
+default_seq = ["C3", "A1", "D4", "C3", "E5", "A1", "G7", "C3", "H8", "A1", "F6", "C3"]
 def GetRAFCOSequence():
     # Get the next sequence number for the RAF CO
     # Returns the next sequence number for the RAF CO
