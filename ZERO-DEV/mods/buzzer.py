@@ -3,7 +3,7 @@ import time
 
 global starttime , buzzer
 starttime= 0
-buzzPin = 23
+buzzPin = 21
 interval = 1    # in seconds
 buzzerOn = False
 
