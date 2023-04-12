@@ -140,7 +140,7 @@ from pydub import AudioSegment
 import wave
 import struct
 
-def create_audio_file(filename = "data1.txt", sampling_rate = 1000000.0 * 39484/ (39484/7800)):
+def create_audio_file(filename = "data3.txt", sampling_rate = 1000000.0 * 39484/ (39484/7800)):
     # Read float values from file
     with open(filename, 'r', encoding='UTF-16') as f:
         values = [int(line.strip()) for line in f.readlines()[:-3]]
@@ -152,7 +152,7 @@ def create_audio_file(filename = "data1.txt", sampling_rate = 1000000.0 * 39484/
     nframes = len(values)
 
     # Create a new wave file and set its parameters
-    wav_file = wave.open('output.wav', 'w')
+    wav_file = wave.open('output3.wav', 'w')
     wav_file.setparams((nchannels, sampwidth, framerate, nframes, 'NONE', 'not compressed'))
 
     # Convert the list of numbers to binary data and write it to the wave file
@@ -176,5 +176,5 @@ def create_audio_file(filename = "data1.txt", sampling_rate = 1000000.0 * 39484/
 '''
 
 if __name__ == "__main__":
-    create_audio_file ("data1.txt")
+    create_audio_file ("data3.txt")
 

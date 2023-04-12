@@ -1,0 +1,6 @@
+To create data file:
+run globBin.py > output.txt
+delete headers and all white spaces, leaving numbers
+run the program datatoaudio.py, changing the name of the input file
+move the .wav file inside the directory of direwolf
+in the terminal, run ./atest output.wav
