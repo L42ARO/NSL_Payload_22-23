@@ -1,7 +1,7 @@
 import RPi.GPIO as io
 import time
 try:
-    resetPin = 17
+    resetPin = 16
     io.setmode(io.BCM)
     io.setup(resetPin, io.OUT)
     io.output(resetPin, True)

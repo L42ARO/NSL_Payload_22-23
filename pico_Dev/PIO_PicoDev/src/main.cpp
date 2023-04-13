@@ -5,6 +5,7 @@
 #include "MoveServo.h"
 #include "buzzerNotification.h"
 #include "microstepper.h"
+#include "draManager.h"
 
 I2C_Comm &i2c = I2C_Comm::getInstance();
 const int stepPin = 11; 
@@ -14,6 +15,14 @@ Stepper stepper1(stepPin, dirPin, rstPin); //create stepper object
 MainServo mainServo(9);
 Microstepper micro(42, 500, {3, 5, 4, 6});    // purpose, yellow, orange green or blue, black, red, white
 //3,11,9,10
+
+//DRA PINS
+const int PTT_PIN 2; // PTT control pin
+const int PD_PIN 7; // PD pin
+const int SQ_PIN 5; //Squelch pin
+const int HL_PIN 6;
+
+bool readingRF = false;
 
 void processCommand(int commandNumber, int value);
 
@@ -30,9 +39,34 @@ void setup() {
   delay(1000);
 }
 int c = 0;
+
+DRA Behelit= new DRA(PTT_PIN,SQ_PIN,HL_PIN); // SET UP DRA OBJECT NOW CALLED BEHELIT
+
 void loop() {
-  delay(100);
+    if(readingRF) { 
+        if(Behelit.get_State() == 4){
+            Behelit.squelch_Loop();
+            return;
+        } else if( Behelit.get_State() == 1){
+            if(Behelit.Handshake()){
+                Behelit++;
+            }
+        } else if (Behelit.get_State() == 2){
+            if(Behelit.SetVolume()){
+                Behelit++;
+            }
+        } else if (Behelit.get_State() == 3){
+            if(Behelit.SetFilter()){
+                Behelit++;
+                Serial.write(">");
+            }
+        }
+
+        return; //this return error?
+    }
+    delay(100);
 }
+
 
 void processCommand(int commandNumber, int value){
     Serial.println("Processing command");
@@ -60,6 +94,11 @@ void processCommand(int commandNumber, int value){
            Serial.println(value);
            micro.rotate(value);
            break;
+       case 4:
+       //once case is called int rfreciever is set to true and i2c communication is stopped
+            readingRF = true;
+            Serial.end();
+            break;
        default:
            Serial.println("Invalid command received");
            break;

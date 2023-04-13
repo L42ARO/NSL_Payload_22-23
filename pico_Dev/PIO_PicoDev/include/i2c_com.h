@@ -14,7 +14,10 @@ class I2C_Comm {
     void setReady(int ready){
         _ready = ready;
     }
+
+    void end(){ Wire.end();}
     
+    void reset(int adress);
   private:
     static void receiveEvent(int howMany);
     static void requestEvent();
