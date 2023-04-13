@@ -71,3 +71,12 @@ void I2C_Comm::sendEvent(String msg){
 
     delay(1000);
 }
+
+void I2C_Comm::begin(int address, void (*processCommand)(int, int)) {
+    _address = address;
+    Wire.begin(_address);                // join i2c bus with address #8
+    Wire.onRequest(requestEvent); // register event
+    Wire.onReceive(receiveEvent); // register event
+    instance = this;
+    instance->processCommand = processCommand;
+}

@@ -1,6 +1,4 @@
-#include <SoftwareSerial.h>
 
-SoftwareSerial dra(3,4);
 #define PTT_PIN 2 // PTT control pin
 #define PD_PIN 7 // PD pin
 #define SQ_PIN 5 //Squelch pin
