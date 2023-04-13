@@ -1,7 +1,7 @@
 import serial
 import struct
 
-ser = serial.Serial('COM9', 500000)  # Replace COM_PORT with the actual port of your Arduino
+ser = serial.Serial('COM10', 500000)  # Replace COM_PORT with the actual port of your Arduino
 
 # Wait for data to start coming
 while ser.in_waiting == 0:

@@ -46,7 +46,7 @@ def receive_signal(i):
     
     #create file and write data
     #with open('output'+str(i)+'.txt', 'w+', encoding='UTF-16') as output:
-    with open('output6.txt', 'r', encoding='UTF-16') as output:
+    with open('outputNasa26.txt', 'r', encoding='UTF-16') as output:
         #output.write(text)
         rows = [line.strip() for line in output.readlines()[16:-2]]
         #print(rows)
