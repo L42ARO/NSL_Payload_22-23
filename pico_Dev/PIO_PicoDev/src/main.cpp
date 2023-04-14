@@ -97,7 +97,7 @@ void processCommand(int commandNumber, int value){
        case 4:
        //once case is called int rfreciever is set to true and i2c communication is stopped
             readingRF = true;
-            Serial.end();
+            i2c.end();
             break;
        default:
            Serial.println("Invalid command received");
