@@ -7,67 +7,74 @@ import re
 import math
 
 def receive_signal(i):
-    #ser = serial.Serial('COM11', 500000)  # Replace COM_PORT with the actual port of your Arduino
+    # ser = serial.Serial('COM11', 500000)  # Replace COM_PORT with the actual port of your Arduino
     
-    #with open('output'+str(i)+'.txt', 'w+', encoding='UTF-16') as output:
+    # with open('output'+str(i)+'.txt', 'w+', encoding='UTF-16') as output:
 
-        # # Wait for data to start coming
-        # while ser.in_waiting == 0:
-        #     pass
+    #     # Wait for data to start coming
+    #     while ser.in_waiting == 0:
+    #         pass
 
-        # text = ""
-        # print("Incoming data...")
-        # output.write("Incoming data...")
-        # while True:
-        #     byte = ser.read(1)
-        #     if byte == b'>':
-        #         break
-        #     text += byte.decode('ascii')
+    #     text = ""
+    #     print("Incoming data...")
+    #     output.write("Incoming data...")
+    #     while True:
+    #         byte = ser.read(1)
+    #         if byte == b'>':
+    #             break
+    #         text += byte.decode('ascii')
 
-        # print(text)
-        # output.write(text)
+    #     print(text)
+    #     output.write(text)
 
-        # while ser.in_waiting == 0:
-        #     pass
+    #     while ser.in_waiting == 0:
+    #         pass
 
-        # while True:
-        #     try:
-        #         data = ser.read(1)
-        #         if(data == b'<'):
-        #             break
-        #         data2 = ser.read(1)
-        #         val = struct.unpack('>H', data + data2)[0]
+    #     while True:
+    #         try:
+    #             data = ser.read(1)
+    #             if(data == b'<'):
+    #                 break
+    #             data2 = ser.read(1)
+    #             val = struct.unpack('>H', data + data2)[0]
                 
-        #         print(str(val))
-        #         output.write(str(val))
-        #     except Exception as e:
-        #         print(f'Error:{e}')
+    #             print(str(val))
+    #             output.write(str(val)+'\n')
+    #         except Exception as e:
+    #             print(f'Error:{e}')
 
-        # text = ""
-        # while True:
-        #     byte = ser.read(1)
-        #     if byte == b'>':
-        #         break
-        #     text += byte.decode('ascii')
-        # output.write(text)
+    #     text = ""
+    #     while True:
+    #         byte = ser.read(1)
+    #         if byte == b'>':
+    #             break
+    #         text += byte.decode('ascii')
+    #     output.write(text)
 
-        # rows = [line.strip() for line in output.readlines()[16:-2]]
-        # #print(rows)
-        # samples=int(rows[-3].split(' ',1)[1])
-
+    #     rows = [line.strip() for line in output.readlines()[16:-2]]
+        #print(rows)
+        
     #output.close()
-    with open('outputNasa50.txt', 'r', encoding='UTF-16') as output:
-        rows = [line.strip() for line in output.readlines()[16:-2]]
+    with open('output1.txt', 'r', encoding='UTF-16') as output:
+        rows = [line.strip() for line in output.readlines()[16:-1]]
+        
         samples=int(rows[-3].split(' ',1)[1])
+        time=int(rows[-5].split(' ', 1)[1])
+        rate=float(rows[-1].split(' ', 1)[1])
+
     with open('formatted_data'+str(i)+'.txt', 'w', encoding='UTF-16') as file:
         for row in rows:
             file.write(row+'\n')
     file.close()
     
-    return samples 
+    return samples, time, rate
     
 
-def create_audio_file(fileName, frameRate):
+def create_audio_file(fileName):
+    with open('output1.txt', 'r', encoding='UTF-16') as output:
+        rows = [line.strip() for line in output.readlines()[16:-1]]
+        time=int(rows[-5].split(' ', 1)[1])
+        frameRate=int(float(rows[-1].split(' ', 1)[1]))
     # Read int values from file without last three ones
     with open(fileName, 'r', encoding='UTF-16') as data:
         values = [int(line.strip()) for line in data.readlines()[:-5]]
@@ -87,10 +94,15 @@ def create_audio_file(fileName, frameRate):
         binary_data = struct.pack('<h', int(value * 4))
         wav_file.writeframes(binary_data)
 
+    
     #check if length is the same
-    duration = int(nFrames / float(frameRate))
-    print(values[-1])
-
+    duration = (nFrames / float(frameRate))
+    checkTime=abs((time/1000000)-duration)<0.2
+    print(duration)
+    if checkTime:
+        print(f'{time} {duration}')
+    else:
+        print('durations are not equal')
 
     # Close the wave file
     wav_file.close()
@@ -124,16 +136,20 @@ def scan_decoded_file(fileName, callSign):
 def run_receiver():
     sample=[]
     for i in range(1,4):
-        sample.append(receive_signal(i))
+        sample.append(receive_signal(i)[0])
 
     #if not math.isclose((sample[0]+sample[1]+sample[2])/3, sample[0], abs_tol=200):
     if math.isclose(sample[0], sample[1], abs_tol=5000) and math.isclose(sample[0], sample[2], abs_tol=5000) and math.isclose(sample[1], sample[2], abs_tol=5000):
         return 'formatted_data2.txt'
     else:
         run_receiver()
-    
-if __name__=='__main__':
-    create_audio_file(run_receiver(), 5400)
+        
+def get_commands():
+    create_audio_file(run_receiver())
     decode_audio_file('signal.wav')
     commands=scan_decoded_file('decoded.txt', 'KQ4FYU')
     print(commands)
+    return commands
+
+if __name__=='__main__':
+    get_commands()
