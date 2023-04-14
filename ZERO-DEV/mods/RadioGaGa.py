@@ -7,60 +7,64 @@ import re
 import math
 
 def receive_signal(i):
-    # ser = serial.Serial('COM10', 500000)  # Replace COM_PORT with the actual port of your Arduino
-
-    # # Wait for data to start coming
-    # while ser.in_waiting == 0:
-    #     pass
-
-    # text = ""
-    # print("Incoming data...")
-    # while True:
-    #     byte = ser.read(1)
-    #     if byte == b'>':
-    #         break
-    #     text += byte.decode('ascii')
-
-    # print(text)
-
-    # while ser.in_waiting == 0:
-    #     pass
-
-    # while True:
-    #     try:
-    #         data = ser.read(1)
-    #         if(data == b'<'):
-    #             break
-    #         data2 = ser.read(1)
-    #         val = struct.unpack('>H', data + data2)[0]
-    #         print(val)
-    #     except:
-    #         print("Error")
-
-    # text = ""
-    # while True:
-    #     byte = ser.read(1)
-    #     if byte == b'>':
-    #         break
-    #     text += byte.decode('ascii')
+    #ser = serial.Serial('COM11', 500000)  # Replace COM_PORT with the actual port of your Arduino
     
-    #create file and write data
     #with open('output'+str(i)+'.txt', 'w+', encoding='UTF-16') as output:
-    with open('outputNasa26.txt', 'r', encoding='UTF-16') as output:
-        #output.write(text)
+
+        # # Wait for data to start coming
+        # while ser.in_waiting == 0:
+        #     pass
+
+        # text = ""
+        # print("Incoming data...")
+        # output.write("Incoming data...")
+        # while True:
+        #     byte = ser.read(1)
+        #     if byte == b'>':
+        #         break
+        #     text += byte.decode('ascii')
+
+        # print(text)
+        # output.write(text)
+
+        # while ser.in_waiting == 0:
+        #     pass
+
+        # while True:
+        #     try:
+        #         data = ser.read(1)
+        #         if(data == b'<'):
+        #             break
+        #         data2 = ser.read(1)
+        #         val = struct.unpack('>H', data + data2)[0]
+                
+        #         print(str(val))
+        #         output.write(str(val))
+        #     except Exception as e:
+        #         print(f'Error:{e}')
+
+        # text = ""
+        # while True:
+        #     byte = ser.read(1)
+        #     if byte == b'>':
+        #         break
+        #     text += byte.decode('ascii')
+        # output.write(text)
+
+        # rows = [line.strip() for line in output.readlines()[16:-2]]
+        # #print(rows)
+        # samples=int(rows[-3].split(' ',1)[1])
+
+    #output.close()
+    with open('outputNasa50.txt', 'r', encoding='UTF-16') as output:
         rows = [line.strip() for line in output.readlines()[16:-2]]
-        #print(rows)
         samples=int(rows[-3].split(' ',1)[1])
-        
-        
-   
-    output.close()
     with open('formatted_data'+str(i)+'.txt', 'w', encoding='UTF-16') as file:
         for row in rows:
             file.write(row+'\n')
     file.close()
-    return samples
-     
+    
+    return samples 
     
 
 def create_audio_file(fileName, frameRate):
@@ -85,7 +89,7 @@ def create_audio_file(fileName, frameRate):
 
     #check if length is the same
     duration = int(nFrames / float(frameRate))
-
+    print(values[-1])
 
 
     # Close the wave file
@@ -110,9 +114,12 @@ def scan_decoded_file(fileName, callSign):
                     message=line
     formatted_message=re.sub('_1', '~', re.sub('X/`', '~', message))
     msg=re.split('~', formatted_message)
-    print(msg)
     
-    return msg[1].split()
+    try:
+        commands=msg[1].split()
+    except:
+        return f'No APRS packets received: {msg}'
+    return commands
 
 def run_receiver():
     sample=[]

@@ -17,13 +17,12 @@ volatile unsigned long squelch_start = 0;
 volatile unsigned long curr_sr = 0;
 void setup() {
   Serial.begin(500000); // Set the baud rate for the serial monitor
-  ADMUX |= (1<< REFS0);
-  ADCSRA |= (1 << ADPS2);// | (1 << ADPS1) | (1 << ADPS0);
-  ADCSRA |= (1 << ADEN);
+  ADCSRA |= (1 << ADPS2) | (1 << ADPS1);
+  ADCSRA &= ~(1 << ADPS0);
+  analogReference(INTERNAL);  // use internal reference (1.1V) for better accuracy
+  pinMode(A0, INPUT);
+  //analogReadResolution(10);
   
-  //ADCSRA &= ~(bit (ADPS0) | bit (ADPS1) | bit (ADPS2)); // clear prescaler bits
-  //ADCSRA |= bit (ADPS2); // set prescaler to 2 (highest ADC clock frequency)
-  //ADCSRA |= bit (ADEN); // enable ADC
    while (!Serial) {
     ; // wait for serial port to connect
   }
@@ -57,19 +56,21 @@ void loop() {
     }  
     //Serial.print(sq_out*100);
     //Serial.print(",");
-    uint16_t reading = analogReadDirect();
-    //int reading = analogReadDirect();
+    uint16_t reading = analogRead(A0);
+    //Serial.print(sq_out);
+    //Serial.print(",");
+    //Serial.println(reading);
     
   if (squelch) {
     //Serial.println(reading);
     unsigned long currentTime = micros();
     if (currentTime - lastPrintTime >= 120 || true) { // Print the data every 120 microseconds (8300 samples per second)
+
       
-      //byte high_byte = reading >> 8;
-      //byte low_byte = reading & 0xFF;
-      //Serial.write(high_byte);
-      //Serial.write(low_byte);
-      Serial.write((byte*)&reading, sizeof(reading));
+     uint8_t high_byte = reading >> 8;
+  uint8_t low_byte = reading & 0xFF;
+     byte buffer[2] = { high_byte, low_byte };
+     Serial.write(buffer, 2);
       lastPrintTime = currentTime;
       curr_sr+=1;
     }
@@ -112,19 +113,15 @@ ISR(TIMER1_COMPA_vect) {
 }
 
 // Function to read the analog input using direct port access
-inline int analogReadDirect() {
+inline int analogReadDirect(uint8_t pin) {
   // Select the ADC channel and set the reference voltage
-  //ADMUX = (pin & 0x07) | (1 << REFS0);
-  ADMUX = (ADMUX & 0xF0) | (0 & 0x0F);
+  ADMUX = (pin & 0x07) | (1 << REFS0);
   // Enable the ADC and start the conversion
-  //ADCSRA |= (1 << ADEN) | (1 << ADSC);
+  ADCSRA |= (1 << ADEN) | (1 << ADSC);
   // Wait for the conversion to finish
-  //while (ADCSRA & (1 << ADSC));
-  ADCSRA |= (1 >> ADSC);
-  while (bit_is_set(ADCSRA, ADSC));
+  while (ADCSRA & (1 << ADSC));
   // Return the raw ADC value
-  uint16_t adc_value=ADC;
-  return adc_value;
+  return ADC;
 }
 bool SetFilter(){
   SendCommand("AT+SETFILTER=0,0,0\r\n");
@@ -138,7 +135,7 @@ bool SetFilter(){
 }
 
 bool SetVolume(){
-  SendCommand("AT+DMOSETVOLUME=5\r\n");
+  SendCommand("AT+DMOSETVOLUME=7\r\n");
   String msg = getMessage();
   Serial.println(msg);
   if(msg == "+DMOSETVOLUME:0\r\n"){
@@ -149,7 +146,7 @@ bool SetVolume(){
 
 bool SetFrequency(){
   //Serial.println("Freq Sent");
-  SendCommand("AT+DMOSETGROUP=1,150.0000,144.9000,0000,1,0000\r\n");
+  SendCommand("AT+DMOSETGROUP=1,150.0000,145.0000,0000,1,0000\r\n");
   String msg = getMessage();
   //Serial.println(msg);
   if(msg=="+DMOSETGROUP:0\r\n"){
