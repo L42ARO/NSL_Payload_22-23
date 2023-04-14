@@ -7,72 +7,71 @@ import re
 import math
 
 def receive_signal(i):
-    # ser = serial.Serial('COM11', 500000)  # Replace COM_PORT with the actual port of your Arduino
+    ser = serial.Serial('COM11', 500000)  # Replace COM_PORT with the actual port of your Arduino
     
-    # with open('output'+str(i)+'.txt', 'w+', encoding='UTF-16') as output:
+    with open('output'+str(i)+'.txt', 'w+', encoding='UTF-16') as output:
 
-    #     # Wait for data to start coming
-    #     while ser.in_waiting == 0:
-    #         pass
+        # Wait for data to start coming
+        while ser.in_waiting == 0:
+            pass
 
-    #     text = ""
-    #     print("Incoming data...")
-    #     output.write("Incoming data...")
-    #     while True:
-    #         byte = ser.read(1)
-    #         if byte == b'>':
-    #             break
-    #         text += byte.decode('ascii')
+        text = ""
+        print("Incoming data...")
+        output.write("Incoming data...")
+        while True:
+            byte = ser.read(1)
+            if byte == b'>':
+                break
+            text += byte.decode('ascii')
 
-    #     print(text)
-    #     output.write(text)
+        print(text)
+        output.write(text)
 
-    #     while ser.in_waiting == 0:
-    #         pass
+        while ser.in_waiting == 0:
+            pass
 
-    #     while True:
-    #         try:
-    #             data = ser.read(1)
-    #             if(data == b'<'):
-    #                 break
-    #             data2 = ser.read(1)
-    #             val = struct.unpack('>H', data + data2)[0]
+        while True:
+            try:
+                data = ser.read(1)
+                if(data == b'<'):
+                    break
+                data2 = ser.read(1)
+                val = struct.unpack('>H', data + data2)[0]
                 
-    #             print(str(val))
-    #             output.write(str(val)+'\n')
-    #         except Exception as e:
-    #             print(f'Error:{e}')
+                print(str(val))
+                output.write(str(val)+'\n')
+            except Exception as e:
+                print(f'Error:{e}')
 
-    #     text = ""
-    #     while True:
-    #         byte = ser.read(1)
-    #         if byte == b'>':
-    #             break
-    #         text += byte.decode('ascii')
-    #     output.write(text)
+        text = ""
+        while True:
+            byte = ser.read(1)
+            if byte == b'>':
+                break
+            text += byte.decode('ascii')
+        output.write(text)
 
-    #     rows = [line.strip() for line in output.readlines()[16:-2]]
-        #print(rows)
-        
-    #output.close()
-    with open('output1.txt', 'r', encoding='UTF-16') as output:
         rows = [line.strip() for line in output.readlines()[16:-1]]
-        
         samples=int(rows[-3].split(' ',1)[1])
-        time=int(rows[-5].split(' ', 1)[1])
-        rate=float(rows[-1].split(' ', 1)[1])
+        print(rows)
+        
+    output.close()
+    #with open('outputNasa3.txt', 'r', encoding='UTF-16') as output:
+        #rows = [line.strip() for line in output.readlines()[16:-2]]
+        
+        #samples=int(rows[-3].split(' ',1)[1])
 
     with open('formatted_data'+str(i)+'.txt', 'w', encoding='UTF-16') as file:
         for row in rows:
             file.write(row+'\n')
     file.close()
     
-    return samples, time, rate
+    return samples
     
 
 def create_audio_file(fileName):
-    with open('output1.txt', 'r', encoding='UTF-16') as output:
-        rows = [line.strip() for line in output.readlines()[16:-1]]
+    with open('outputNasa3.txt', 'r', encoding='UTF-16') as output:
+        rows = [line.strip() for line in output.readlines()[16:-2]]
         time=int(rows[-5].split(' ', 1)[1])
         frameRate=int(float(rows[-1].split(' ', 1)[1]))
     # Read int values from file without last three ones
@@ -83,6 +82,7 @@ def create_audio_file(fileName):
     nChannels = 1
     sampWidth = 2
     nFrames = len(values)
+    print(len(values))
 
     # Create a new wave file and set its parameters
     wav_file = wave.open('signal.wav', 'w')
@@ -99,6 +99,7 @@ def create_audio_file(fileName):
     duration = (nFrames / float(frameRate))
     checkTime=abs((time/1000000)-duration)<0.2
     print(duration)
+    print(f'{time} {duration}')
     if checkTime:
         print(f'{time} {duration}')
     else:
@@ -111,8 +112,8 @@ def decode_audio_file(wav_file):
     folder_path = os.getcwd()
     wav_path = os.path.join(folder_path, wav_file)
     
-    atest_path=r'C:\Users\alelo\Downloads\direwolf-1.7.0-dev-A_x86_64\direwolf-1.7.0-7fa91dd_i686\atest.exe'
-    os.system(atest_path+' '+wav_path+' > ./decoded.txt')
+    #atest_path=r'C:\Users\alelo\Downloads\direwolf-1.7.0-dev-A_x86_64\direwolf-1.7.0-7fa91dd_i686\atest.exe'
+    os.system('atest '+wav_path+' > ./decoded.txt')
 
 def scan_decoded_file(fileName, callSign):
     message=''
@@ -136,14 +137,14 @@ def scan_decoded_file(fileName, callSign):
 def run_receiver():
     sample=[]
     for i in range(1,4):
-        sample.append(receive_signal(i)[0])
+        sample.append(receive_signal(i))
 
     #if not math.isclose((sample[0]+sample[1]+sample[2])/3, sample[0], abs_tol=200):
     if math.isclose(sample[0], sample[1], abs_tol=5000) and math.isclose(sample[0], sample[2], abs_tol=5000) and math.isclose(sample[1], sample[2], abs_tol=5000):
         return 'formatted_data2.txt'
     else:
         run_receiver()
-        
+
 def get_commands():
     create_audio_file(run_receiver())
     decode_audio_file('signal.wav')
