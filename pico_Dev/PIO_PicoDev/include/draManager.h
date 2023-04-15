@@ -24,9 +24,7 @@ class DRA {
         void operator++(){
             state++;
         }
-
-        DRA(int PTT_PIN_, int SQ_PIN_, int PD_PIN_, int state_ = 0) : 
-        PTT_PIN(PTT_PIN_), SQ_PIN(SQ_PIN_), PD_PIN(PD_PIN_), state(state_), dra(9,12){
+        void begin(){
             pinMode(PTT_PIN, OUTPUT); // Set the PTT pin as an output
             pinMode(PD_PIN, OUTPUT); // Set the PD pin as an output
             pinMode(SQ_PIN, INPUT);
@@ -34,6 +32,10 @@ class DRA {
             digitalWrite(PTT_PIN, HIGH); // Set the module to RX mode initially
             delay(500);
             dra.begin(9600);
+        }
+        DRA(int PTT_PIN_, int SQ_PIN_, int PD_PIN_, int state_ = 0) : 
+        PTT_PIN(PTT_PIN_), SQ_PIN(SQ_PIN_), PD_PIN(PD_PIN_), state(state_), dra(9,12){
+            
         }
         int get_State() const { return state;}
         bool HandShake();
