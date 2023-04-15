@@ -5,11 +5,14 @@ import struct
 import os
 import re
 import math
+import scipy.signal
+import soundfile as sf
+import contact
 
 def receive_signal(i):
-    ser = serial.Serial('COM11', 500000)  # Replace COM_PORT with the actual port of your Arduino
-    
+    #write the signal into the file
     with open('output'+str(i)+'.txt', 'w+', encoding='UTF-16') as output:
+        ser = serial.Serial('COM10', 500000)  # Replace COM_PORT with the actual port of your Arduino
 
         # Wait for data to start coming
         while ser.in_waiting == 0:
@@ -38,7 +41,7 @@ def receive_signal(i):
                 data2 = ser.read(1)
                 val = struct.unpack('>H', data + data2)[0]
                 
-                print(str(val))
+                #print(str(val))
                 output.write(str(val)+'\n')
             except Exception as e:
                 print(f'Error:{e}')
@@ -50,17 +53,16 @@ def receive_signal(i):
                 break
             text += byte.decode('ascii')
         output.write(text)
+    output.close()
 
+    #reopen the file to get the samples
+    with open('output'+str(i)+'.txt', 'r', encoding='UTF-16') as output:
+    #with open('output1.txt', 'r', encoding='UTF-16') as output:
         rows = [line.strip() for line in output.readlines()[16:-1]]
         samples=int(rows[-3].split(' ',1)[1])
-        print(rows)
-        
     output.close()
-    #with open('outputNasa3.txt', 'r', encoding='UTF-16') as output:
-        #rows = [line.strip() for line in output.readlines()[16:-2]]
-        
-        #samples=int(rows[-3].split(' ',1)[1])
-
+    
+    #creates file formatted for slicing
     with open('formatted_data'+str(i)+'.txt', 'w', encoding='UTF-16') as file:
         for row in rows:
             file.write(row+'\n')
@@ -70,20 +72,23 @@ def receive_signal(i):
     
 
 def create_audio_file(fileName):
-    with open('outputNasa3.txt', 'r', encoding='UTF-16') as output:
-        rows = [line.strip() for line in output.readlines()[16:-2]]
+    #opens formatted_data2.txt to get the time and framerate
+    with open(fileName, 'r', encoding='UTF-16') as output:
+        rows = [line.strip() for line in output.readlines()[16:]]
         time=int(rows[-5].split(' ', 1)[1])
         frameRate=int(float(rows[-1].split(' ', 1)[1]))
+    output.close()
+
     # Read int values from file without last three ones
     with open(fileName, 'r', encoding='UTF-16') as data:
         values = [int(line.strip()) for line in data.readlines()[:-5]]
-    
+    data.close()
+
     # Set the parameters for the wave file
     nChannels = 1
     sampWidth = 2
     nFrames = len(values)
-    print(len(values))
-
+    
     # Create a new wave file and set its parameters
     wav_file = wave.open('signal.wav', 'w')
     wav_file.setparams((nChannels, sampWidth, frameRate, nFrames, 'NONE', 'not compressed'))
@@ -94,19 +99,22 @@ def create_audio_file(fileName):
         binary_data = struct.pack('<h', int(value * 4))
         wav_file.writeframes(binary_data)
 
-    
     #check if length is the same
     duration = (nFrames / float(frameRate))
     checkTime=abs((time/1000000)-duration)<0.2
-    print(duration)
-    print(f'{time} {duration}')
+
+    #print(f'Time frm file:{time}, Duration calc:{duration}')
+    #if the time on the file and the one calculated are the same, continue. Else, re-run everything
     if checkTime:
-        print(f'{time} {duration}')
+        pass
     else:
-        print('durations are not equal')
+        run_receiver()
 
     # Close the wave file
     wav_file.close()
+
+    if frameRate<6000:
+        resample()
 
 def decode_audio_file(wav_file):
     folder_path = os.getcwd()
@@ -131,7 +139,7 @@ def scan_decoded_file(fileName, callSign):
     try:
         commands=msg[1].split()
     except:
-        return f'No APRS packets received: {msg}'
+        return msg
     return commands
 
 def run_receiver():
@@ -145,12 +153,33 @@ def run_receiver():
     else:
         run_receiver()
 
+def resample():
+    # Load the audio file
+    audio_file = "signal.wav"
+    audio_data, sample_rate = sf.read(audio_file)
+
+    # Define the new sample rate
+    new_sample_rate = 8000
+
+    # Resample the audio data to the new sample rate
+    resampled_data = scipy.signal.resample(audio_data, int(len(audio_data) * new_sample_rate / sample_rate))
+    
+    # Save the resampled data to a new audio file
+    sf.write("signal.wav", resampled_data, new_sample_rate)
+
 def get_commands():
-    create_audio_file(run_receiver())
-    decode_audio_file('signal.wav')
-    commands=scan_decoded_file('decoded.txt', 'KQ4FYU')
-    print(commands)
-    return commands
+    try:
+        create_audio_file(run_receiver())
+        decode_audio_file('signal.wav')
+        commands=scan_decoded_file('decoded.txt', 'KQ4FYU')
+        if commands==['']:
+            commands=contact.GetRAFCOSequence()
+            return commands
+        return commands
+    except:
+        commands=contact.GetRAFCOSequence()
+        return commands
 
 if __name__=='__main__':
-    get_commands()
+    commands=get_commands()
+    print(commands)
