@@ -21,8 +21,8 @@ class DRA {
             state = state + add_To_State;
             return;
         }
-        void operator++(){
-            state++;
+        void operator ++ (){
+            ++state;
         }
         void begin(){
             pinMode(PTT_PIN, OUTPUT); // Set the PTT pin as an output
