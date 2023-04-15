@@ -5,7 +5,7 @@
 #include "MoveServo.h"
 #include "buzzerNotification.h"
 #include "microstepper.h"
-#include "draManager.h"
+//#include "draManager.h"
 
 I2C_Comm &i2c = I2C_Comm::getInstance();
 const int stepPin = 11; 
@@ -17,10 +17,10 @@ Microstepper micro(42, 500, {3, 5, 4, 6});    // purpose, yellow, orange green o
 //3,11,9,10
 
 //DRA PINS
-const int PTT_PIN 2; // PTT control pin
-const int PD_PIN 7; // PD pin
-const int SQ_PIN 5; //Squelch pin
-const int HL_PIN 6;
+//const int PTT_PIN 2; // PTT control pin
+//const int PD_PIN 7; // PD pin
+//const int SQ_PIN 5; //Squelch pin
+//const int HL_PIN 6;
 
 bool readingRF = false;
 
@@ -40,29 +40,29 @@ void setup() {
 }
 int c = 0;
 
-DRA Behelit= new DRA(PTT_PIN,SQ_PIN,HL_PIN); // SET UP DRA OBJECT NOW CALLED BEHELIT
+//DRA Behelit= new DRA(PTT_PIN,SQ_PIN,HL_PIN); // SET UP DRA OBJECT NOW CALLED BEHELIT
 
 void loop() {
     if(readingRF) { 
-        if(Behelit.get_State() == 4){
-            Behelit.squelch_Loop();
-            return;
-        } else if( Behelit.get_State() == 1){
-            if(Behelit.Handshake()){
-                Behelit++;
-            }
-        } else if (Behelit.get_State() == 2){
-            if(Behelit.SetVolume()){
-                Behelit++;
-            }
-        } else if (Behelit.get_State() == 3){
-            if(Behelit.SetFilter()){
-                Behelit++;
-                Serial.write(">");
-            }
-        }
+        // if(Behelit.get_State() == 4){
+        //     Behelit.squelch_Loop();
+        //     return;
+        // } else if( Behelit.get_State() == 1){
+        //     if(Behelit.Handshake()){
+        //         Behelit++;
+        //     }
+        // } else if (Behelit.get_State() == 2){
+        //     if(Behelit.SetVolume()){
+        //         Behelit++;
+        //     }
+        // } else if (Behelit.get_State() == 3){
+        //     if(Behelit.SetFilter()){
+        //         Behelit++;
+        //         Serial.write(">");
+        //     }
+        // }
 
-        return; //this return error?
+        // return; //this return error?
     }
     delay(100);
 }

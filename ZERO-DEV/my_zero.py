@@ -15,10 +15,10 @@ parser.add_argument('--test', action='store_true', help='Run test. Will not run 
 args = parser.parse_args()
 
 #Define Pins
-buzzerPin = 10
-Servo1Pin = 19
-Servo2Pin = 12
-Servo3Pin = 18
+buzzerPin = 21
+coverPin = 26
+extenderPin = 12
+gimbalPin = 18
 runAwait = True
 
 if __name__=="__main__":
@@ -31,9 +31,9 @@ if __name__=="__main__":
 
         utils.exitListen()
 
-        coverServo = ServoMotor(Servo1Pin)
-        extenderServo = ServoMotor(Servo2Pin)
-        gimbalServo = ServoMotor(Servo3Pin)
+        coverServo = ServoMotor(coverPin)
+        extenderServo = ServoMotor(extenderPin)
+        gimbalServo = ServoMotor(gimbalPin)
 
         coverServo.rotate(0)
         extenderServo.rotate(0)
@@ -47,7 +47,6 @@ if __name__=="__main__":
         if runAwait:
             try:
                 happy_landing.checkForLanding(120)
-
             except Exception as e:
                 print(f'Failed to check for landing: {e}')
                 print('Executing default landing sequence awaiting for 2 hours')
@@ -56,6 +55,7 @@ if __name__=="__main__":
             time.sleep(1)
             
         buzzer.startBuzzer()
+        
         #Remove the cover
         coverServo.rotate(0)
         time.sleep(1)
@@ -78,5 +78,6 @@ if __name__=="__main__":
         bullseye.TakePhoto()
         bullseye.SeriesOfPics(seq)
         reset_arduino.reset()
+
     except Exception as e:
         print(f'failed: {e}')
