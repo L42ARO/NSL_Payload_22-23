@@ -1,10 +1,12 @@
-bool DRA::Handshake(){
-    Serial.begin(500000);
-    while (!Serial) {;} // wait for serial port to connect
+#include "draManager.h"
+
+bool DRA::HandShake(){
+    //Serial.begin(500000);
+    //while (!Serial) {;} // wait for serial port to connect
 
     Serial.println("Handshake Started");
     SendCommand("AT+DMOCONNECT \r\n");
-    String msg = getMessage();
+    String msg = GetMessage();
     Serial.println(msg);
     if(msg=="+DMOCONNECT:0\r\n"){ return true;}
     else{return false;}
@@ -13,7 +15,7 @@ bool DRA::Handshake(){
 bool DRA::SetFrequency(){
     //Serial.println("Freq Sent");
     SendCommand("AT+DMOSETGROUP=1,150.0000,145.0000,0000,1,0000\r\n");
-    String msg = getMessage();
+    String msg = GetMessage();
     //Serial.println(msg);
     if(msg=="+DMOSETGROUP:0\r\n"){ return true; }
     return false;
@@ -21,7 +23,7 @@ bool DRA::SetFrequency(){
 
 bool DRA::SetVolume(){
     SendCommand("AT+DMOSETVOLUME=5\r\n");
-    String msg = getMessage();
+    String msg = GetMessage();
     Serial.println(msg);
     if(msg == "+DMOSETVOLUME:0\r\n"){ return true;}
     return false;
@@ -34,7 +36,7 @@ void DRA::SendCommand(String cmd){
     dra.write(cmd.c_str(), cmd.length()); // Send the command to the module
 }
 
-String DRA::getmessages(){
+String DRA::GetMessage(){
     // Switch back to RX mode and wait for a response from the module
     digitalWrite(PTT_PIN, HIGH); // Set the module to RX mode
     delay(20); // Add a delay of 20ms to switch to RX mode
@@ -51,7 +53,7 @@ String DRA::getmessages(){
 }
 
 void DRA::squelch_Loop(){
-        int sq_out = digitalRead(SQ_PIN);
+    int sq_out = digitalRead(SQ_PIN);
     if(sq_out == LOW && !squelch){
         squelch_start = micros();
         curr_sr = 0;
@@ -69,18 +71,15 @@ void DRA::squelch_Loop(){
         Serial.write(">");
         squelch = false;
     }
-
+    int reading = analogRead(A0);
     if (squelch) {
         //Serial.println(reading);
         unsigned long currentTime = micros();
-        if (currentTime - lastPrintTime >= 120 || true) { // Print the data every 120 microseconds (8300 samples per second)
-        
         byte high_byte = reading >> 8;
         byte low_byte = reading & 0xFF;
         Serial.write(high_byte);
         Serial.write(low_byte);
         lastPrintTime = currentTime;
         curr_sr+=1;
-        }
     }
 }
