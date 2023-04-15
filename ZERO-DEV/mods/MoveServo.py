@@ -21,6 +21,44 @@ class ServoMotor:
         self.pwm.ChangeDutyCycle(duty_cycle)
         time.sleep(0.75)  # Wait for servo to move
     
+class FullServo:
+    def __init__(self, pin):
+        # Set up GPIO pin
+        self.pin = pin
+        GPIO.setup(self.pin, GPIO.OUT)
+
+        # Set up PWM signal
+        self.pwm = GPIO.PWM(self.pin, 50)  # 50 Hz frequency
+        self.pwm.start(0)
+        self.approximate_speed = 20000  
+
+    def rotate(self, angle):
+        # Calculate duration based on angle and approximate speed
+        duration = abs(angle) /self.approximate_speed
+        print(f'Rotating for {duration} seconds.')
+
+        # Determine rotation direction
+        if angle >= 0:
+            duty_cycle = 7.5 + 1  # Clockwise rotation
+        else:
+            duty_cycle = 7.5 - 1  # Counterclockwise rotation
+
+        # Set servo rotation speed
+        self.pwm.ChangeDutyCycle(duty_cycle)
+        time.sleep(duration)  # Rotate for the calculated duration
+
+        # Stop servo after rotation
+        self.stop()
+
+    def stop(self):
+        # Stop servo by setting duty cycle to the neutral position (7.5%)
+        self.pwm.ChangeDutyCycle(7.5)
+        time.sleep(0.5)  # Allow time for the servo to stop
+
+    def cleanup(self):
+        self.pwm.stop()
+        GPIO.cleanup()
+
     #def __del__(self):
     #    # Clean up GPIO pin
     #    self.pwm.stop()
