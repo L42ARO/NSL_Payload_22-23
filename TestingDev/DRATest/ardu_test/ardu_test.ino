@@ -19,7 +19,7 @@ void setup() {
   Serial.begin(500000); // Set the baud rate for the serial monitor
   ADCSRA |= (1 << ADPS2) | (1 << ADPS1);
   ADCSRA &= ~(1 << ADPS0);
-  analogReference(INTERNAL);  // use internal reference (1.1V) for better accuracy
+  //analogReference(INTERNAL);  // use internal reference (1.1V) for better accuracy
   pinMode(A0, INPUT);
   //analogReadResolution(10);
   
@@ -56,7 +56,7 @@ void loop() {
     }  
     //Serial.print(sq_out*100);
     //Serial.print(",");
-    uint16_t reading = analogRead(A0);
+    int reading = analogRead(A0);
     //Serial.print(sq_out);
     //Serial.print(",");
     //Serial.println(reading);
@@ -67,10 +67,10 @@ void loop() {
     if (currentTime - lastPrintTime >= 120 || true) { // Print the data every 120 microseconds (8300 samples per second)
 
       
-     uint8_t high_byte = reading >> 8;
-  uint8_t low_byte = reading & 0xFF;
-     byte buffer[2] = { high_byte, low_byte };
-     Serial.write(buffer, 2);
+      byte high_byte = reading >> 8;
+      byte low_byte = reading & 0xFF;
+      Serial.write(high_byte);
+      Serial.write(low_byte);
       lastPrintTime = currentTime;
       curr_sr+=1;
     }
@@ -146,7 +146,7 @@ bool SetVolume(){
 
 bool SetFrequency(){
   //Serial.println("Freq Sent");
-  SendCommand("AT+DMOSETGROUP=1,150.0000,145.0000,0000,1,0000\r\n");
+  SendCommand("AT+DMOSETGROUP=1,150.0000,144.9000,0000,1,0000\r\n");
   String msg = getMessage();
   //Serial.println(msg);
   if(msg=="+DMOSETGROUP:0\r\n"){
