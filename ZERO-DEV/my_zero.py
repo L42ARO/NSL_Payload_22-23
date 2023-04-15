@@ -9,6 +9,7 @@ import mods.contact as contact
 import time
 import argparse
 import mods.reset_arduino as reset_arduino
+import mods.RadioGaGa as RadioGaGa
 
 parser = argparse.ArgumentParser(description='ZERO-DEV')
 parser.add_argument('--test', action='store_true', help='Run test. Will not run the await loop.')
@@ -72,7 +73,7 @@ if __name__=="__main__":
         mr_blue_sky.MoveGimbal(gimbalServo, 0)
 
         #Get RAFCO sequence
-        seq = contact.GetRAFCOSequence()
+        seq = RadioGaGa.get_commands()
 
         #Take pictures
         bullseye.TakePhoto()
@@ -81,3 +82,5 @@ if __name__=="__main__":
 
     except Exception as e:
         print(f'failed: {e}')
+
+        
