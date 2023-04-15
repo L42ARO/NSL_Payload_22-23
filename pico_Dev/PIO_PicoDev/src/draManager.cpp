@@ -1,8 +1,9 @@
 #include "draManager.h"
 
 bool DRA::HandShake(){
-    //Serial.begin(500000);
-    //while (!Serial) {;} // wait for serial port to connect
+    Serial.end();
+    Serial.begin(500000);
+    while (!Serial) {;} // wait for serial port to connect
     digitalWrite(PD_PIN, HIGH); // Set the PD pin to a high state
     delay(500);
     Serial.println("Handshake Started");
