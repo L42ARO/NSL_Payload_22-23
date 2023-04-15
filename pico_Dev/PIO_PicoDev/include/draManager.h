@@ -7,6 +7,7 @@
 class DRA {
     private:
         int state;
+        double freq;
         int PTT_PIN;
         int SQ_PIN;
         int PD_PIN;
@@ -33,10 +34,8 @@ class DRA {
             delay(500);
             dra.begin(9600);
         }
-        DRA(int PTT_PIN_, int SQ_PIN_, int PD_PIN_, int state_ = 0) : 
-        PTT_PIN(PTT_PIN_), SQ_PIN(SQ_PIN_), PD_PIN(PD_PIN_), state(state_), dra(9,12){
-            
-        }
+        DRA(int PTT_PIN_, int SQ_PIN_, int PD_PIN_, double freq_, int state_ = 0) : 
+        PTT_PIN(PTT_PIN_), SQ_PIN(SQ_PIN_), PD_PIN(PD_PIN_),freq(freq_), state(state_), dra(9,12){}
         int get_State() const { return state;}
         bool HandShake();
         bool SetFilter();
