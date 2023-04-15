@@ -13,7 +13,7 @@ I2C_Comm* I2C_Comm::instance =0;
 void I2C_Comm::begin(int address, void (*processCommand)(int, int)) {
     _address = address;
     Wire.begin(_address);                // join i2c bus with address #8
-    Wire.onRequest(requestEvent); // register event
+    //Wire.onRequest(requestEvent); // register event
     Wire.onReceive(receiveEvent); // register event
     instance = this;
     instance->processCommand = processCommand;
@@ -52,24 +52,6 @@ void I2C_Comm::receiveEvent(int howMany) {
 
     //Wire.write("ready");        // sends ready
     //Wire.endTransmission();     // stop transmitting
-}
-void I2C_Comm::requestEvent() {
-    Serial.println("requestEvent");
-    if(instance->_ready == 1){
-        Wire.write("ready");        // sends ready
-    }
-    else{
-        Wire.write("not ready");        // sends ready
-    }
-    Wire.endTransmission();     // stop transmitting
-}
-void I2C_Comm::sendEvent(String msg){
-    Wire.begin();
-    Wire.beginTransmission(8); // transmit to device #8
-    Wire.write("jfjdf"); // sends the string
-    Wire.endTransmission(); // stop transmitting
-
-    delay(1000);
 }
 
 //void I2C_Comm::begin(int address, void (*processCommand)(int, int)) {

@@ -38,7 +38,7 @@ if __name__=="__main__":
 
         coverServo.rotate(0)
         extenderServo.rotate(0)
-        gimbalServo.rotate(0)
+        #gimbalServo.rotate(0)
 
         time.sleep(1)
 
@@ -65,12 +65,12 @@ if __name__=="__main__":
         mr_blue_sky.moveToHole(3)
         
         #Extend the extender
-        gimbalServo.rotate(90)
+        #gimbalServo.rotate(90)
         time.sleep(1)
         extenderServo.rotate(160)
         time.sleep(1)
         #Move the gimbal to the true vertical
-        mr_blue_sky.MoveGimbal(gimbalServo, 0)
+        #mr_blue_sky.MoveGimbal(gimbalServo, 0)
 
         #Get RAFCO sequence
         seq = RadioGaGa.get_commands()

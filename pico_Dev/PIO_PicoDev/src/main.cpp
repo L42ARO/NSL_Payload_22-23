@@ -29,7 +29,7 @@ void processCommand(int commandNumber, int value);
 void setup() {
   Serial.begin(9600);
   Serial.println("Starting up");
-  i2c.begin(8, &processCommand);
+  //i2c.begin(0x08, &processCommand);
   //Set up DRA pins, intialize DRA to sleep
   Behelit.begin();
   // Setting the pins up
@@ -40,9 +40,13 @@ void setup() {
   delay(1000);
 }
 int c = 0;
-
+bool i2cOn = true;
+String rec="";
 void loop() {
     if(readingRF) { 
+        if(i2cOn){
+            //i2c.end();
+        }
         if(Behelit.get_State() == 4){
             Behelit.squelch_Loop();
             return;
@@ -69,6 +73,22 @@ void loop() {
         }
         
         return; //this return error?
+    }
+    while (Serial.available()){
+        delay(3);
+        if(Serial.available()>0){
+            char c = Serial.read();
+            rec+=c;
+        }
+    }
+    if (rec.length()>=3){
+        String cmd = rec.substring(0,1);
+        String val = rec.substring(2,rec.length());
+        String sign = rec.substring(1,2);
+        bool pos=sign=="1";
+        int truVal = val.toInt() * (pos?1:-1);          
+        Serial.println(cmd + sign + val);
+        processCommand(cmd.toInt(),truVal);
     }
     delay(100);
 }
@@ -103,7 +123,6 @@ void processCommand(int commandNumber, int value){
        case 4:
        //once case is called int rfreciever is set to true and i2c communication is stopped
             readingRF = true;
-            i2c.end();
             break;
        default:
            Serial.println("Invalid command received");
