@@ -12,7 +12,7 @@ import mods.reset_arduino as reset_arduino
 import mods.talking_heads as talking_heads
 import time
 import platform
-#create another 
+#create another function for counting how many times the waiting is runned
 def receive_signal(i):
     #reset_arduino.reset()
     #talking_heads.talk(4,0)
@@ -21,7 +21,7 @@ def receive_signal(i):
     with open('output'+str(i)+'.txt', 'w+', encoding='UTF-16') as output:
         port='COM10'
         if platform.system()=='Linux':
-            port='/dev/ttyAMA0'
+            port='/dev/ttyUSB0'
         ser = serial.Serial(port, 500000)  # Replace COM_PORT with the actual port of your Arduino
 
         # Wait for data to start coming
