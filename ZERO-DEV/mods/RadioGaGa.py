@@ -11,21 +11,25 @@ import mods.contact as contact
 import mods.reset_arduino as reset_arduino
 import mods.talking_heads as talking_heads
 import time
-
+import platform
+#create another function for counting how many times the waiting is runned
 def receive_signal(i):
-    reset_arduino.reset()
-    talking_heads.talk(4,0)
-    time.sleep(2)
+    #reset_arduino.reset()
+    #talking_heads.talk(4,0)
+    #time.sleep(2)
     #write the signal into the file
     with open('output'+str(i)+'.txt', 'w+', encoding='UTF-16') as output:
-        ser = serial.Serial('COM10', 500000)  # Replace COM_PORT with the actual port of your Arduino
+        port='COM10'
+        if platform.system()=='Linux':
+            port='/dev/ttyUSB0'
+        ser = serial.Serial(port, 500000)  # Replace COM_PORT with the actual port of your Arduino
 
         # Wait for data to start coming
         while ser.in_waiting == 0:
             pass
 
         text = ""
-        print("Incoming data...")
+        #print("Incoming data...")
         output.write("Incoming data...")
         while True:
             byte = ser.read(1)
@@ -33,10 +37,18 @@ def receive_signal(i):
                 break
             text += byte.decode('ascii')
 
-        print(text)
+        #print(text)
         output.write(text)
 
+        #max_time = 5  # Set the maximum time in seconds
+        #start_time = time.time()  # Record the start time of the loop
+        #elapsed_time = 0  # Initialize the elapsed time to 0
+        #counter=0
+
         while ser.in_waiting == 0:
+            #elapsed_time = time.time() - start_time  # Calculate the elapsed time
+            #if elapsed_time >= max_time:
+                #run_receiver()
             pass
 
         while True:
@@ -178,13 +190,14 @@ def get_commands():
         create_audio_file(run_receiver())
         decode_audio_file('signal.wav')
         commands=scan_decoded_file('decoded.txt', 'KQ4FYU')
-        reset_arduino.reset()
+        #reset_arduino.reset()
         if commands==['']:
             commands=contact.GetRAFCOSequence()
             return commands
         return commands
-    except:
+    except Exception as e:
         commands=contact.GetRAFCOSequence()
+        print(e)
         return commands
 
 if __name__=='__main__':
