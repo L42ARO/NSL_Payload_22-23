@@ -14,13 +14,13 @@ const int rstPin = 12;
 Stepper stepper1(stepPin, dirPin, rstPin); //create stepper object
 MainServo mainServo(9);
 Microstepper micro(42, 500, {3, 5, 4, 6});    // purpose, yellow, orange green or blue, black, red, white
-DRA Behelit(PTT_PIN,SQ_PIN,PD_PIN, 145.000); // SET UP DRA OBJECT NOW CALLED BEHELIT
 //3,11,9,10
 
 //DRA PINS
 const int PTT_PIN= 2; // PTT control pin
 const int PD_PIN = 7; // PD pin
 const int SQ_PIN = 8; //Squelch pin
+DRA Behelit(PTT_PIN,SQ_PIN,PD_PIN, 145.000); // SET UP DRA OBJECT NOW CALLED BEHELIT
 
 bool readingRF = false;
 
