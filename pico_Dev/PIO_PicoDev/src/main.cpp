@@ -14,6 +14,7 @@ const int rstPin = 12;
 Stepper stepper1(stepPin, dirPin, rstPin); //create stepper object
 MainServo mainServo(9);
 Microstepper micro(42, 500, {3, 5, 4, 6});    // purpose, yellow, orange green or blue, black, red, white
+DRA Behelit(PTT_PIN,SQ_PIN,PD_PIN, 145.000); // SET UP DRA OBJECT NOW CALLED BEHELIT
 //3,11,9,10
 
 //DRA PINS
@@ -29,7 +30,8 @@ void setup() {
   Serial.begin(9600);
   Serial.println("Starting up");
   i2c.begin(8, &processCommand);
-
+  //Set up DRA pins, intialize DRA to sleep
+  Behelit.begin();
   // Setting the pins up
   micro.begin();
   stepper1.begin();
@@ -38,29 +40,35 @@ void setup() {
   delay(1000);
 }
 int c = 0;
-DRA Behelit= DRA(PTT_PIN,SQ_PIN,PD_PIN); // SET UP DRA OBJECT NOW CALLED BEHELIT
 
 void loop() {
     if(readingRF) { 
-        // if(Behelit.get_State() == 4){
-        //     Behelit.squelch_Loop();
-        //     return;
-        // } else if( Behelit.get_State() == 1){
-        //     if(Behelit.Handshake()){
-        //         Behelit++;
-        //     }
-        // } else if (Behelit.get_State() == 2){
-        //     if(Behelit.SetVolume()){
-        //         Behelit++;
-        //     }
-        // } else if (Behelit.get_State() == 3){
-        //     if(Behelit.SetFilter()){
-        //         Behelit++;
-        //         Serial.write(">");
-        //     }
-        // }
+        if(Behelit.get_State() == 4){
+            Behelit.squelch_Loop();
+            return;
 
-        // return; //this return error?
+        } 
+        else if(Behelit.get_State() == 0){
+            if(Behelit.HandShake()){
+                Behelit++;
+            }
+        }
+        else if( Behelit.get_State() == 1){
+            if(Behelit.SetVolume()){
+                Behelit++;
+            }
+        } else if (Behelit.get_State() == 2){
+            if(Behelit.SetFilter()){
+                Behelit++;
+            }
+        } else if (Behelit.get_State() == 3){
+            if(Behelit.SetFrequency()){
+                Behelit++;
+                Serial.write(">");
+            }
+        }
+        
+        return; //this return error?
     }
     delay(100);
 }

@@ -3,7 +3,8 @@
 bool DRA::HandShake(){
     //Serial.begin(500000);
     //while (!Serial) {;} // wait for serial port to connect
-
+    digitalWrite(PD_PIN, HIGH); // Set the PD pin to a high state
+    delay(500);
     Serial.println("Handshake Started");
     SendCommand("AT+DMOCONNECT \r\n");
     String msg = GetMessage();

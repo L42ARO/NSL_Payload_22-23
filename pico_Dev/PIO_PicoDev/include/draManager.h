@@ -18,13 +18,14 @@ class DRA {
         SoftwareSerial dra;
     public:
 
-        void operator+(int add_To_State) { 
-            state = state + add_To_State;
-            return;
-        }
-        DRA& operator ++ (){
+        //void operator+(int add_To_State) { 
+        //    state = state + add_To_State;
+        //    return;
+        //}
+        DRA operator++ (int){
+            DRA temp = *this;
             ++state;
-            return *this
+            return temp;
         }
         void begin(){
             pinMode(PTT_PIN, OUTPUT); // Set the PTT pin as an output
