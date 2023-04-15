@@ -28,7 +28,7 @@ class DRA {
             pinMode(PTT_PIN, OUTPUT); // Set the PTT pin as an output
             pinMode(PD_PIN, OUTPUT); // Set the PD pin as an output
             pinMode(SQ_PIN, INPUT);
-            digitalWrite(PD_PIN, HIGH); // Set the PD pin to a high state
+            digitalWrite(PD_PIN, LOW); // Set the PD pin to a high state
             digitalWrite(PTT_PIN, HIGH); // Set the module to RX mode initially
             delay(500);
             dra.begin(9600);
