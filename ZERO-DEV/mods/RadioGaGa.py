@@ -7,9 +7,15 @@ import re
 import math
 import scipy.signal
 import soundfile as sf
-import contact
+import mods.contact as contact
+import mods.reset_arduino as reset_arduino
+import mods.talking_heads as talking_heads
+import time
 
 def receive_signal(i):
+    reset_arduino.reset()
+    talking_heads.talk(4,0)
+    time.sleep(2)
     #write the signal into the file
     with open('output'+str(i)+'.txt', 'w+', encoding='UTF-16') as output:
         ser = serial.Serial('COM10', 500000)  # Replace COM_PORT with the actual port of your Arduino
@@ -172,6 +178,7 @@ def get_commands():
         create_audio_file(run_receiver())
         decode_audio_file('signal.wav')
         commands=scan_decoded_file('decoded.txt', 'KQ4FYU')
+        reset_arduino.reset()
         if commands==['']:
             commands=contact.GetRAFCOSequence()
             return commands
