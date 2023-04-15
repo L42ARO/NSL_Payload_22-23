@@ -84,3 +84,14 @@ void DRA::squelch_Loop(){
         curr_sr+=1;
     }
 }
+
+bool DRA::SetFilter(){
+    SendCommand("AT+SETFILTER=0,0,0\r\n");
+    String msg = getMessage();
+    Serial.println(msg);
+    delay(200);
+    if(msg=="+DMOSETFILTER:0\r\n"){
+      return true;
+    }
+    return false;
+}
